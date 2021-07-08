@@ -7,9 +7,9 @@ server <- shiny::shinyServer(function(input, output) {
   
   getPlotData.DE <- reactive({
     
-    #get normalised counts
-    RNAseqdata.normalised <- readRDS('/servers/sutherland-scratch/ecw63/Teaching/shiny_WK/RNAseqdata.normalised.rds')
-    gene.df = readRDS('/servers/sutherland-scratch/ecw63/Teaching/shiny_WK/genedf.rds')
+    # normalised counts
+    # RNAseqdata.normalised <- readRDS('/servers/sutherland-scratch/ecw63/Teaching/shiny_WK/RNAseqdata.normalised.rds')
+    # gene.df = readRDS('/servers/sutherland-scratch/ecw63/Teaching/shiny_WK/genedf.rds')
     
     #add gene names
     RNAseqdata.normalised = merge(RNAseqdata.normalised,gene.df,by = c('gene_id'))
@@ -160,8 +160,8 @@ server <- shiny::shinyServer(function(input, output) {
   #------------------------------------------------------------------------------
   
   getPlotData_chip <- reactive({
-    #get data for plotting
-    ChIPseqdata = readRDS('/servers/sutherland-scratch/ecw63/Teaching/shiny_WK/ChIP_nearbygenes.rds')
+    # get data for plotting
+    # ChIPseqdata = readRDS('/servers/sutherland-scratch/ecw63/Teaching/shiny_WK/ChIP_nearbygenes.rds')
     
     l1 = log2(ChIPseqdata[, input[["variable1_chip"]]])
     l2 = log2(ChIPseqdata[, input[["variable2_chip"]]])
@@ -208,7 +208,7 @@ server <- shiny::shinyServer(function(input, output) {
   
   #get data for plotting
   getPlotData_atac <- reactive({
-    ATACseqdata = readRDS('/servers/sutherland-scratch/ecw63/Teaching/shiny_WK/ATAC_nearbygenes.rds')
+    # ATACseqdata = readRDS('/servers/sutherland-scratch/ecw63/Teaching/shiny_WK/ATAC_nearbygenes.rds')
     
     l1 = log2(ATACseqdata[, input[["variable1_atac"]]])
     l2 = log2(ATACseqdata[, input[["variable2_atac"]]])
