@@ -11,60 +11,10 @@ library(shinydashboard)
 ui <- navbarPage("Interaction of BCL11A and CHD8 in triple negative breast cancer", theme = shinytheme("flatly"),
                  #RNAseq---------------------------------------------------------
                  navbarMenu("RNAseq",
-                            #tab for DE
-                            tabPanel("Differential expression",
-                                     titlePanel("Interaction of BCL11A and CHD8 in triple negative breast cancer"),
-                                     sidebarLayout(
-                                       
-                                       # Sidebar panel for inputs ----
-                                       sidebarPanel(
-                                         
-                                         # Input: Selector variables to compare
-                                         selectInput("variable1", "Sample 1:",
-                                                     c("control" = "control",
-                                                       "BCL11A" = "BCL11A",
-                                                       "CHD8" = "CHD8")),
-                                         selectInput("variable2", "Sample 2:",
-                                                     c("BCL11A" = "BCL11A",
-                                                       "control" = "control",
-                                                       "CHD8" = "CHD8")),
-                                         
-                                         #download file name and button
-                                         textInput("fileName","File name for download",value ='DEset.csv',placeholder = 'DEset.csv'),
-                                         downloadButton("downloadData", "Download"),
-                                         
-                                         #choose type of plot for RNAseq
-                                         selectInput("plottype", "Type of plot:",
-                                                     c("MA" = "MA",
-                                                       "volcano" = "volcano")),
-                                         
-                                         #DE thresholds
-                                         sliderInput(
-                                           "FC_threshold", label = "logFC threshold",
-                                           min = 0, value = 1, max = 5,step = 0.5
-                                         ),
+                            # tab for DE
+                            DEpanelUI("DE"),
 
-                                         sliderInput(
-                                           "pval_threshold", label = "Adjusted p-value threshold",
-                                           min = 0, value = 0.05, max = 0.2,step = 0.005
-                                         ),
-                                         
-                                         #should all genes or only DE be shown in table?
-                                         checkboxInput("all_genes", "All genes", TRUE),
-                                         
-                                         #gene to colour
-                                         textInput("GeneName","Gene name",value ='',placeholder = 'Mrgprb2')
-                                         
-                                       ),
-                                       
-                                       #Main panel for displaying outputs
-                                       mainPanel(
-                                         
-                                         plotOutput("maPlot", click = "plot_click"),
-                                         tableOutput("maData.DE"),
-                                       )
-                                     )),
-                            #tab for enrichment
+                            # tab for enrichment
                             tabPanel("Enrichment",
                                      titlePanel("Interaction of BCL11A and CHD8 in triple negative breast cancer"),
                                      sidebarLayout(
