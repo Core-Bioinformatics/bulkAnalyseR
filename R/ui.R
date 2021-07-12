@@ -8,49 +8,17 @@ library(shinydashboard)
 
 
 # Define UI for miles per gallon app ----
-ui <- navbarPage("Interaction of BCL11A and CHD8 in triple negative breast cancer", theme = shinytheme("flatly"),
+ui <- navbarPage("Interaction of BCL11A and CHD8 in triple negative breast cancer", 
+                 theme = shinytheme("flatly"),
                  #RNAseq---------------------------------------------------------
-                 navbarMenu("RNAseq",
+                 tabPanel("RNAseq",
+                          tabsetPanel(
                             # tab for DE
                             DEpanelUI("DE"),
-
+                            
                             # tab for enrichment
-                            tabPanel("Enrichment",
-                                     titlePanel("Interaction of BCL11A and CHD8 in triple negative breast cancer"),
-                                     sidebarLayout(
-                                       
-                                       # Sidebar panel for inputs ----
-                                       sidebarPanel(
-                                         
-                                         #file upload
-                                         fileInput("file1", "Choose CSV File",
-                                                   multiple = FALSE,
-                                                   accept = c("text/csv",
-                                                              "text/comma-separated-values,text/plain",
-                                                              ".csv")),
-                                         "Select data sources",
-                                         checkboxInput("GOBP", "GO:BP", TRUE),
-                                         checkboxInput("GOMF", "GO:MF", TRUE),
-                                         checkboxInput("GOCC", "GO:CC", TRUE),
-                                         checkboxInput("KEGG", "KEGG", TRUE),
-                                         checkboxInput("REAC", "REAC", TRUE),
-                                         checkboxInput("TF", "TF", TRUE),
-                                         checkboxInput("MIRNA", "MIRNA", TRUE),
-                                         checkboxInput("CORUM", "CORUM", FALSE),
-                                         checkboxInput("HP", "HP", FALSE),
-                                         checkboxInput("HPA", "HPA", FALSE),
-                                         checkboxInput("WP", "WP", FALSE),
-                                         
-                                         #download file name and button
-                                         textInput("enrichmentfileName","File name for download",value ='EnrichmentSet.csv',placeholder = 'EnrichmentSet.csv'),
-                                         downloadButton("downloadEnrichment", "Download")),
-                                       
-                                       #main panel for displaying outputs
-                                       mainPanel(
-                                         plotOutput("enrichmentPlot", click = "plot_click2"),
-                                         tableOutput("enrichmentTable"),
-                                       )
-                                     ))),
+                            enrichmentPanelUI("Enrichment")
+                          )),
                  #ChIPseq--------------------------------------------------------
                  tabPanel("ChIPseq",
                           # App title ----

@@ -40,7 +40,7 @@ DEpanelUI <- function(id){
       #Main panel for displaying outputs
       mainPanel(
         plotOutput(ns('plot'), click = ns('plot_click')),
-        tableOutput(ns('dataDE'))
+        tableOutput(ns('data'))
       )
     )
   )
@@ -58,8 +58,8 @@ DEpanelServer <- function(id){
       # gene.df = readRDS('/servers/sutherland-scratch/ecw63/Teaching/shiny_WK/genedf.rds')
       
       #add gene names
-      RNAseqdata.normalised = merge(RNAseqdata.normalised,gene.df,by = c('gene_id'))
-      rownames(RNAseqdata.normalised)=RNAseqdata.normalised$gene_id
+      RNAseqdata.normalised = merge(RNAseqdata.normalised, gene.df, by = c('gene_id'))
+      rownames(RNAseqdata.normalised) = RNAseqdata.normalised$gene_id
       
       #extract columns for samples being compared
       columns = list('control' = c('control_rep1','control_rep2','control_rep3'),
@@ -133,7 +133,7 @@ DEpanelServer <- function(id){
     output[['plot']] <- renderPlot(plot_RNAseq())
     
     #define output table when you click on gene with all genes or only DE
-    output[['dataDE']] <- renderTable({
+    output[['data']] <- renderTable({
       req(input[['plot_click']])
       data = getPlotData.DE()
       if (!(input[['allGenes']])){
@@ -154,6 +154,8 @@ DEpanelServer <- function(id){
                   row.names = FALSE)
       }
     )
+    
+    getPlotData.DE
   })
 }
 

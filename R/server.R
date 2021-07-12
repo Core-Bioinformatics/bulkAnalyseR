@@ -1,65 +1,13 @@
-server <- shiny::shinyServer(function(input, output) {
+server <- function(input, output, session){
   
   #RNAseq------------------------------------------------------------------------
   #------------------------------------------------------------------------------
   
   #Differential expression-------------------------------------------------------
-  DEpanelServer("DE")
+  getPlotData.DE <- DEpanelServer("DE")
   
   #Enrichment--------------------------------------------------------------------
-  
-  #run enrichment
-  getenrichmentData <- reactive({
-    
-    req(input$file1)
-    tryCatch(
-      {
-        data <- read.csv(input$file1$datapath)
-      },
-      error = function(e) {
-        # return a safeError if a parsing error occurs
-        stop(safeError(e))
-      }
-    )
-    sources = c(ifelse(input$GOBP,'GO:BP','a'),
-                ifelse(input$GOMF,'GO:MF','a'),
-                ifelse(input$GOCC,'GO:CC','a'),
-                ifelse(input$KEGG,'KEGG','a'),
-                ifelse(input$REAC,'REAC','a'),
-                ifelse(input$TF,'TF','a'),
-                ifelse(input$MIRNA,'MIRNA','a'),
-                ifelse(input$CORUM,'CORUM','a'),
-                ifelse(input$HP,'HP','a'),
-                ifelse(input$HPA,'HPA','a'),
-                ifelse(input$WP,'WP','a'))
-    sources = sources[sources!='a']
-    enrichment=gprofiler2::gost(query=data$gene_id,organism='mmusculus',correction_method = 'fdr',custom_bg = getPlotData.DE()$gene_id,sources=sources)
-    enrichment$result
-  })
-  
-  #plot enrichment data
-  output$enrichmentPlot <- renderPlot({
-    enrichment = getenrichmentData()
-    enrichment = enrichment[,c("query","significant","p_value","term_size","query_size","intersection_size","precision","recall","term_id","source","term_name","effective_domain_size")]
-    ggplot(enrichment,aes(x=source,y=p_value,color=source))+geom_point()+theme_bw()
-  })
-  
-  #define clicking on enrichment data table
-  output$enrichmentTable <-renderTable({
-    req(input$plot_click2)
-    enrichment = getenrichmentData()
-    enrichment = enrichment[,c("query","significant","p_value","term_size","query_size","intersection_size","precision","recall","term_id","source","term_name","effective_domain_size")]    
-    nearPoints(df=enrichment,coordinfo = input$plot_click2,maxpoints = 5)  })
-  
-  #download enrichment
-  output$downloadEnrichment <- downloadHandler(
-    filename = function() {
-      paste(input$enrichmentfileName)
-    },
-    content = function(file) {
-      write.csv(x = getenrichmentData()[,c("query","significant","p_value","term_size","query_size","intersection_size","precision","recall","term_id","source","term_name","effective_domain_size")], file, row.names = FALSE)
-    }
-  )
+  enrichmentPanelServer("Enrichment", getPlotData.DE)
   
   #ChIP--------------------------------------------------------------------------
   #------------------------------------------------------------------------------
@@ -157,4 +105,4 @@ server <- shiny::shinyServer(function(input, output) {
   },digits=6)
   
   
-})
+}
