@@ -3,7 +3,6 @@ DEpanelUI <- function(id){
   
   tabPanel(
     'Differential expression',
-    titlePanel('Interaction of BCL11A and CHD8 in triple negative breast cancer'),
     sidebarLayout(
       
       # Sidebar panel for inputs ----
@@ -51,7 +50,7 @@ DEpanelServer <- function(id){
   stopifnot({TRUE})
   
   moduleServer(id, function(input, output, session){
-    getPlotData.DE <- reactive({
+    getPlotData <- reactive({
       
       # normalised counts
       # RNAseqdata.normalised <- readRDS('/servers/sutherland-scratch/ecw63/Teaching/shiny_WK/RNAseqdata.normalised.rds')
@@ -75,12 +74,12 @@ DEpanelServer <- function(id){
         A = log2(rowSums(RNAseqdata.normalised.categories) / ncol(RNAseqdata.normalised.categories))
       )
       rownames(plotdata) = rownames(RNAseqdata.normalised)
-      design <- model.matrix(~ 0 + as.factor(c(rep(input[['variable1']], 3), rep(input[['variable2']], 3))))
+      design <- stats::model.matrix(~ 0 + as.factor(c(rep(input[['variable1']], 3), rep(input[['variable2']], 3))))
       edger <- DGEList(counts = RNAseqdata.normalised.categories,group = c(0, 0, 0, 1, 1, 1))
       edger <- estimateDisp(edger, design)
       glm.fit = glmFit(edger, design = design)
       glm.table <- glmLRT(glm.fit, contrast=c(-1, 1))$table
-      glm.table$adjustedp = p.adjust(glm.table$PValue, method='BH')
+      glm.table$adjustedp = stats::p.adjust(glm.table$PValue, method='BH')
       
       #create table for plotting
       plotdata$M = glm.table$logFC
@@ -94,14 +93,15 @@ DEpanelServer <- function(id){
     })
     
     #define plot (MA or volcano)
-    plot_RNAseq <- reactive({
-      plotdata = getPlotData.DE()
+    myplot <- reactive({
+      plotdata = getPlotData()
       plotdata.DE = plotdata[((abs(plotdata$M) > input[['lfcThreshold']]) & 
                                 (plotdata$adjustedpVal < input[['pvalThreshold']])),]
       plotdata.logFC = plotdata[((abs(plotdata$M)>input[['lfcThreshold']])),]
       plotdata.pval = plotdata[(plotdata$adjustedpVal < input[['pvalThreshold']]),]
       plotdata.mygene = plotdata[plotdata$gene_name == input[['geneName']],]
       max.M = max(abs(plotdata$M))
+      A <- NULL; M <- NULL; `-log10(adjustedpVal)` <- NULL
       if (input[['plotType']] == 'MA'){
         #MA
         myplot <- ggplot(plotdata, aes(x = A, y = M)) +
@@ -120,7 +120,7 @@ DEpanelServer <- function(id){
           geom_point(data = plotdata.logFC, color = 'blue', alpha = 0.5) +
           geom_point(data = plotdata.DE, color = 'red', alpha = 1) +
           geom_point(data = plotdata.mygene,color = 'green', alpha = 1, size = 2) +
-          geom_text_repel(data = plotdata.mygene, label = input[['geneName']]) +
+          ggrepel::geom_text_repel(data = plotdata.mygene, label = input[['geneName']]) +
           theme_bw() +
           geom_hline(yintercept = -log10(input[['pvalThreshold']]), color = 'gray')+
           geom_vline(xintercept = input[['lfcThreshold']], color = 'gray')+
@@ -130,12 +130,12 @@ DEpanelServer <- function(id){
     })
     
     #output MA/volcano plot
-    output[['plot']] <- renderPlot(plot_RNAseq())
+    output[['plot']] <- renderPlot(myplot())
     
     #define output table when you click on gene with all genes or only DE
     output[['data']] <- renderTable({
       req(input[['plot_click']])
-      data = getPlotData.DE()
+      data = getPlotData()
       if (!(input[['allGenes']])){
         data = data[((abs(data$M) > input[['lfcThreshold']]) & (data$adjustedpVal < input[['pvalThreshold']])),]
       }
@@ -148,14 +148,14 @@ DEpanelServer <- function(id){
         paste(input[['fileName']])
       },
       content = function(file) {
-        write.csv(x = getPlotData.DE()[((abs(getPlotData.DE()$M) > input[['lfcThreshold']]) & 
-                                          (getPlotData.DE()$adjustedpVal < input[['pvalThreshold']])),], 
+        utils::write.csv(x = getPlotData()[((abs(getPlotData()$M) > input[['lfcThreshold']]) & 
+                                          (getPlotData()$adjustedpVal < input[['pvalThreshold']])),], 
                   file = file, 
                   row.names = FALSE)
       }
     )
     
-    getPlotData.DE
+    getPlotData
   })
 }
 

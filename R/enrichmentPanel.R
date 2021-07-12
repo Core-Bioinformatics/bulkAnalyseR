@@ -3,7 +3,6 @@ enrichmentPanelUI <- function(id){
   
   tabPanel(
     'Enrichment',
-    titlePanel('Interaction of BCL11A and CHD8 in triple negative breast cancer'),
     sidebarLayout(
       
       # Sidebar panel for inputs ----
@@ -41,7 +40,7 @@ enrichmentPanelServer <- function(id, getPlotData.DE){
       req(input[['fileIn']])
       tryCatch(
         {
-          data <- read.csv(input[['fileIn']]$datapath)
+          data <- utils::read.csv(input[['fileIn']]$datapath)
         },
         error = function(e) {
           # return a safeError if a parsing error occurs
@@ -59,6 +58,7 @@ enrichmentPanelServer <- function(id, getPlotData.DE){
     })
     
     #plot enrichment data
+    source <- NULL; p_value <- NULL
     output[['plot']] <- renderPlot({
       ggplot(getenrichmentData(), aes(x = source, y = p_value, fill = source)) + 
         geom_boxplot() + 
@@ -66,7 +66,7 @@ enrichmentPanelServer <- function(id, getPlotData.DE){
     })
     
     #define clicking on enrichment data table
-    output[['data']] <-renderTable({
+    output[['data']] <- renderTable({
       req(input[['plot_click']])
       nearPoints(df = getenrichmentData(), coordinfo = input[['plot_click']], maxpoints = 5)
     })
@@ -77,7 +77,7 @@ enrichmentPanelServer <- function(id, getPlotData.DE){
         paste(input[['fileName']])
       },
       content = function(file){
-        write.csv(x = getenrichmentData(), file, row.names = FALSE)
+        utils::write.csv(x = getenrichmentData(), file, row.names = FALSE)
       }
     )
   })
