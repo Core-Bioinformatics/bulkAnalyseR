@@ -22,7 +22,7 @@ enrichmentPanelUI <- function(id){
       
       #main panel for displaying outputs
       mainPanel(
-        plotOutput(ns('plot'), click = 'plot_click'),
+        plotOutput(ns('plot'), click = ns('plot_click')),
         tableOutput(ns('data')),
       )
     )
@@ -60,8 +60,8 @@ enrichmentPanelServer <- function(id, getPlotData.DE){
     #plot enrichment data
     source <- NULL; p_value <- NULL
     output[['plot']] <- renderPlot({
-      ggplot(getenrichmentData(), aes(x = source, y = p_value, fill = source)) + 
-        geom_boxplot() + 
+      ggplot(getenrichmentData(), aes(x = source, y = p_value, colour = source)) + 
+        geom_point() + 
         theme_bw()
     })
     
