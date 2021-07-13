@@ -1,5 +1,4 @@
 #' @import shiny
-#' @import edgeR
 #' @import ggplot2
 bulkApp <- function(...){
   

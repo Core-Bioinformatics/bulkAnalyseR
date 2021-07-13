@@ -74,11 +74,12 @@ DEpanelServer <- function(id){
         A = log2(rowSums(RNAseqdata.normalised.categories) / ncol(RNAseqdata.normalised.categories))
       )
       rownames(plotdata) = rownames(RNAseqdata.normalised)
-      design <- stats::model.matrix(~ 0 + as.factor(c(rep(input[['variable1']], 3), rep(input[['variable2']], 3))))
-      edger <- DGEList(counts = RNAseqdata.normalised.categories,group = c(0, 0, 0, 1, 1, 1))
-      edger <- estimateDisp(edger, design)
-      glm.fit = glmFit(edger, design = design)
-      glm.table <- glmLRT(glm.fit, contrast=c(-1, 1))$table
+      design <- stats::model.matrix(~ 0 + as.factor(c(rep(input[['variable1']], 3), 
+                                                      rep(input[['variable2']], 3))))
+      edger <- edgeR::DGEList(counts = RNAseqdata.normalised.categories, group = c(0, 0, 0, 1, 1, 1))
+      edger <- edgeR::estimateDisp(edger, design)
+      glm.fit = edgeR::glmFit(edger, design = design)
+      glm.table <- edgeR::glmLRT(glm.fit, contrast=c(-1, 1))$table
       glm.table$adjustedp = stats::p.adjust(glm.table$PValue, method='BH')
       
       #create table for plotting
@@ -109,7 +110,7 @@ DEpanelServer <- function(id){
           ylim(-max.M, max.M) +
           geom_point(data = plotdata.DE, color = 'red', alpha=0.5) +
           geom_point(data = plotdata.mygene, color = 'green', alpha=1, size=2) +
-          geom_text_repel(data = plotdata.mygene, label = input[['geneName']]) + 
+          ggrepel::geom_text_repel(data = plotdata.mygene, label = input[['geneName']]) + 
           theme_bw()
       }else{   
         #volcano
