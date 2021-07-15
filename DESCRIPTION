@@ -23,4 +23,8 @@ Imports:
     edgeR,
     stats,
     ggrepel,
-    utils
+    utils,
+    RColorBrewer,
+    ComplexHeatmap,
+    circlize,
+    grid
