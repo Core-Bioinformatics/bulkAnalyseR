@@ -4,21 +4,32 @@ QCpanelUI <- function(id, metadata){
   tabPanel(
     'Quality checks',
     tags$h1("Jaccard Similarity Index Heatmap"),
-    sidebarLayout(
-      sidebarPanel(
-        checkboxGroupInput(ns('jaccard.annotations'), label = "Show annotations",
-                           choices = colnames(metadata), selected = colnames(metadata)[ncol(metadata)]),
-        sliderInput(ns('jaccard.n.abundant'), label = '# of (most abundant) genes',
-                    min = 50, value = 500, max = 5000, step = 50, ticks = FALSE),
-        checkboxInput(ns("jaccard.show.values"), label = "Show JSI values", value = FALSE)
-      ),
-      mainPanel(plotOutput(ns('jaccard')))
+    shinyWidgets::dropdownButton(
+      checkboxGroupInput(ns('jaccard.annotations'), label = "Show annotations",
+                         choices = colnames(metadata), selected = colnames(metadata)[ncol(metadata)]),
+      sliderInput(ns('jaccard.n.abundant'), label = '# of (most abundant) genes',
+                  min = 50, value = 500, max = 5000, step = 50, ticks = FALSE),
+      checkboxInput(ns("jaccard.show.values"), label = "Show JSI values", value = FALSE),
+      
+      status = "info",
+      icon = icon("gear"), 
+      tooltip = tooltipOptions(title = "Click to see inputs!")
     ),
-    # tags$h1("Principal Component Analysis"),
-    # sidebarLayout(
-    #   sidebarPanel(),
-    #   mainPanel(plotOutput(ns('pca')))
-    # )
+    plotOutput(ns('jaccard')),
+    
+    tags$h1("Principal Component Analysis"),
+    shinyWidgets::dropdownButton(
+      radioButtons(ns('pca.annotation'), label = "Group by",
+                   choices = colnames(metadata), selected = colnames(metadata)[ncol(metadata)]),
+      sliderInput(ns('pca.n.abundant'), label = '# of (most abundant) genes',
+                  min = 50, value = 500, max = 5000, step = 50, ticks = FALSE),
+      checkboxInput(ns("pca.show.labels"), label = "Show sample labels", value = FALSE),
+      
+      status = "info",
+      icon = icon("gear"), 
+      tooltip = tooltipOptions(title = "Click to see inputs!")
+    ),
+    plotOutput(ns('pca'))
   )
 }
 
@@ -34,17 +45,25 @@ QCpanelServer <- function(id, expression.matrix, metadata){
       myplot <- jaccard_heatmap(
         expression.matrix = expression.matrix,
         metadata = metadata,
+        top.annotation.ids = match(input[['jaccard.annotations']], colnames(metadata)),
         n.abundant = input[['jaccard.n.abundant']], 
-        top.annotation.df = NULL, 
-        top.annotation.colours = NULL,
         show.values = input[["jaccard.show.values"]]
       )
       myplot 
     })
     output[['jaccard']] <- renderPlot(jaccard.plot())
     
-    # pca.plot <- reactive()
-    # output[['pca']] <- renderPlot(pca.plot)
+    pca.plot <- reactive({
+      myplot <- plot_pca(
+        expression.matrix = expression.matrix,
+        metadata = metadata,
+        annotation.id = match(input[['pca.annotation']], colnames(metadata)),
+        n.abundant = input[['pca.n.abundant']],
+        show.labels = input[['pca.show.labels']]
+      )
+      myplot
+    })
+    output[['pca']] <- renderPlot(pca.plot())
   })
 }
 

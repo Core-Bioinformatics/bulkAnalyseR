@@ -11,9 +11,8 @@ jaccard_index <- function(a, b){
 jaccard_heatmap <- function(
   expression.matrix,
   metadata,
+  top.annotation.ids = NULL, 
   n.abundant = NULL, 
-  top.annotation.df = NULL, 
-  top.annotation.colours = NULL,
   show.values = TRUE
 ){
   n.abundant <- min(n.abundant, nrow(expression.matrix))
@@ -28,19 +27,40 @@ jaccard_heatmap <- function(
   }
   rownames(heatmat) <- colnames(heatmat) <- colnames(expression.matrix)
   
+  if(!is.null(top.annotation.ids)){
+    qual.col.pals = dplyr::filter(RColorBrewer::brewer.pal.info, category == 'qual')
+    col.vector = unique(unlist(mapply(RColorBrewer::brewer.pal, 
+                                      qual.col.pals$maxcolors, 
+                                      rownames(qual.col.pals))))
+    
+    top.annotation.colour.list=list()
+    colind <- 1
+    for(annos in seq_len(length(top.annotation.ids))){
+      values <- unique(metadata[, top.annotation.ids[annos]])
+      vec <- vector(mode="character")
+      for(i in seq_len(length(values))){
+        vec <- c(vec, col.vector[colind])
+        names(vec)[i] <- values[i]
+        colind <- colind + 1
+      }
+      top.annotation.colour.list[[colnames(metadata)[top.annotation.ids[annos]]]] <- vec
+    }
+    
+    top.annotation.df <- as.data.frame(metadata[, top.annotation.ids])
+    colnames(top.annotation.df) <- colnames(metadata)[top.annotation.ids]
+    
+    top.annotation <- ComplexHeatmap::HeatmapAnnotation(df = top.annotation.df,
+                                                        col = top.annotation.colour.list,
+                                                        show_annotation_name = FALSE)
+  }else{
+    top.annotation <- NULL
+  }
+  
   if(show.values){
     cell.fun <- function(j, i, x, y, width, height, fill) {
       grid::grid.text(sub("0.", ".", sprintf("%.2f", heatmat[i,j])), x, y, gp = grid::gpar(fontsize = 8))}
   }else{
     cell.fun = NULL
-  }
-  
-  if(!is.null(top.annotation.df) & !is.null(top.annotation.colours)){
-    top.annotation <- ComplexHeatmap::HeatmapAnnotation(df = top.annotation.df,
-                                                        col = top.annotation.colours,
-                                                        show_annotation_name = FALSE)
-  }else{
-    top.annotation <- NULL
   }
   
   jaccard.plot <- ComplexHeatmap::Heatmap(
@@ -59,26 +79,40 @@ jaccard_heatmap <- function(
   )
 }
 
-plotPCA <- function(expression.matrix,geom.ind=c("point","text"))
-{
-  expr.PCA <- prcomp(expression.matrix[,3:ncol(expression.matrix)],
-                     center = TRUE, scale = TRUE)
+plot_pca <- function(
+  expression.matrix,
+  metadata,
+  annotation.id = NULL, 
+  n.abundant = NULL,
+  show.labels
+){
+  annotation.name <- colnames(metadata)[annotation.id]
+  n.abundant <- min(n.abundant, nrow(expression.matrix))
   
-  staph.p <- fviz_pca_ind(expr.PCA,
-                          geom.ind = geom.ind, # show points only, text only, or both
-                          col.ind = expression.matrix[,2], # color by groups
-                          # palette = c("#00AFBB", "#FC4E07","#FF7256"),
-                          addEllipses = TRUE, # Concentration ellipses
-                          ellipse.type = "confidence", # for confidence ellipses
-                          legend.title = "Groups") 
+  expr.PCA.list <- expression.matrix %>%
+    dplyr::filter(seq_len(nrow(expression.matrix)) %in% 
+                    tail(order(rowSums(expression.matrix)), n.abundant)) %>%
+    t() %>%
+    stats::prcomp(center = TRUE, scale = TRUE)
   
-  toPlot <- ggpubr::ggpar(staph.p,
-                          title = "Principal Component Analysis",
-                          subtitle = title,
-                          # caption = "Source: nanostring",
-                          xlab = paste("PC1\n","Proportion of variance = ",summary(expr.PCA)$importance[2,1]*100,"%"), 
-                          ylab = paste("PC2\n","Proportion of variance = ",summary(expr.PCA)$importance[2,2]*100,"%"),
-                          legend.title = "Condition", legend.position = "top",
-                          ggtheme = theme_gray())
-  return(toPlot)
+  expr.PCA <- dplyr::mutate(
+    as.data.frame(expr.PCA.list$x),
+    name = factor(metadata[, 1], levels = metadata[, 1]),
+    condition = factor(metadata[, annotation.id], levels = unique(metadata[, annotation.id]))
+  )
+  
+  pca.plot <- ggplot(expr.PCA, aes(x = PC1, y = PC2, colour = condition)) +
+    theme_minimal() +
+    geom_point() +
+    labs(x = paste0("PC1 (proportion of variance = ", summary(expr.PCA.list)$importance[2, 1] * 100, "%)"),
+         y = paste0("PC2 (proportion of variance = ", summary(expr.PCA.list)$importance[2, 2] * 100, "%)"),
+         colour = annotation.name) +
+    ggforce::geom_mark_ellipse(aes(fill = condition, colour = condition), show.legend = FALSE)
+  
+  if(show.labels){
+    pca.plot <- pca.plot +
+      ggrepel::geom_label_repel(aes(label = name))
+  }
+  
+  pca.plot
 }

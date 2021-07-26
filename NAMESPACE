@@ -2,3 +2,4 @@
 
 import(ggplot2)
 import(shiny)
+importFrom(magrittr,`%>%`)
