@@ -36,7 +36,7 @@ jaccard_heatmap <- function(
     top.annotation.colour.list=list()
     colind <- 1
     for(annos in seq_len(length(top.annotation.ids))){
-      values <- unique(metadata[, top.annotation.ids[annos]])
+      values <- as.character(unique(metadata[, top.annotation.ids[annos]]))
       vec <- vector(mode="character")
       for(i in seq_len(length(values))){
         vec <- c(vec, col.vector[colind])

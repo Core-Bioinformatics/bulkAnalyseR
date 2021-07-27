@@ -28,4 +28,5 @@ Imports:
     ComplexHeatmap,
     circlize,
     grid,
-    shinyWidgets
+    shinyWidgets,
+    shinyjqui

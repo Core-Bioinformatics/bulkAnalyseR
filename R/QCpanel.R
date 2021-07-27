@@ -5,15 +5,15 @@ QCpanelUI <- function(id, metadata){
     'Quality checks',
     tags$h1("Jaccard Similarity Index Heatmap"),
     shinyWidgets::dropdownButton(
-      checkboxGroupInput(ns('jaccard.annotations'), label = "Show annotations",
-                         choices = colnames(metadata), selected = colnames(metadata)[ncol(metadata)]),
+      shinyjqui::orderInput(ns('jaccard.annotations'), label = "Show annotations",
+                            items = colnames(metadata)),
       sliderInput(ns('jaccard.n.abundant'), label = '# of (most abundant) genes',
                   min = 50, value = 500, max = 5000, step = 50, ticks = FALSE),
       checkboxInput(ns("jaccard.show.values"), label = "Show JSI values", value = FALSE),
       
       status = "info",
       icon = icon("gear"), 
-      tooltip = tooltipOptions(title = "Click to see inputs!")
+      tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
     ),
     plotOutput(ns('jaccard')),
     
@@ -27,7 +27,7 @@ QCpanelUI <- function(id, metadata){
       
       status = "info",
       icon = icon("gear"), 
-      tooltip = tooltipOptions(title = "Click to see inputs!")
+      tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
     ),
     plotOutput(ns('pca'))
   )
@@ -42,10 +42,14 @@ QCpanelServer <- function(id, expression.matrix, metadata){
   
   moduleServer(id, function(input, output, session){
     jaccard.plot <- reactive({
+      meta <- lapply(metadata, function(x) factor(x, levels = unique(x))) %>% 
+        as.data.frame() %>%
+        dplyr::arrange(dplyr::across(input[['jaccard.annotations']]))
+      
       myplot <- jaccard_heatmap(
-        expression.matrix = expression.matrix,
-        metadata = metadata,
-        top.annotation.ids = match(input[['jaccard.annotations']], colnames(metadata)),
+        expression.matrix = expression.matrix[, meta[, 1]],
+        metadata = meta,
+        top.annotation.ids = match(input[['jaccard.annotations']], colnames(meta)),
         n.abundant = input[['jaccard.n.abundant']], 
         show.values = input[["jaccard.show.values"]]
       )
