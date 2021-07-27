@@ -28,7 +28,7 @@ jaccard_heatmap <- function(
   rownames(heatmat) <- colnames(heatmat) <- colnames(expression.matrix)
   
   if(!is.null(top.annotation.ids)){
-    qual.col.pals = dplyr::filter(RColorBrewer::brewer.pal.info, category == 'qual')
+    qual.col.pals = dplyr::filter(RColorBrewer::brewer.pal.info, .data$category == 'qual')
     col.vector = unique(unlist(mapply(RColorBrewer::brewer.pal, 
                                       qual.col.pals$maxcolors, 
                                       rownames(qual.col.pals))))
@@ -91,7 +91,7 @@ plot_pca <- function(
   
   expr.PCA.list <- expression.matrix %>%
     dplyr::filter(seq_len(nrow(expression.matrix)) %in% 
-                    tail(order(rowSums(expression.matrix)), n.abundant)) %>%
+                    utils::tail(order(rowSums(expression.matrix)), n.abundant)) %>%
     t() %>%
     stats::prcomp(center = TRUE, scale = TRUE)
   
@@ -101,17 +101,17 @@ plot_pca <- function(
     condition = factor(metadata[, annotation.id], levels = unique(metadata[, annotation.id]))
   )
   
-  pca.plot <- ggplot(expr.PCA, aes(x = PC1, y = PC2, colour = condition)) +
+  pca.plot <- ggplot(expr.PCA, aes(x = .data$PC1, y = .data$PC2, colour = .data$condition)) +
     theme_minimal() +
     geom_point() +
     labs(x = paste0("PC1 (proportion of variance = ", summary(expr.PCA.list)$importance[2, 1] * 100, "%)"),
          y = paste0("PC2 (proportion of variance = ", summary(expr.PCA.list)$importance[2, 2] * 100, "%)"),
          colour = annotation.name) +
-    ggforce::geom_mark_ellipse(aes(fill = condition, colour = condition), show.legend = FALSE)
+    ggforce::geom_mark_ellipse(aes(fill = .data$condition, colour = .data$condition), show.legend = FALSE)
   
   if(show.labels){
     pca.plot <- pca.plot +
-      ggrepel::geom_label_repel(aes(label = name))
+      ggrepel::geom_label_repel(aes(label = .data$name))
   }
   
   pca.plot

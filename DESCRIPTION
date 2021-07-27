@@ -29,4 +29,8 @@ Imports:
     circlize,
     grid,
     shinyWidgets,
-    shinyjqui
+    shinyjqui,
+    dplyr,
+    magrittr,
+    ggforce,
+    rlang
