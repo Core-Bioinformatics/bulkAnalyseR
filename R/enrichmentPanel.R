@@ -7,8 +7,6 @@ enrichmentPanelUI <- function(id){
       
       # Sidebar panel for inputs ----
       sidebarPanel(
-        #file upload
-        fileInput(ns('fileIn'), 'Choose CSV File', accept = '.csv'),
         
         checkboxGroupInput(ns('gprofilerSources'), 'Select data sources', 
                            choices = c('GO:BP', 'GO:MF', 'GO:CC', 'KEGG', 'REAC', 
@@ -36,42 +34,49 @@ enrichmentPanelServer <- function(id, getPlotData.DE){
   })
   
   moduleServer(id, function(input, output, session){
+    
+    #Run enrichment
     getenrichmentData <- reactive({
-      req(input[['fileIn']])
-      tryCatch(
-        {
-          data <- utils::read.csv(input[['fileIn']]$datapath)
-        },
-        error = function(e) {
-          # return a safeError if a parsing error occurs
-          stop(safeError(e))
-        }
-      )
+      inputdata = getPlotData.DE()
+      data = inputdata$de
+      listofgenes = inputdata$genelist
       enrichment <- gprofiler2::gost(query = data$gene_id,
                                      organism = 'mmusculus',
                                      correction_method = 'fdr',
-                                     custom_bg = getPlotData.DE()$gene_id,
+                                     custom_bg = listofgenes,
                                      sources = input[['gprofilerSources']])
       enrichment$result[, c('query', 'significant', 'p_value', 'term_size',
                             'query_size', 'intersection_size', 'precision', 'recall',
                             'term_id', 'source', 'term_name', 'effective_domain_size')]
     })
     
-    #plot enrichment data
+    #Jitter plot and save coordinates
+    getenrichmentPlot <- reactive({
+      jitter.plot = ggplot(getenrichmentData(), aes(x = source, y = p_value, colour = source)) + 
+        geom_jitter()
+      jitter.build <- ggplot_build(jitter.plot)
+      x=jitter.build$data[[1]]$x
+      df = getenrichmentData()
+      df$jitter = x
+      df$`-log10(pVal)`= -log10(df$p_value)
+      return(df)
+    })
+    
+    #Plot enrichment data
     source <- NULL; p_value <- NULL
     output[['plot']] <- renderPlot({
-      ggplot(getenrichmentData(), aes(x = source, y = p_value, colour = source)) + 
+      ggplot(getenrichmentPlot(), aes(x = jitter, y = `-log10(pVal)`, colour = source)) + 
         geom_point() + 
-        theme_bw()
+        theme_bw()+ scale_x_continuous(breaks=seq(1,length(unique(getenrichmentPlot()$source)),1),labels = unique(getenrichmentPlot()$source))+xlab('')
     })
     
-    #define clicking on enrichment data table
+    #Define clicking on enrichment data table
     output[['data']] <- renderTable({
       req(input[['plot_click']])
-      nearPoints(df = getenrichmentData(), coordinfo = input[['plot_click']], maxpoints = 5)
+      nearPoints(df = getenrichmentPlot(), coordinfo = input[['plot_click']], maxpoints = 5)
     })
     
-    #download enrichment
+    #Download enrichment
     output[['download']] <- downloadHandler(
       filename = function(){
         paste(input[['fileName']])

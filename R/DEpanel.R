@@ -14,13 +14,6 @@ DEpanelUI <- function(id){
         selectInput(ns('variable2'), 'Sample 2:',
                     c('BCL11A' = 'BCL11A', 'control' = 'control', 'CHD8' = 'CHD8')),
         
-        #download file name and button
-        textInput(ns('fileName'),'File name for download', value ='DEset.csv', placeholder = 'DEset.csv'),
-        downloadButton(ns('downloadData'), 'Download'),
-        
-        #choose type of plot for RNAseq
-        selectInput(ns('plotType'), 'Type of plot:', c('MA' = 'MA', 'volcano' = 'volcano')),
-        
         #DE thresholds
         sliderInput(ns('lfcThreshold'), label = 'logFC threshold',
                     min = 0, value = 1, max = 5, step = 0.5),
@@ -28,39 +21,36 @@ DEpanelUI <- function(id){
         sliderInput(ns('pvalThreshold'), label = 'Adjusted p-value threshold',
                     min = 0, value = 0.05, max = 0.2, step = 0.005),
         
-        #should all genes or only DE be shown in table?
-        checkboxInput(ns('allGenes'), 'All genes', TRUE),
+        #Only start DE when button is pressed
+        actionButton(ns('goDE'),label = 'Start DE'),
         
-        #gene to colour
-        textInput(ns('geneName'), 'Gene name', value ='', placeholder = 'Mrgprb2')
-        
+        #download file name and button
+        textInput(ns('fileName'),'File name for download', value ='DEset.csv', placeholder = 'DEset.csv'),
+        downloadButton(ns('downloadData'), 'Download'),
       ),
       
-      #Main panel for displaying outputs
+      #Main panel for displaying table of DE genes
       mainPanel(
-        plotOutput(ns('plot'), click = ns('plot_click')),
-        tableOutput(ns('data'))
+        dataTableOutput(ns('data'))
       )
     )
   )
 }
+
 
 DEpanelServer <- function(id){
   # check whether inputs (other than id) are reactive or not
   stopifnot({TRUE})
   
   moduleServer(id, function(input, output, session){
-    getPlotData <- reactive({
-      
-      # normalised counts
-      # RNAseqdata.normalised <- readRDS('/servers/sutherland-scratch/ecw63/Teaching/shiny_WK/RNAseqdata.normalised.rds')
-      # gene.df = readRDS('/servers/sutherland-scratch/ecw63/Teaching/shiny_WK/genedf.rds')
-      
-      #add gene names
+    
+    #Run DE
+    getPlotData <- eventReactive(input$goDE,{
+      #Add gene names
       RNAseqdata.normalised = merge(RNAseqdata.normalised, gene.df, by = c('gene_id'))
       rownames(RNAseqdata.normalised) = RNAseqdata.normalised$gene_id
       
-      #extract columns for samples being compared
+      #Extract columns for samples being compared
       columns = list('control' = c('control_rep1','control_rep2','control_rep3'),
                      'BCL11A' = c('X11A_rep1','X11A_rep2','X11A_rep3'),
                      'CHD8' = c('CHD8_rep1','CHD8_rep2','CHD8_rep3'))
@@ -90,58 +80,18 @@ DEpanelServer <- function(id){
       plotdata$gene_name = RNAseqdata.normalised$gene_name
       plotdata$`-log10(adjustedpVal)` = -log10(plotdata$adjustedpVal)
       
-      plotdata
+      #the thresholds are returned here so that MA/volcano and table display 
+      #don't use new thresholds without the button being used
+      return(list('all'=plotdata,'logFC'=input[["lfcThreshold"]],'pVal'=input[["pvalThreshold"]]))
     })
     
-    #define plot (MA or volcano)
-    myplot <- reactive({
-      plotdata = getPlotData()
-      plotdata.DE = plotdata[((abs(plotdata$M) > input[['lfcThreshold']]) & 
-                                (plotdata$adjustedpVal < input[['pvalThreshold']])),]
-      plotdata.logFC = plotdata[((abs(plotdata$M)>input[['lfcThreshold']])),]
-      plotdata.pval = plotdata[(plotdata$adjustedpVal < input[['pvalThreshold']]),]
-      plotdata.mygene = plotdata[plotdata$gene_name == input[['geneName']],]
-      max.M = max(abs(plotdata$M))
-      A <- NULL; M <- NULL; `-log10(adjustedpVal)` <- NULL
-      if (input[['plotType']] == 'MA'){
-        #MA
-        myplot <- ggplot(plotdata, aes(x = A, y = M)) +
-          geom_point(color = 'black', alpha = 0.1) +
-          ylim(-max.M, max.M) +
-          geom_point(data = plotdata.DE, color = 'red', alpha=0.5) +
-          geom_point(data = plotdata.mygene, color = 'green', alpha=1, size=2) +
-          ggrepel::geom_text_repel(data = plotdata.mygene, label = input[['geneName']]) + 
-          theme_bw()
-      }else{   
-        #volcano
-        myplot <- ggplot(plotdata, aes(x = M, y = `-log10(adjustedpVal)`)) +
-          geom_point(color = 'black', alpha = 0.1) +
-          xlim(-max.M, max.M) +
-          geom_point(data = plotdata.logFC, color = 'orange', alpha = 0.5) +
-          geom_point(data = plotdata.logFC, color = 'blue', alpha = 0.5) +
-          geom_point(data = plotdata.DE, color = 'red', alpha = 1) +
-          geom_point(data = plotdata.mygene,color = 'green', alpha = 1, size = 2) +
-          ggrepel::geom_text_repel(data = plotdata.mygene, label = input[['geneName']]) +
-          theme_bw() +
-          geom_hline(yintercept = -log10(input[['pvalThreshold']]), color = 'gray')+
-          geom_vline(xintercept = input[['lfcThreshold']], color = 'gray')+
-          geom_vline(xintercept = -input[['lfcThreshold']], color='gray')
-      }
-      myplot
-    })
-    
-    #output MA/volcano plot
-    output[['plot']] <- renderPlot(myplot())
-    
-    #define output table when you click on gene with all genes or only DE
-    output[['data']] <- renderTable({
-      req(input[['plot_click']])
-      data = getPlotData()
-      if (!(input[['allGenes']])){
-        data = data[((abs(data$M) > input[['lfcThreshold']]) & (data$adjustedpVal < input[['pvalThreshold']])),]
-      }
-      nearPoints(df = data, coordinfo = input[['plot_click']], threshold = 20, maxpoints = 10)
-    }, digits = 4)
+    #Define output table when you click on gene with all genes or only DE
+    output[['data']] <- renderDataTable({
+      plotoutput = getPlotData()
+      data = plotoutput$all
+      data = data[((abs(data$M) >  plotoutput$logFC) & (data$adjustedpVal < plotoutput$pVal)),]
+      data})
+
     
     #DE data download
     output[['downloadData']] <- downloadHandler(
@@ -149,14 +99,20 @@ DEpanelServer <- function(id){
         paste(input[['fileName']])
       },
       content = function(file) {
-        utils::write.csv(x = getPlotData()[((abs(getPlotData()$M) > input[['lfcThreshold']]) & 
-                                          (getPlotData()$adjustedpVal < input[['pvalThreshold']])),], 
-                  file = file, 
-                  row.names = FALSE)
+        utils::write.csv(x = getPlotData()$output[((abs(getPlotData()$all$M) > getPlotData()$logFC) & 
+                                                     (getPlotData()$all$adjustedpVal < getPlotData()$pVal)),], 
+                         file = file, 
+                         row.names = FALSE)
       }
     )
-    
-    getPlotData
+    #this is passed on to MA/volcano and enrichment modules
+    outputdf = reactive({list(all=getPlotData()$all,
+                              de=getPlotData()$all[((abs(getPlotData()$all$M) > getPlotData()$logFC) & 
+                                                         (getPlotData()$all$adjustedpVal < getPlotData()$pVal)),],
+                              logFC=getPlotData()$logFC,
+                              pVal=getPlotData()$pVal,
+                              genelist = as.vector(getPlotData()$all$gene_id))})
+    outputdf
   })
 }
 
