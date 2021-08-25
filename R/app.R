@@ -1,5 +1,7 @@
 #' @import shiny
 #' @import ggplot2
+#' @importFrom magrittr `%>%`
+#' @importFrom rlang .data
 bulkApp <- function(...){
   
   ui <- navbarPage(
@@ -7,6 +9,7 @@ bulkApp <- function(...){
     theme = shinythemes::shinytheme("flatly"),
     tabPanel("RNAseq",
              tabsetPanel(
+               QCpanelUI("QC", metadata),
                DEpanelUI("DE"),
                MApanelUI("MA"),
                enrichmentPanelUI("Enrichment")
@@ -23,6 +26,7 @@ bulkApp <- function(...){
   )
   
   server <- function(input, output, session){
+    QCpanelServer("QC", expression.matrix, metadata)
     getPlotData.DE <- DEpanelServer("DE")
     MApanelServer("MA",getPlotData.DE)
     enrichmentPanelServer("Enrichment", getPlotData.DE)

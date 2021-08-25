@@ -23,4 +23,14 @@ Imports:
     edgeR,
     stats,
     ggrepel,
-    utils
+    utils,
+    RColorBrewer,
+    ComplexHeatmap,
+    circlize,
+    grid,
+    shinyWidgets,
+    shinyjqui,
+    dplyr,
+    magrittr,
+    ggforce,
+    rlang
