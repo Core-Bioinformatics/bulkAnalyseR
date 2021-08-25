@@ -8,6 +8,7 @@ bulkApp <- function(...){
     tabPanel("RNAseq",
              tabsetPanel(
                DEpanelUI("DE"),
+               MApanelUI("MA"),
                enrichmentPanelUI("Enrichment")
              )),
     peaksPanelUI("chip", "ChIPseq", c("control BCL11A IP" = "control_11AIP",
@@ -23,6 +24,7 @@ bulkApp <- function(...){
   
   server <- function(input, output, session){
     getPlotData.DE <- DEpanelServer("DE")
+    MApanelServer("MA",getPlotData.DE)
     enrichmentPanelServer("Enrichment", getPlotData.DE)
     peaksPanelServer("chip", ChIPseqdata)
     peaksPanelServer("atac", ATACseqdata)
