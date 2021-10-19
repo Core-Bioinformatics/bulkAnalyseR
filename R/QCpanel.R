@@ -6,7 +6,7 @@ QCpanelUI <- function(id, metadata){
     tags$h1("Jaccard Similarity Index Heatmap"),
     shinyWidgets::dropdownButton(
       shinyjqui::orderInput(ns('jaccard.annotations'), label = "Show annotations",
-                            items = colnames(metadata)),
+                            items = setdiff(colnames(metadata), "name")),
       sliderInput(ns('jaccard.n.abundant'), label = '# of (most abundant) genes',
                   min = 50, value = 500, max = 5000, step = 50, ticks = FALSE),
       checkboxInput(ns("jaccard.show.values"), label = "Show JSI values", value = FALSE),
