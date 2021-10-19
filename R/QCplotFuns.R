@@ -90,6 +90,7 @@ plot_pca <- function(
   n.abundant <- min(n.abundant, nrow(expression.matrix))
   
   expr.PCA.list <- expression.matrix %>%
+    as.data.frame() %>%
     dplyr::filter(seq_len(nrow(expression.matrix)) %in% 
                     utils::tail(order(rowSums(expression.matrix)), n.abundant)) %>%
     t() %>%

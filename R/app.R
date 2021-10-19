@@ -10,7 +10,7 @@ bulkApp <- function(...){
     tabPanel("RNAseq",
              tabsetPanel(
                QCpanelUI("QC", metadata),
-               DEpanelUI("DE"),
+               DEpanelUI("DE", metadata),
                MApanelUI("MA"),
                enrichmentPanelUI("Enrichment")
              )),
@@ -27,9 +27,9 @@ bulkApp <- function(...){
   
   server <- function(input, output, session){
     QCpanelServer("QC", expression.matrix, metadata)
-    getPlotData.DE <- DEpanelServer("DE")
-    MApanelServer("MA",getPlotData.DE)
-    enrichmentPanelServer("Enrichment", getPlotData.DE)
+    getPlotData.DE <- DEpanelServer("DE", expression.matrix, metadata)
+    MApanelServer("MA", getPlotData.DE)
+    enrichmentPanelServer("Enrichment", getPlotData.DE, organism = "mmusculus")
     peaksPanelServer("chip", ChIPseqdata)
     peaksPanelServer("atac", ATACseqdata)
   }
