@@ -11,7 +11,7 @@ bulkApp <- function(...){
              tabsetPanel(
                QCpanelUI("QC", metadata),
                DEpanelUI("DE", metadata),
-               MApanelUI("MA"),
+               DEplotPanelUI("MA"),
                enrichmentPanelUI("Enrichment")
              )),
     peaksPanelUI("chip", "ChIPseq", c("control BCL11A IP" = "control_11AIP",
@@ -27,9 +27,9 @@ bulkApp <- function(...){
   
   server <- function(input, output, session){
     QCpanelServer("QC", expression.matrix, metadata)
-    getPlotData.DE <- DEpanelServer("DE", expression.matrix, metadata)
-    MApanelServer("MA", getPlotData.DE)
-    enrichmentPanelServer("Enrichment", getPlotData.DE, organism = "mmusculus")
+    DEresults <- DEpanelServer("DE", expression.matrix, metadata, "org.Mm.eg.db")
+    DEplotPanelServer("MA", DEresults)
+    enrichmentPanelServer("Enrichment", DEresults, organism = "mmusculus")
     peaksPanelServer("chip", ChIPseqdata)
     peaksPanelServer("atac", ATACseqdata)
   }

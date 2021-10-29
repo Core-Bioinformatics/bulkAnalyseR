@@ -37,79 +37,52 @@ DEpanelUI <- function(id, metadata){
 }
 
 
-DEpanelServer <- function(id, expression.matrix, metadata){
+DEpanelServer <- function(id, expression.matrix, metadata, org){
   # check whether inputs (other than id) are reactive or not
   stopifnot({
     !is.reactive(expression.matrix)
     !is.reactive(metadata)
+    !is.reactive(org)
   })
   
   moduleServer(id, function(input, output, session){
     
-    #Run DE
-    getPlotData <- eventReactive(input[["goDE"]], {
-      
-      #Extract columns for samples being compared
-      expression.matrix.subset <- 
-        expression.matrix[, metadata$condition %in% c(input[['variable1']], input[['variable2']])]
-      
-      #run DE with supplied thresholds
-      reps1 <- sum(metadata$condition == input[['variable1']])
-      reps2 <- sum(metadata$condition == input[['variable2']])
-      design <- stats::model.matrix(~ 0 + as.factor(c(rep(input[['variable1']], reps1), 
-                                                      rep(input[['variable2']], reps2))))
-      edger <- edgeR::DGEList(counts = expression.matrix.subset, 
-                              group = c(rep(0, reps1), rep(1, reps2)))
-      edger <- edgeR::estimateDisp(edger, design)
-      glm.fit = edgeR::glmFit(edger, design = design)
-      glm.table <- edgeR::glmLRT(glm.fit, contrast = c(-1, 1))$table
-      glm.table$adjustedp = stats::p.adjust(glm.table$PValue, method = 'BH')
-      
-      #create table for plotting
-      plotdata = tibble::tibble(
-        gene_id = rownames(expression.matrix.subset),
-        gene_name = rownames(expression.matrix.subset),
-        A = log2(rowSums(expression.matrix.subset) / ncol(expression.matrix.subset)),
-        M = glm.table$logFC,
-        pVal = glm.table$PValue,
-        adjustedpVal = glm.table$adjustedp,
-        `-log10(adjustedpVal)` = -log10(adjustedpVal)
+    DEresults <- eventReactive(input[["goDE"]], {
+      condition.indices <- metadata$condition %in% c(input[['variable1']], input[['variable2']])
+      DEtable <- DEanalysis_edger(
+        expression.matrix = expression.matrix[, condition.indices],
+        condition = metadata$condition[condition.indices],
+        var1 = input[['variable1']],
+        var2 = input[['variable2']],
+        org = org
       )
+      
+      DEtableSubset <- DEtable %>%
+        dplyr::filter(abs(log2FC) > input[["lfcThreshold"]] & pvalAdj < input[["pvalThreshold"]])
       
       #the thresholds are returned here so that MA/volcano and table display 
       #don't use new thresholds without the button being used
-      return(list('all' = plotdata, 'logFC' = input[["lfcThreshold"]], 'pVal' = input[["pvalThreshold"]]))
+      return(list('DEtable' = DEtable,
+                  "DEtableSubset" = DEtableSubset,
+                  'lfcThreshold' = input[["lfcThreshold"]], 
+                  'pvalThreshold' = input[["pvalThreshold"]]))
     })
     
-    #Define output table when you click on gene with all genes or only DE
-    output[['data']] <- renderDataTable({
-      plotoutput = getPlotData()
-      data = plotoutput$all
-      data = data[((abs(data$M) >  plotoutput$logFC) & (data$adjustedpVal < plotoutput$pVal)),]
-      data
-    })
-    
-    
+    #Define output table (only DE genes)
+    output[['data']] <- renderDataTable(DEresults()$DEtableSubset)
+
     #DE data download
     output[['downloadData']] <- downloadHandler(
       filename = function() {
         paste(input[['fileName']])
       },
       content = function(file) {
-        plotoutput = getPlotData()
-        data <- plotoutput$all %>%
-          dplyr::filter(abs(M) > plotoutput$logFC, adjustedpVal < plotoutput$pVal)
-        utils::write.csv(x = data, file = file, row.names = FALSE)
+        utils::write.csv(x = DEresults()$DEtableSubset, file = file, row.names = FALSE)
       }
     )
-    #this is passed on to MA/volcano and enrichment modules
-    outputdf = reactive({list(all=getPlotData()$all,
-                              de=getPlotData()$all[((abs(getPlotData()$all$M) > getPlotData()$logFC) & 
-                                                      (getPlotData()$all$adjustedpVal < getPlotData()$pVal)),],
-                              logFC=getPlotData()$logFC,
-                              pVal=getPlotData()$pVal,
-                              genelist = as.vector(getPlotData()$all$gene_id))})
-    outputdf
+    
+    DEresults
+    
   })
 }
 

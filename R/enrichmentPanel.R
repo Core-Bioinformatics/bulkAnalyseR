@@ -20,10 +20,10 @@ enrichmentPanelUI <- function(id){
   )
 }
 
-enrichmentPanelServer <- function(id, getPlotData.DE, organism){
+enrichmentPanelServer <- function(id, DEresults, organism){
   # check whether inputs (other than id) are reactive or not
   stopifnot({
-    is.reactive(getPlotData.DE)
+    is.reactive(DEresults)
     !is.reactive(organism)
   })
   
@@ -31,17 +31,15 @@ enrichmentPanelServer <- function(id, getPlotData.DE, organism){
     
     #Run enrichment
     getenrichmentData <- eventReactive({
-      getPlotData.DE()
+      DEresults()
       input[["goEnrichment"]]
     }, 
     {
-      inputdata = getPlotData.DE()
-      data = inputdata$de
-      listofgenes = inputdata$genelist
-      enrichment <- gprofiler2::gost(query = data$gene_id,
+      inputdata = DEresults()
+      enrichment <- gprofiler2::gost(query = inputdata$DEtableSubset$gene_id,
                                      organism = organism,
                                      correction_method = 'fdr',
-                                     custom_bg = listofgenes,
+                                     custom_bg = inputdata$DEtable$gene_id,
                                      sources = input[['gprofilerSources']])
       enrichment$result[, c('query', 'significant', 'p_value', 'term_size',
                             'query_size', 'intersection_size', 'precision', 'recall',
