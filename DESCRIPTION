@@ -1,4 +1,4 @@
-Package: bulkApp
+Package: bulkAnalyseR
 Title: Shiny app for bulk sequencing data
 Version: 0.1.0
 Authors@R: 
@@ -33,4 +33,5 @@ Imports:
     dplyr,
     magrittr,
     ggforce,
-    rlang
+    rlang,
+    glue

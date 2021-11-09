@@ -12,7 +12,7 @@ QCpanelUI <- function(id, metadata){
       checkboxInput(ns("jaccard.show.values"), label = "Show JSI values", value = FALSE),
       
       status = "info",
-      icon = icon("gear"), 
+      icon = icon("gear", verify_fa = FALSE), 
       tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
     ),
     plotOutput(ns('jaccard')),
@@ -26,7 +26,7 @@ QCpanelUI <- function(id, metadata){
       checkboxInput(ns("pca.show.labels"), label = "Show sample labels", value = FALSE),
       
       status = "info",
-      icon = icon("gear"), 
+      icon = icon("gear", verify_fa = FALSE), 
       tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
     ),
     plotOutput(ns('pca'))

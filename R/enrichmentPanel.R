@@ -12,7 +12,7 @@ enrichmentPanelUI <- function(id){
       textInput(ns('fileName'), 'File name for download', value ='EnrichmentSet.csv'),
       downloadButton(ns('download'), 'Download'),
       status = "info",
-      icon = icon("gear"), 
+      icon = icon("gear", verify_fa = FALSE), 
       tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
     ),
     plotOutput(ns('plot'), click = ns('plot_click')),

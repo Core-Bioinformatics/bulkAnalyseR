@@ -16,7 +16,7 @@ DEplotPanelUI <- function(id){
       selectInput(ns('plotType'), 'Type of plot:', c('Volcano', 'MA')),
       selectInput(ns("geneName"), "Genes to highlight:", multiple = TRUE, choices = character(0)),
       status = "info",
-      icon = icon("gear"), 
+      icon = icon("gear", verify_fa = FALSE), 
       tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
     ),
     plotOutput(ns('plot'), click = ns('plot_click')),
