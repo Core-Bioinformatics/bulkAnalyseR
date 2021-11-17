@@ -9,9 +9,9 @@ DEpanelUI <- function(id, metadata){
       sidebarPanel(
         
         # Input: Selector variables to compare
-        selectInput(ns('variable1'), 'Sample 1:', unique(metadata$condition)),
-        selectInput(ns('variable2'), 'Sample 2:', unique(metadata$condition),
-                    selected = unique(metadata$condition)[2]),
+        selectInput(ns('variable1'), 'Sample 1:', unique(metadata[[ncol(metadata)]])),
+        selectInput(ns('variable2'), 'Sample 2:', unique(metadata[[ncol(metadata)]]),
+                    selected = unique(metadata[[ncol(metadata)]])[2]),
         
         #DE thresholds
         sliderInput(ns('lfcThreshold'), label = 'logFC threshold',
@@ -48,10 +48,10 @@ DEpanelServer <- function(id, expression.matrix, metadata, org){
   moduleServer(id, function(input, output, session){
     
     DEresults <- eventReactive(input[["goDE"]], {
-      condition.indices <- metadata$condition %in% c(input[['variable1']], input[['variable2']])
+      condition.indices <- metadata[[ncol(metadata)]] %in% c(input[['variable1']], input[['variable2']])
       DEtable <- DEanalysis_edger(
         expression.matrix = expression.matrix[, condition.indices],
-        condition = metadata$condition[condition.indices],
+        condition = metadata[[ncol(metadata)]][condition.indices],
         var1 = input[['variable1']],
         var2 = input[['variable2']],
         org = org

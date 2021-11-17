@@ -16,6 +16,11 @@ generateShinyApp <- function(
   data.extra = c(),
   packages.extra = c()
 ){
+  validateAppInputs(
+    shiny.dir = shiny.dir,
+    expression.matrix = expression.matrix,
+    metadata = metadata
+  )
   generateAppFile(
     shiny.dir = shiny.dir,
     app.title = app.title,
@@ -27,18 +32,36 @@ generateShinyApp <- function(
     packages.extra = packages.extra
   )
   generateDataFiles(
+    shiny.dir = shiny.dir,
     expression.matrix = expression.matrix,
     metadata = metadata,
-    shiny.dir = shiny.dir,
     data.extra = data.extra
   )
   invisible(shiny.dir)
 }
 
+validateAppInputs <- function(
+  shiny.dir = shiny.dir,
+  expression.matrix = expression.matrix,
+  metadata = metadata
+){
+  if(!dir.exists(shiny.dir)) dir.create(shiny.dir)
+  if(length(dir(shiny.dir,  all.files = TRUE, include.dirs = TRUE, no.. = TRUE)) > 0){
+    stop("Please specify a new or empty directory")
+  }
+  if(ncol(expression.matrix != nrow(metadata))){
+    stop("Detected different number of columns in expression.matrix to rows in metadata")
+  }else if(!identical(colnames(expression.matrix), metadata[[1]])){
+    stop("The first coolumn on metadata must correspond to the column names of expression.matrix")
+  }else if(ncol(metadata) < 2){
+    stop("metadata must be a data frame with at least 2 columns")
+  }
+}
+
 generateDataFiles <- function(
+  shiny.dir,
   expression.matrix,
   metadata,
-  shiny.dir,
   data.extra
 ){
   if(any(c("expression_matrix", "metadata") %in% data.extra)){
