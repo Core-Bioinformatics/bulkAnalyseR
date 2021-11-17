@@ -37,6 +37,7 @@ generateShinyApp <- function(
     metadata = metadata,
     data.extra = data.extra
   )
+  message("App created! To launch, run shiny::runApp('", shiny.dir, "')")
   invisible(shiny.dir)
 }
 
@@ -45,16 +46,16 @@ validateAppInputs <- function(
   expression.matrix = expression.matrix,
   metadata = metadata
 ){
-  if(!dir.exists(shiny.dir)) dir.create(shiny.dir)
-  if(length(dir(shiny.dir,  all.files = TRUE, include.dirs = TRUE, no.. = TRUE)) > 0){
-    stop("Please specify a new or empty directory")
-  }
-  if(ncol(expression.matrix != nrow(metadata))){
+  if(ncol(expression.matrix) != nrow(metadata)){
     stop("Detected different number of columns in expression.matrix to rows in metadata")
   }else if(!identical(colnames(expression.matrix), metadata[[1]])){
     stop("The first coolumn on metadata must correspond to the column names of expression.matrix")
   }else if(ncol(metadata) < 2){
     stop("metadata must be a data frame with at least 2 columns")
+  }
+  if(!dir.exists(shiny.dir)) dir.create(shiny.dir)
+  if(length(dir(shiny.dir,  all.files = TRUE, include.dirs = TRUE, no.. = TRUE)) > 0){
+    stop("Please specify a new or empty directory")
   }
 }
 
