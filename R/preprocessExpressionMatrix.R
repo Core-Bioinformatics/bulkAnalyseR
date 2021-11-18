@@ -3,9 +3,7 @@ preprocessExpressionMatrix <- function(
   normalisation.method = c("quantile", "rpm"),
   ...
 ){
-  
   expression.matrix <- noisyr::noisyr_counts(expression.matrix, ...)
-  
   if(normalisation.method[1] == "quantile"){
     message("Performing ", normalisation.method[1], " normalisation...")
     expression.matrix.normalised <- preprocessCore::normalize.quantiles(expression.matrix)
@@ -19,7 +17,5 @@ preprocessExpressionMatrix <- function(
   }else{
     warning("No valid normalisation method selected, proceeding with un-normalised data is not recommended")
   }
-  
   expression.matrix
-
 }

@@ -1,0 +1,24 @@
+---
+title: "bulkAnalyseR quick start guide"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+devtools::load_all(".")
+exp <- as.matrix(read.csv(system.file("extdata", "counts_raw.csv", package = "noisyr"), row.names = 1))
+meta <- data.frame(srr = colnames(exp), timepoint = c("0h", "0h", "12h", "12h"))
+exp.proc <- preprocessExpressionMatrix(exp)
+generateShinyApp(
+  expression.matrix = exp.proc,
+  metadata = meta,
+  shiny.dir = "shiny_Yang2019",
+  app.title = "Shiny app for two timepoints from the Yang 2019 data",
+  organism = "mmusculus",
+  org = "org.Mm.eg.db"
+)
+shiny::runApp("shiny_Yang2019")
+```
