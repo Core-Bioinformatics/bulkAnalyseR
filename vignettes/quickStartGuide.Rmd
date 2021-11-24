@@ -20,5 +20,20 @@ generateShinyApp(
   organism = "mmusculus",
   org = "org.Mm.eg.db"
 )
+# generateShinyApp(
+#   expression.matrix = exp.proc,
+#   metadata = meta,
+#   shiny.dir = "shiny_Yang2019",
+#   app.title = "Shiny app for two timepoints from the Yang 2019 data",
+#   organism = "mmusculus",
+#   org = "org.Mm.eg.db",
+#   panels.default = NULL,
+#   panels.extra = tibble::tibble(
+#     UIfun = "QCpanelUI", 
+#     UIvars = "'QC', metadata", 
+#     serverFun = "QCpanelServer", 
+#     serverVars = "'QC', expression.matrix, metadata"
+#   )
+# )
 shiny::runApp("shiny_Yang2019")
 ```

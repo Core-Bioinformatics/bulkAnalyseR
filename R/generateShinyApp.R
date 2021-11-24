@@ -71,7 +71,8 @@ generateDataFiles <- function(
   save(expression.matrix, file = paste0(shiny.dir, "/expression_matrix.rda"))
   save(metadata, file = paste0(shiny.dir, "/metadata.rda"))
   lapply(data.extra, function(name){
-    save(get(name), file = paste0(shiny.dir, "/", name, ".rda"))
+    object <- get(name)
+    save(object, file = paste0(shiny.dir, "/", name, ".rda"))
   })
 }
 
