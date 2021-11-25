@@ -37,7 +37,7 @@ DEanalysis_edger <- function(
   output = tibble::tibble(
     gene_id = rownames(expression.matrix),
     gene_name = anno$NAME[match(gene_id, anno$ENSEMBL)],
-    avgExp = log2(rowMeans(expression.matrix)),
+    log2exp = log2(rowMeans(expression.matrix)),
     log2FC = edger.table$logFC,
     pval = edger.table$PValue,
     pvalAdj = stats::p.adjust(pval, method = 'BH'),

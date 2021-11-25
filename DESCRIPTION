@@ -39,4 +39,6 @@ Imports:
     AnnotationDbi,
     matrixStats,
     noisyr,
-    tibble
+    tibble,
+    ggnewscale,
+    ggrastr
