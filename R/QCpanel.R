@@ -10,6 +10,8 @@ QCpanelUI <- function(id, metadata){
       sliderInput(ns('jaccard.n.abundant'), label = '# of (most abundant) genes',
                   min = 50, value = 500, max = 5000, step = 50, ticks = FALSE),
       checkboxInput(ns("jaccard.show.values"), label = "Show JSI values", value = FALSE),
+      textInput(ns('plotJSIFileName'), 'File name for JSI plot download', value ='JSIPlot.png'),
+      downloadButton(ns('downloadJSIPlot'), 'Download JSI Plot'),
       
       status = "info",
       icon = icon("gear", verify_fa = FALSE), 
@@ -24,6 +26,9 @@ QCpanelUI <- function(id, metadata){
       sliderInput(ns('pca.n.abundant'), label = '# of (most abundant) genes',
                   min = 50, value = 500, max = 5000, step = 50, ticks = FALSE),
       checkboxInput(ns("pca.show.labels"), label = "Show sample labels", value = FALSE),
+      checkboxInput(ns('pca.show.ellipses'),label = "Show ellipses around groups",value=TRUE),
+      textInput(ns('plotPCAFileName'), 'File name for PCA plot download', value ='PCAPlot.png'),
+      downloadButton(ns('downloadPCAPlot'), 'Download PCA Plot'),
       
       status = "info",
       icon = icon("gear", verify_fa = FALSE), 
@@ -63,11 +68,30 @@ QCpanelServer <- function(id, expression.matrix, metadata){
         metadata = metadata,
         annotation.id = match(input[['pca.annotation']], colnames(metadata)),
         n.abundant = input[['pca.n.abundant']],
-        show.labels = input[['pca.show.labels']]
+        show.labels = input[['pca.show.labels']],
+        show.ellipses = input[['pca.show.ellipses']]
       )
       myplot
     })
     output[['pca']] <- renderPlot(pca.plot())
+    
+    output[['downloadJSIPlot']] <- downloadHandler(
+      filename = function() { input[['plotJSIFileName']] },
+      content = function(file) {
+        png(file)
+        print(jaccard.plot())
+        dev.off()
+        
+      }
+    )
+    
+    output[['downloadPCAPlot']] <- downloadHandler(
+      filename = function() { input[['plotPCAFileName']] },
+      content = function(file) {
+        device <- function(..., width, height) grDevices::png(..., width = width, height = height, res = 300, units = "in")
+        ggsave(file, plot = pca.plot(), device = device)
+      }
+    )
   })
 }
 

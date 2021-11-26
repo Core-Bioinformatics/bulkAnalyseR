@@ -1,4 +1,4 @@
-DEplotPanelUI <- function(id){
+DEplotPanelUI <- function(id,anno){
   ns <- NS(id)
   
   tabPanel(
@@ -23,7 +23,23 @@ DEplotPanelUI <- function(id){
         value = FALSE,
         onStatus = FALSE
       ),
+      conditionalPanel(
+        id = ns('conditionalVolcanoOption'),
+        ns=ns,
+        condition = "input[['plotType']] == 'Volcano'",
+        shinyWidgets::switchInput(
+          inputId = ns("capPVal"),
+          label = "Cap log10(pval) > 10?", 
+          labelWidth = "80px",
+          onLabel = 'No',
+          offLabel = 'Yes',
+          value = FALSE,
+          onStatus = FALSE
+        ),
+      ),
       selectInput(ns("geneName"), "Genes to highlight:", multiple = TRUE, choices = character(0)),
+      textInput(ns('plotFileName'), 'File name for plot download', value ='DEPlot.png'),
+      downloadButton(ns('downloadPlot'), 'Download Plot'),
       status = "info",
       icon = icon("gear", verify_fa = FALSE), 
       tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
@@ -33,7 +49,7 @@ DEplotPanelUI <- function(id){
   )
 }
 
-DEplotPanelServer <- function(id, DEresults){
+DEplotPanelServer <- function(id, DEresults,anno){
   
   # check whether inputs (other than id) are reactive or not
   stopifnot({
@@ -43,14 +59,11 @@ DEplotPanelServer <- function(id, DEresults){
   moduleServer(id, function(input, output, session){
     
     #Set up server-side search for gene names
-    # observe({
-    #   input[["geneName"]]
-    #   updateSelectizeInput(session, "geneName", choices = DEresults()$DEtable$gene_name, server = TRUE)
-    # })
+    updateSelectizeInput(session, "geneName", choices = anno$NAME, server = TRUE)
     
     DEplot <- reactive({
       results = DEresults()
-      
+
       if(input[['plotType']] == 'Volcano'){
         myplot <- volcano_plot(
           genes.de.results = results$DEtable,
@@ -59,7 +72,8 @@ DEplotPanelServer <- function(id, DEresults){
           add.labels.auto = input[["autoLabel"]],
           n.labels.auto = c(10, 10),
           add.labels.custom = length(input[["geneName"]]) > 0,
-          genes.to.label = input[["geneName"]]
+          genes.to.label = input[["geneName"]],
+          log10pval.cap = !(input[['capPVal']])
         )
       }
       if (input[['plotType']] == 'MA'){
@@ -92,6 +106,14 @@ DEplotPanelServer <- function(id, DEresults){
       data <- data %>% dplyr::mutate(`-log10pval` = -log10(pvalAdj))
       nearPoints(df = data, coordinfo = input[['plot_click']], threshold = 20, maxpoints = 10)
     }, digits = 4)
+    
+    output[['downloadPlot']] <- downloadHandler(
+      filename = function() { input[['plotFileName']] },
+      content = function(file) {
+        device <- function(..., width, height) grDevices::png(..., width = width, height = height, res = 300, units = "in")
+        ggsave(file, plot = DEplot(), device = device)
+      }
+    )
     
   })
 }

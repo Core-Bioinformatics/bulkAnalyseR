@@ -49,7 +49,7 @@ validateAppInputs <- function(
   if(ncol(expression.matrix) != nrow(metadata)){
     stop("Detected different number of columns in expression.matrix to rows in metadata")
   }else if(!identical(colnames(expression.matrix), metadata[[1]])){
-    stop("The first coolumn on metadata must correspond to the column names of expression.matrix")
+    stop("The first column on metadata must correspond to the column names of expression.matrix")
   }else if(ncol(metadata) < 2){
     stop("metadata must be a data frame with at least 2 columns")
   }
@@ -71,7 +71,7 @@ generateDataFiles <- function(
   save(expression.matrix, file = paste0(shiny.dir, "/expression_matrix.rda"))
   save(metadata, file = paste0(shiny.dir, "/metadata.rda"))
   lapply(data.extra, function(name){
-    object <- get(name)
+    object<-get(name)
     save(object, file = paste0(shiny.dir, "/", name, ".rda"))
   })
 }
@@ -98,7 +98,15 @@ generateAppFile <- function(
     "r.files <- setdiff(r.files, 'app.R')",
     "for(fl in r.files) source(fl)",
     "rda.files <- list.files(pattern = '\\.rda$')",
-    "for(fl in rda.files) load(fl)"
+    "for(fl in rda.files) load(fl)",
+    "anno <- AnnotationDbi::select(",
+    glue::glue("getExportedValue('{org.db}', '{org.db}'),"),
+    "keys = rownames(expression.matrix),",
+    "keytype = 'ENSEMBL',",
+    "columns = 'SYMBOL'",
+    ") %>%",
+    "dplyr::distinct(ENSEMBL, .keep_all = TRUE) %>%",
+    "dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))"
   )
   lines.out <- c(lines.out, code.source.objects, "")
   
@@ -112,7 +120,7 @@ generateAppFile <- function(
   if("QC" %in% panels.default) code.ui <- c(code.ui, "QCpanelUI('QC', metadata),")
   if("DE" %in% panels.default){
     code.ui <- c(code.ui, "DEpanelUI('DE', metadata),")
-    if("DEplot" %in% panels.default) code.ui <- c(code.ui, "DEplotPanelUI('DEplot'),")
+    if("DEplot" %in% panels.default) code.ui <- c(code.ui, "DEplotPanelUI('DEplot',anno),")
     if("Enrichment" %in% panels.default) code.ui <- c(code.ui, "enrichmentPanelUI('Enrichment'),")
   }
   for(i in seq_len(nrow(panels.extra))){
@@ -131,7 +139,7 @@ generateAppFile <- function(
       glue::glue("DEresults <- DEpanelServer('DE', expression.matrix, metadata, '{org.db}')")
     )
     if("DEplot" %in% panels.default){
-      code.server <- c(code.server, "DEplotPanelServer('DEplot', DEresults)")
+      code.server <- c(code.server, "DEplotPanelServer('DEplot', DEresults,anno)")
     }
     if("Enrichment" %in% panels.default){
       code.server <- c(
@@ -153,3 +161,27 @@ generateAppFile <- function(
   write(lines.out, paste0(shiny.dir, "/app.R"))
   
 }
+
+#generateShinyApp(
+#expression.matrix = exp.proc,
+#metadata = meta,
+#shiny.dir = "shiny_Yang20191",
+#app.title = "Shiny app for two timepoints from the Yang 2019 data",
+#organism = "mmusculus",
+#org = "org.Mm.eg.db",
+#data.extra = c("ChIPseqdata","ATACseqdata"),
+#panels.extra = tibble::tibble(
+#  UIfun = c("peaksPanelUI","peaksPanelUI"),
+#  UIvars = c("'chip', 'ChIPseq', c('control BCL11A IP' = 'control_11AIP',
+#                                      'control CHD8 IP' = 'control_CHD8IP',
+#                                      'BCL11A KD BCL11A IP' = '11AKD_11AIP',
+#                                      'BCL11A KD CHD8 IP' = '11AKD_CHD8IP',
+#                                      'CHD8 KD BCL11A IP' = 'CHD8KD_11AIP',
+#                                      'CHD8 KD CHD8 IP' = 'CHD8KD_CHD8AIP')",
+#             "'atac', 'ATACseq', c('control' = 'control',
+#                                      'BCL11A' = 'BCL11A',
+#                                      'CHD8' = 'CHD8')"),
+#  serverFun = c("peaksPanelServer","peaksPanelServer"),
+#  serverVars = c("'chip', ChIPseqdata","'atac',ATACseqdata")
+#)
+#)

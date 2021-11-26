@@ -84,7 +84,8 @@ plot_pca <- function(
   metadata,
   annotation.id = NULL, 
   n.abundant = NULL,
-  show.labels
+  show.labels,
+  show.ellipses
 ){
   annotation.name <- colnames(metadata)[annotation.id]
   n.abundant <- min(n.abundant, nrow(expression.matrix))
@@ -101,18 +102,25 @@ plot_pca <- function(
     name = factor(metadata[, 1], levels = metadata[, 1]),
     condition = factor(metadata[, annotation.id], levels = unique(metadata[, annotation.id]))
   )
-  
-  pca.plot <- ggplot(expr.PCA, aes(x = .data$PC1, y = .data$PC2, colour = .data$condition)) +
+  if (min(table(metadata[,annotation.id]))<=2){
+  expr.PCA.2<-expr.PCA
+  expr.PCA.2$PC1<-expr.PCA.2$PC1*1.001
+  expr.PCA.2$PC2<-expr.PCA.2$PC2*1.001
+  expr.PCA.full<-rbind(expr.PCA,expr.PCA.2)
+  }
+  else {expr.PCA.full<-expr.PCA}
+  pca.plot <- ggplot(expr.PCA.full, aes(x = .data$PC1, y = .data$PC2, colour = .data$condition)) +
     theme_minimal() +
     geom_point() +
     labs(x = paste0("PC1 (proportion of variance = ", summary(expr.PCA.list)$importance[2, 1] * 100, "%)"),
          y = paste0("PC2 (proportion of variance = ", summary(expr.PCA.list)$importance[2, 2] * 100, "%)"),
-         colour = annotation.name) +
-    ggforce::geom_mark_ellipse(aes(fill = .data$condition, colour = .data$condition), show.legend = FALSE)
-  
+         colour = annotation.name)
+  if(show.ellipses){
+    pca.plot <- pca.plot + ggforce::geom_mark_ellipse(aes(fill = .data$condition, colour = .data$condition), show.legend = FALSE)
+  }
   if(show.labels){
     pca.plot <- pca.plot +
-      ggrepel::geom_label_repel(aes(label = .data$name))
+      ggrepel::geom_label_repel(data = expr.PCA,aes(x = .data$PC1, y = .data$PC2, colour = .data$condition,label = .data$name))
   }
   
   pca.plot

@@ -9,8 +9,10 @@ enrichmentPanelUI <- function(id){
                                      'TF', 'MIRNA', 'CORUM', 'HP', 'HPA', 'WP'), 
                          selected = c('GO:BP', 'GO:MF', 'GO:CC', 'KEGG', 'REAC', 'TF', 'MIRNA')),
       actionButton(ns('goEnrichment'), label = 'Start enrichment analysis'),
-      textInput(ns('fileName'), 'File name for download', value ='EnrichmentSet.csv'),
-      downloadButton(ns('download'), 'Download'),
+      textInput(ns('fileName'), 'File name for data download', value ='EnrichmentSet.csv'),
+      downloadButton(ns('download'), 'Download Data'),
+      textInput(ns('plotFileName'), 'File name for plot download', value ='EnrichmentPlot.png'),
+      downloadButton(ns('downloadPlot'), 'Download Plot'),
       status = "info",
       icon = icon("gear", verify_fa = FALSE), 
       tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
@@ -60,19 +62,23 @@ enrichmentPanelServer <- function(id, DEresults, organism){
     
     #Plot enrichment data
     source <- NULL; p_value <- NULL
-    output[['plot']] <- renderPlot({
-      ggplot(getenrichmentPlot(), aes(x = jitter, y = `-log10(pVal)`, colour = source)) + 
-        geom_point() + 
-        theme_bw()+ 
-        scale_x_continuous(breaks = seq(1, length(unique(getenrichmentPlot()$source)), 1), 
-                           labels = unique(getenrichmentPlot()$source)) + 
-        xlab("")
+    plotenrichmentPlot <- reactive({
+      plotdata <- getenrichmentPlot()
+      return(      ggplot(plotdata, aes(x = jitter, y = `-log10(pVal)`, colour = source)) + 
+                     geom_point() + 
+                     theme_bw()+ 
+                     scale_x_continuous(breaks = seq(1, length(unique(plotdata$source)), 1), 
+                                        labels = unique(plotdata$source)) + 
+                     xlab("")
+      )
     })
+    output[['plot']]<-renderPlot({plotenrichmentPlot()})
+
     
     #Define clicking on enrichment data table
     output[['data']] <- renderTable({
       req(input[['plot_click']])
-      nearPoints(df = getenrichmentPlot(), coordinfo = input[['plot_click']], maxpoints = 5)
+      nearPoints(df = getenrichmentPlot()[,c('term_name','source','term_id','-log10(pVal)','intersection_size','jitter')], coordinfo = input[['plot_click']], maxpoints = 5)
     })
     
     #Download enrichment
@@ -82,6 +88,14 @@ enrichmentPanelServer <- function(id, DEresults, organism){
       },
       content = function(file){
         utils::write.csv(x = getenrichmentData(), file, row.names = FALSE)
+      }
+    )
+    
+    output[['downloadPlot']] <- downloadHandler(
+      filename = function() { input[['plotFileName']] },
+      content = function(file) {
+        device <- function(..., width, height) grDevices::png(..., width = width, height = height, res = 300, units = "in")
+        ggsave(file, plot = plotenrichmentPlot(), device = device)
       }
     )
   })
