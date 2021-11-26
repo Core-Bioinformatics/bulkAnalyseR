@@ -48,7 +48,6 @@ DEplotPanelServer <- function(id, DEresults){
     #   updateSelectizeInput(session, "geneName", choices = DEresults()$DEtable$gene_name, server = TRUE)
     # })
     
-    #Define plot (MA or volcano)
     DEplot <- reactive({
       results = DEresults()
       
@@ -63,25 +62,16 @@ DEplotPanelServer <- function(id, DEresults){
           genes.to.label = input[["geneName"]]
         )
       }
-      
-      data = results$DEtable
-      lfcThreshold = results$lfcThreshold
-      pvalThreshold = results$pvalThreshold
-      plotdata.DE = results$DEtableSubset
-      
-      plotdata.logFC = data[((abs(data$log2FC) > lfcThreshold)), ]
-      plotdata.pval = data[(data$pvalAdj < pvalThreshold), ]
-      plotdata.mygene = data[data$gene_name %in% input[['geneName']], ]
-      max.M = max(abs(data$log2FC))
-      
       if (input[['plotType']] == 'MA'){
-        myplot <- ggplot(data, aes(x = avgExp, y = log2FC)) +
-          geom_point(color = 'black', alpha = 0.1) +
-          ylim(-max.M, max.M) +
-          geom_point(data = plotdata.DE, color = 'red', alpha=0.5) +
-          geom_point(data = plotdata.mygene, color = 'green', alpha = 1, size = 2) +
-          ggrepel::geom_text_repel(data = plotdata.mygene, label = plotdata.mygene$gene_name) +
-          theme_minimal()
+        myplot <- ma_plot(
+          genes.de.results = results$DEtable,
+          pval.threshold = results$pvalThreshold, 
+          lfc.threshold = results$lfcThreshold,
+          add.labels.auto = input[["autoLabel"]],
+          n.labels.auto = c(10, 10),
+          add.labels.custom = length(input[["geneName"]]) > 0,
+          genes.to.label = input[["geneName"]]
+        )
       }
       
       myplot
@@ -108,10 +98,10 @@ DEplotPanelServer <- function(id, DEresults){
 
 DEplotPanelApp <- function(){
   shinyApp(
-    ui = navbarPage("DE", tabPanel("", tabsetPanel(DEpanelUI('RNA'), MApanelUI('RNA')))),
+    ui = navbarPage("DE", tabPanel("", tabsetPanel(DEpanelUI('RNA'), DEplotPanelUI('RNA')))),
     server = function(input, output, session){
-      getPlotData.DE <- DEpanelServer('RNA')
-      MApanelServer('RNA', getPlotData.DE)
+      DEresults <- DEpanelServer('RNA')
+      DEplotPanelServer('RNA', DEresults)
     }
   )
 }
