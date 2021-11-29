@@ -4,6 +4,15 @@
 #' @importFrom rlang .data
 bulkApp <- function(...){
   
+  anno <- AnnotationDbi::select(
+    getExportedValue('org.Mm.eg.db', 'org.Mm.eg.db'),
+    keys = rownames(expression.matrix),
+    keytype = 'ENSEMBL',
+    columns = 'SYMBOL'
+  ) %>%
+    dplyr::distinct(ENSEMBL, .keep_all = TRUE) %>%
+    dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))
+  
   ui <- navbarPage(
     "Interaction of BCL11A and CHD8 in triple negative breast cancer", 
     theme = shinythemes::shinytheme("flatly"),
@@ -11,8 +20,9 @@ bulkApp <- function(...){
              tabsetPanel(
                QCpanelUI("QC", metadata),
                DEpanelUI("DE", metadata),
-               DEplotPanelUI("MA"),
-               enrichmentPanelUI("Enrichment")
+               DEplotPanelUI("DEplot", anno),
+               enrichmentPanelUI("Enrichment"),
+               crossPanelUI("Cross", metadata)
              )),
     peaksPanelUI("chip", "ChIPseq", c("control BCL11A IP" = "control_11AIP",
                                       "control CHD8 IP" = "control_CHD8IP",
@@ -27,9 +37,10 @@ bulkApp <- function(...){
   
   server <- function(input, output, session){
     QCpanelServer("QC", expression.matrix, metadata)
-    DEresults <- DEpanelServer("DE", expression.matrix, metadata, "org.Mm.eg.db")
-    DEplotPanelServer("MA", DEresults)
+    DEresults <- DEpanelServer("DE", expression.matrix, metadata, anno)
+    DEplotPanelServer("DEplot", DEresults, anno)
     enrichmentPanelServer("Enrichment", DEresults, organism = "mmusculus")
+    crossPanelServer("Cross", expression.matrix, metadata, anno)
     peaksPanelServer("chip", ChIPseqdata)
     peaksPanelServer("atac", ATACseqdata)
   }

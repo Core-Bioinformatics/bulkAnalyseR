@@ -10,9 +10,10 @@ enrichmentPanelUI <- function(id){
                          selected = c('GO:BP', 'GO:MF', 'GO:CC', 'KEGG', 'REAC', 'TF', 'MIRNA')),
       actionButton(ns('goEnrichment'), label = 'Start enrichment analysis'),
       textInput(ns('fileName'), 'File name for data download', value ='EnrichmentSet.csv'),
-      downloadButton(ns('download'), 'Download Data'),
+      downloadButton(ns('downloadTable'), 'Download Data'),
       textInput(ns('plotFileName'), 'File name for plot download', value ='EnrichmentPlot.png'),
       downloadButton(ns('downloadPlot'), 'Download Plot'),
+      
       status = "info",
       icon = icon("gear", verify_fa = FALSE), 
       tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
@@ -82,7 +83,7 @@ enrichmentPanelServer <- function(id, DEresults, organism){
     })
     
     #Download enrichment
-    output[['download']] <- downloadHandler(
+    output[['downloadTable']] <- downloadHandler(
       filename = function(){
         paste(input[['fileName']])
       },

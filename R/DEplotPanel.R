@@ -29,7 +29,7 @@ DEplotPanelUI <- function(id,anno){
         condition = "input[['plotType']] == 'Volcano'",
         shinyWidgets::switchInput(
           inputId = ns("capPVal"),
-          label = "Cap log10(pval) > 10?", 
+          label = "Cap log10(pval)?", 
           labelWidth = "80px",
           onLabel = 'No',
           offLabel = 'Yes',
@@ -39,7 +39,8 @@ DEplotPanelUI <- function(id,anno){
       ),
       selectInput(ns("geneName"), "Genes to highlight:", multiple = TRUE, choices = character(0)),
       textInput(ns('plotFileName'), 'File name for plot download', value ='DEPlot.png'),
-      downloadButton(ns('downloadPlot'), 'Download Plot'),
+      downloadButton(ns('download'), 'Download Plot'),
+      
       status = "info",
       icon = icon("gear", verify_fa = FALSE), 
       tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
@@ -107,7 +108,7 @@ DEplotPanelServer <- function(id, DEresults,anno){
       nearPoints(df = data, coordinfo = input[['plot_click']], threshold = 20, maxpoints = 10)
     }, digits = 4)
     
-    output[['downloadPlot']] <- downloadHandler(
+    output[['download']] <- downloadHandler(
       filename = function() { input[['plotFileName']] },
       content = function(file) {
         device <- function(..., width, height) grDevices::png(..., width = width, height = height, res = 300, units = "in")

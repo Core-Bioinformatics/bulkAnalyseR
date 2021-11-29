@@ -9,8 +9,8 @@ DEpanelUI <- function(id, metadata){
       sidebarPanel(
         
         # Input: Selector variables to compare
-        selectInput(ns('variable1'), 'Sample 1:', unique(metadata[[ncol(metadata)]])),
-        selectInput(ns('variable2'), 'Sample 2:', unique(metadata[[ncol(metadata)]]),
+        selectInput(ns('variable1'), 'Condition 1:', unique(metadata[[ncol(metadata)]])),
+        selectInput(ns('variable2'), 'Condition 2:', unique(metadata[[ncol(metadata)]]),
                     selected = unique(metadata[[ncol(metadata)]])[2]),
         
         #DE thresholds
@@ -25,7 +25,7 @@ DEpanelUI <- function(id, metadata){
         
         #download file name and button
         textInput(ns('fileName'),'File name for download', value ='DEset.csv', placeholder = 'DEset.csv'),
-        downloadButton(ns('downloadData'), 'Download'),
+        downloadButton(ns('download'), 'Download Table'),
       ),
       
       #Main panel for displaying table of DE genes
@@ -37,12 +37,12 @@ DEpanelUI <- function(id, metadata){
 }
 
 
-DEpanelServer <- function(id, expression.matrix, metadata, org){
+DEpanelServer <- function(id, expression.matrix, metadata, anno){
   # check whether inputs (other than id) are reactive or not
   stopifnot({
     !is.reactive(expression.matrix)
     !is.reactive(metadata)
-    !is.reactive(org)
+    !is.reactive(anno)
   })
   
   moduleServer(id, function(input, output, session){
@@ -54,7 +54,7 @@ DEpanelServer <- function(id, expression.matrix, metadata, org){
         condition = metadata[[ncol(metadata)]][condition.indices],
         var1 = input[['variable1']],
         var2 = input[['variable2']],
-        org = org
+        anno = anno
       )
       
       DEtableSubset <- DEtable %>%
@@ -72,7 +72,7 @@ DEpanelServer <- function(id, expression.matrix, metadata, org){
     output[['data']] <- renderDataTable(DEresults()$DEtableSubset)
 
     #DE data download
-    output[['downloadData']] <- downloadHandler(
+    output[['download']] <- downloadHandler(
       filename = function() {
         paste(input[['fileName']])
       },

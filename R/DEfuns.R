@@ -3,19 +3,11 @@ DEanalysis_edger <- function(
   condition,
   var1,
   var2,
-  org
+  anno
 ){
   expression.matrix <- # Remove genes of constant expression
     expression.matrix[matrixStats::rowMins(expression.matrix) != 
                         matrixStats::rowMaxs(expression.matrix), ]
-  anno <- AnnotationDbi::select(
-    getExportedValue(org, org),
-    keys = rownames(expression.matrix),
-    keytype = "ENSEMBL",
-    columns = "SYMBOL"
-  ) %>%
-    dplyr::distinct(ENSEMBL, .keep_all = TRUE) %>%
-    dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))
     
   group <- c(rep(0, sum(condition == var1)), rep(1, sum(condition == var2)))
   design <- stats::model.matrix(~ 0 + as.factor(condition))
