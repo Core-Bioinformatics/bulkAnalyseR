@@ -41,4 +41,5 @@ Imports:
     noisyr,
     tibble,
     ggnewscale,
-    ggrastr
+    ggrastr,
+    GENIE3

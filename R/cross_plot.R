@@ -11,7 +11,9 @@ cross_plot = function(
   fix.axis.ratio = TRUE,
   add.guide.lines = TRUE,
   add.labels.custom = FALSE,
-  genes.to.label = NULL
+  genes.to.label = NULL,
+  seed = 0,
+  label.force = 1
 ){
   
   de1 <- DEtable1Subset$gene_id
@@ -104,8 +106,13 @@ cross_plot = function(
       df.top.dist <- head(df.lab.sub, labels.per.region)
       df.top.distances <- rbind(df.top.distances, df.top.dist)
     }
+    set.seed(seed = seed)
     cp <- cp +
-      ggrepel::geom_label_repel(aes(x = lfc1, y = lfc2, label = gene_name), df.top.distances)
+      ggrepel::geom_label_repel(data = df.top.distances,
+                                mapping = aes(x = lfc1, y = lfc2, label = gene_name),
+                                max.overlaps = nrow(df.top.distances),
+                                force = label.force,
+                                point.size = NA)
   }
   
   cp

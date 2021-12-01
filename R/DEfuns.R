@@ -1,3 +1,22 @@
+#' Perform differential expression (DE) analysis on an expression matrix
+#' @description This function performs DE analysis on an expression using
+#' edgeR, given a vector of sample conditions.
+#' @inheritParams DEpanel
+#' @param condition a vector of the same length as the number of columns of
+#' expression.matrix, containing the sample conditions; this is usually the
+#' last column of the metadata
+#' @param var1,var2 conditions (contained in condition) to perform DE between
+#' @return A tibble with the differential expression results for all genes.
+#' Columns are 
+#' * gene_id (usually ENSEMBL ID matching one of the rows of the
+#' expression matrix)
+#' * gene_name (name matched through the annotation)
+#' * log2exp (average log2(expression) of the gene across samples)
+#' * log2FC (log2(fold-change) of the gene between conditions)
+#' * pval (p-value of the gene being called DE)
+#' * pvalAdj (adjusted p-value using the Benjamini Hochberg correction)
+#' @export
+#' @examples
 DEanalysis_edger <- function(
   expression.matrix,
   condition,

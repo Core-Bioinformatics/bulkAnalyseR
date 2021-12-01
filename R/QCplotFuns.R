@@ -1,13 +1,32 @@
+#' Calculate the Jaccard similarity index (JSI) between two vectors
+#' @param a,b two vectors 
+#' @return The JSI of the two vectors, a single value between 0 and 1.
+#' @export
+#' @examples
+#' jaccard_index(1:4, 2:6)
 jaccard_index <- function(a, b){
   if ((length(a) == 0) & (length(b) == 0)) {
     return(1)
   } else {
-    u <- length(union(a,b))
-    i <- length(intersect(a,b))
-    return(i/u)
+    u <- length(union(a, b))
+    i <- length(intersect(a, b))
+    return(i / u)
   }
 }
 
+#' Create a heatmap of the Jaccard similarity index (JSI) between samples of
+#' an experiment
+#' @description This function creates a JSI heatmap between all samples in the
+#' expression matrix using the specified number of most abundant genes as
+#' input. Metadata columns are used as annotations.
+#' @inheritParams generateShinyApp
+#' @param top.annotation.ids a vector of column indices denoting which columns
+#' of the metadata should become heatmap annotations
+#' @param n.abundant number of most abundant genes to use for the JSI calculation
+#' @param show.values whether to show the JSI values within the heatmap squares
+#' @return The JSI heatmap as detailed in the ComplexHeatmap package.
+#' @export
+#' @examples
 jaccard_heatmap <- function(
   expression.matrix,
   metadata,
@@ -79,6 +98,18 @@ jaccard_heatmap <- function(
   )
 }
 
+#' Create a principal component analysis (PCA) plot the samples of an experiment
+#' @description This function creates a PCA plot between all samples in the
+#' expression matrix using the specified number of most abundant genes as
+#' input. A metadata column is used as annotation.
+#' @inheritParams jaccard_heatmap
+#' @param annotation.id a column index denoting which column of the metadata
+#' should be used to colour the points and draw confidence ellipses
+#' @param show.labels whether to label the points with the sample names
+#' @param show.ellipses whether to draw confidence ellipses
+#' @return The PCA plot as a ggplot object.
+#' @export
+#' @examples
 plot_pca <- function(
   expression.matrix,
   metadata,

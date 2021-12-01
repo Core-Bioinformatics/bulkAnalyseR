@@ -1,7 +1,79 @@
+#' Generate all files required for an autonomous shiny app
+#' @description This function creates an app.R file and all required objects
+#' to run the app in .rda format in the target directory. A basic argument 
+#' check is performed to avoid input data problems. The app directory
+#' is standalone and can be used on another platform, as long as bulkAnalyseR
+#' is installed there. It is recommended to run 
+#' \code{\link{preprocessExpressionMatrix}} before this function.
+#' @param expression.matrix the expression matrix; rows correspond to genes and
+#' columns correspond to samples; usually preprocessed by 
+#' \code{\link{preprocessExpressionMatrix}}
+#' @param metadata a data frame containing metadata for the samples contained
+#' in the expression.matrix; must contain at minimum two columns:
+#' the first column must contain the column names of the expression.matrix,
+#' while the last column is assumed to contain the experimental conditions
+#' that will be tested for differential expression
+#' @param shiny.dir directory to store the shiny app; if a non-empty
+#' directory with that name already exists an error is generated
+#' @param app.title title to be displayed within the app
+#' @param organism organism name to be passed on to \code{gprofiler2::gost};
+#' organism names are constructed by concatenating the first letter of the 
+#' name and the family name; default is human - 'hsapiens'
+#' @param org.db database for annotations to transform ENSEMBL IDs to
+#' gene names; a list of bioconductor packaged databases can be found with 
+#' \code{BiocManager::available("^org\\.")}; default is human - 'org.Hs.eg.db'
+#' @param theme shiny theme to be used in the app; default is 'flatly'
+#' @param panels.default argument to control which of the default panels
+#' will be included in the app; default is all; not that the 'DE' panel is
+#' required for 'DEplot' and 'Enrichment'
+#' @param panels.extra,data.extra,packages.extra functionality to add new
+#' user-created panels to the app to extend functionality or change the default
+#' behaviour of existing panels; a data frame of the panel UI and server names
+#' and default parameters should be passed to panels.extra (see example);
+#' the names of any extra data and/or packages required should be passed to
+#' the data.extra and packages.extra arguments
+#' @return The path to shiny.dir (invisibly).
+#' @export
+#' @examples
+#' expression.matrix <- as.matrix(read.csv(
+#'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+#'   row.names = 1
+#' ))
+#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
+#' metadata <- data.frame(
+#'   srr = colnames(expression.matrix.preproc), 
+#'   timepoint = rep(c("0h", "12h"), each = 2)
+#' )
+#' generateShinyApp(
+#'   expression.matrix = expression.matrix.preproc,
+#'   metadata = metadata,
+#'   shiny.dir = "shiny_Yang2019",
+#'   app.title = "Shiny app for the Yang 2019 data",
+#'   organism = "mmusculus",
+#'   org.db = "org.Mm.eg.db"
+#' )
+#' 
+#' 
+#' # Example of an app with a second copy of the QC panel
+#' 
+#' generateShinyApp(
+#'   expression.matrix = expression.matrix.preproc,
+#'   metadata = metadata,
+#'   shiny.dir = "shiny_Yang2019_QC2",
+#'   app.title = "Shiny app for two timepoints from the Yang 2019 data",
+#'   organism = "mmusculus",
+#'   org.db = "org.Mm.eg.db",
+#'   panels.extra = tibble::tibble(
+#'     UIfun = "QCpanelUI", 
+#'     UIvars = "'QC2', metadata", 
+#'     serverFun = "QCpanelServer", 
+#'     serverVars = "'QC2', expression.matrix, metadata"
+#'   )
+#' )
 generateShinyApp <- function(
   expression.matrix,
   metadata,
-  shiny.dir = "shiny_bulkAnalyser",
+  shiny.dir = "shiny_bulkAnalyseR",
   app.title = "Visualisation of RNA-Seq data",
   organism = "hsapiens",
   org.db = "org.Hs.eg.db",
@@ -122,8 +194,8 @@ generateAppFile <- function(
     code.ui <- c(code.ui, "DEpanelUI('DE', metadata),")
     if("DEplot" %in% panels.default) code.ui <- c(code.ui, "DEplotPanelUI('DEplot', anno),")
     if("Enrichment" %in% panels.default) code.ui <- c(code.ui, "enrichmentPanelUI('Enrichment'),")
-    if("Cross" %in% panels.default) code.ui <- c(code.ui, "crossPanelUI('Cross', metadata),")
   }
+  if("Cross" %in% panels.default) code.ui <- c(code.ui, "crossPanelUI('Cross', metadata),")
   for(i in seq_len(nrow(panels.extra))){
     code.ui <- c(code.ui, glue::glue("{panels.extra$UIfun[i]}({panels.extra$UIvars[i]}),"))
   }
