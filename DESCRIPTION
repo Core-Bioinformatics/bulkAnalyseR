@@ -42,4 +42,5 @@ Imports:
     tibble,
     ggnewscale,
     ggrastr,
-    GENIE3
+    GENIE3,
+    visNetwork

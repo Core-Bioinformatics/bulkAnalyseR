@@ -20,9 +20,10 @@ bulkApp <- function(...){
              tabsetPanel(
                QCpanelUI("QC", metadata),
                DEpanelUI("DE", metadata),
-               DEplotPanelUI("DEplot", anno),
+               DEplotPanelUI("DEplot"),
                enrichmentPanelUI("Enrichment"),
-               crossPanelUI("Cross", metadata)
+               crossPanelUI("Cross", metadata),
+               GRNpanelUI("GRN"),
              )),
     peaksPanelUI("chip", "ChIPseq", c("control BCL11A IP" = "control_11AIP",
                                       "control CHD8 IP" = "control_CHD8IP",
@@ -41,6 +42,7 @@ bulkApp <- function(...){
     DEplotPanelServer("DEplot", DEresults, anno)
     enrichmentPanelServer("Enrichment", DEresults, organism = "mmusculus")
     crossPanelServer("Cross", expression.matrix, metadata, anno)
+    GRNpanelServer("GRN", expression.matrix, anno)
     peaksPanelServer("chip", ChIPseqdata)
     peaksPanelServer("atac", ATACseqdata)
   }

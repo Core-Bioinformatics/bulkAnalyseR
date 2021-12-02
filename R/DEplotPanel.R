@@ -11,7 +11,7 @@ NULL
 
 #' @rdname DEplotPanel
 #' @export
-DEplotPanelUI <- function(id, anno){
+DEplotPanelUI <- function(id){
   ns <- NS(id)
   
   tabPanel(
