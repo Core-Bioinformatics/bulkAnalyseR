@@ -42,7 +42,7 @@
 #' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
 #' metadata <- data.frame(
 #'   srr = colnames(expression.matrix.preproc), 
-#'   timepoint = rep(c("0h", "12h"), each = 2)
+#'   timepoint = rep(c("0h", "12h", "36h"), each = 2)
 #' )
 #' generateShinyApp(
 #'   expression.matrix = expression.matrix.preproc,

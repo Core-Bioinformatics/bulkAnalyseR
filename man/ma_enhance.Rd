@@ -35,10 +35,10 @@ ma_enhance(
 \item{df}{data frame of DE results for all genes (usually passed by
 \code{\link{ma_plot}})}
 
-\item{pval.threshold}{the p-value and log2(fold-change)
+\item{pval.threshold}{the p-value and/or log2(fold-change)
 thresholds to determine whether a gene is DE}
 
-\item{lfc.threshold}{the p-value and log2(fold-change)
+\item{lfc.threshold}{the p-value and/or log2(fold-change)
 thresholds to determine whether a gene is DE}
 
 \item{alpha}{the transparency of points; ignored for DE genes if
@@ -96,8 +96,7 @@ DE genes with the lowest p-value, the second to those with highest absolute
 log2(fold-change) and the third to those with highest expression; a single
 integer can also be specified, to be used for all 3 entries; default is 5}
 
-\item{genes.to.label}{a vector of gene names (either matching the name field
-of df or the corresponding name from the annotation) to be labelled in the
+\item{genes.to.label}{a vector of gene names to be labelled in the
 plot; if names are present those are shown as the labels (but the values are
 the ones matched - this is to allow custom gene names to be presented)}
 
@@ -112,7 +111,7 @@ away from the points they are labelling)}
 The enhanced MA plot as a ggplot object.
 }
 \description{
-This function adds features to a volcano plot and is usually
+This function adds features to an MA plot and is usually
 called indirectly by \code{\link{ma_plot}}
 }
 \seealso{
