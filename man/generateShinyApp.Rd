@@ -12,7 +12,7 @@ generateShinyApp(
   organism = "hsapiens",
   org.db = "org.Hs.eg.db",
   theme = "flatly",
-  panels.default = c("QC", "DE", "DEplot", "Enrichment", "Cross"),
+  panels.default = c("QC", "DE", "DEplot", "Enrichment", "Cross", "GRN"),
   panels.extra = tibble::tibble(UIfun = NULL, UIvars = NULL, serverFun = NULL,
     serverVars = NULL),
   data.extra = c(),

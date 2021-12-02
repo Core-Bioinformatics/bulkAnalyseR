@@ -6,21 +6,21 @@
 \alias{DEplotPanelServer}
 \title{Generate the DE plot plot panel of the shiny app}
 \usage{
-DEplotPanelUI(id, anno)
+DEplotPanelUI(id)
 
 DEplotPanelServer(id, DEresults, anno)
 }
 \arguments{
 \item{id}{the input slot that will be used to access the value}
 
+\item{DEresults}{differential expression results output from DEpanelServer;
+a reactive list with slots 'DEtable' (all genes), 'DEtableSubset' (only DE genes),
+'lfcThreshold' and 'pvalThreshold'}
+
 \item{anno}{annotation data frame containing a match between the row names
 of the expression.matrix (usually ENSEMBL IDs) and the gene names that
 should be rendered within the app and in output files; this object is
 created by \code{\link{generateShinyApp}} using the org.db specified}
-
-\item{DEresults}{differential expression results output from DEpanelServer;
-a reactive list with slots 'DEtable' (all genes), 'DEtableSubset' (only DE genes),
-'lfcThreshold' and 'pvalThreshold'}
 }
 \description{
 These are the UI and server components of the DE plot panel of the
