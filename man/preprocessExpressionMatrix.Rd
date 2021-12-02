@@ -6,6 +6,7 @@
 \usage{
 preprocessExpressionMatrix(
   expression.matrix,
+  output.plot = FALSE,
   normalisation.method = c("quantile", "rpm"),
   ...
 )
@@ -18,6 +19,9 @@ columns correspond to samples}
 quantile}
 
 \item{...}{optional arguments passed on to \code{noisyr::noisyr_counts()}}
+
+\item{noisyr.plot}{whether to create an expression-similarity plot for the
+noise analysis (printed to the console); default is FALSE}
 }
 \value{
 The denoised, normalised expression matrix; some rows (genes)
