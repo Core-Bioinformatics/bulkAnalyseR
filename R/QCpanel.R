@@ -34,7 +34,21 @@ QCpanelUI <- function(id, metadata){
       icon = icon("gear", verify_fa = FALSE), 
       tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
     ),
-    plotOutput(ns('pca'))
+    plotOutput(ns('pca')),
+    
+    tags$h1("MA plots"),
+    shinyWidgets::dropdownButton(
+      checkboxInput(ns("ma.show.guidelines"), label = "Show guidelines", value = TRUE),
+      selectInput(ns('ma.sample1'),'Sample 1',choices = meta[,1],selected = meta[1,1]),
+      selectInput(ns('ma.sample2'),'Sample 2',choices = meta[,1],selected=meta[2,1]),
+      textInput(ns('plotMAFileName'), 'File name for MA plot download', value ='MAPlot.png'),
+      downloadButton(ns('downloadMAPlot'), 'Download MA Plot'),
+      
+      status = "info",
+      icon = icon("gear", verify_fa = FALSE), 
+      tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
+    ),
+    plotOutput(ns('ma'))
   )
 }
 
@@ -75,6 +89,16 @@ QCpanelServer <- function(id, expression.matrix, metadata){
     })
     output[['pca']] <- renderPlot(pca.plot())
     
+    qc.ma.plot <- reactive({
+      myplot <- qc_ma_plot(expression.matrix=expression.matrix,
+                           metadata=metadata,
+                           i=match(input[['ma.sample1']],metadata[,1]),
+                           j=match(input[['ma.sample2']],metadata[,1]),
+                           include.guidelines=input[['ma.show.guidelines']])
+      myplot
+    })
+    output[['ma']] <- renderPlot(qc.ma.plot())
+    
     output[['downloadJSIPlot']] <- downloadHandler(
       filename = function() { input[['plotJSIFileName']] },
       content = function(file) {
@@ -90,6 +114,14 @@ QCpanelServer <- function(id, expression.matrix, metadata){
       content = function(file) {
         device <- function(..., width, height) grDevices::png(..., width = width, height = height, res = 300, units = "in")
         ggsave(file, plot = pca.plot(), device = device)
+      }
+    )
+    
+    output[['downloadMAPlot']] <- downloadHandler(
+      filename = function() { input[['plotMAFileName']] },
+      content = function(file) {
+        device <- function(..., width, height) grDevices::png(..., width = width, height = height, res = 300, units = "in")
+        ggsave(file, plot = qc.ma.plot(), device = device)
       }
     )
   })

@@ -3,8 +3,10 @@ enrichmentPanelUI <- function(id){
   
   tabPanel(
     'Enrichment',
-    shinyWidgets::dropdownButton(
-      checkboxGroupInput(ns('gprofilerSources'), 'Select data sources', 
+    sidebarLayout(
+      # Sidebar panel for inputs ----
+      sidebarPanel(
+        checkboxGroupInput(ns('gprofilerSources'), 'Select data sources', 
                          choices = c('GO:BP', 'GO:MF', 'GO:CC', 'KEGG', 'REAC', 
                                      'TF', 'MIRNA', 'CORUM', 'HP', 'HPA', 'WP'), 
                          selected = c('GO:BP', 'GO:MF', 'GO:CC', 'KEGG', 'REAC', 'TF', 'MIRNA')),
@@ -13,13 +15,12 @@ enrichmentPanelUI <- function(id){
       downloadButton(ns('downloadTable'), 'Download Data'),
       textInput(ns('plotFileName'), 'File name for plot download', value ='EnrichmentPlot.png'),
       downloadButton(ns('downloadPlot'), 'Download Plot'),
-      
-      status = "info",
-      icon = icon("gear", verify_fa = FALSE), 
-      tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
     ),
+    mainPanel(
     plotOutput(ns('plot'), click = ns('plot_click')),
     tableOutput(ns('data'))
+      )
+  )
   )
 }
 
