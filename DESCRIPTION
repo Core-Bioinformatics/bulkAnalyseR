@@ -1,4 +1,4 @@
-Package: bulkApp
+Package: bulkAnalyseR
 Title: Shiny app for bulk sequencing data
 Version: 0.1.0
 Authors@R: 
@@ -12,7 +12,7 @@ License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Depends: 
     R (>= 2.10)
 Imports: 
@@ -33,4 +33,14 @@ Imports:
     dplyr,
     magrittr,
     ggforce,
-    rlang
+    rlang,
+    glue,
+    preprocessCore,
+    AnnotationDbi,
+    matrixStats,
+    noisyr,
+    tibble,
+    ggnewscale,
+    ggrastr,
+    GENIE3,
+    visNetwork
