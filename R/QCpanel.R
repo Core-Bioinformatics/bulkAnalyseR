@@ -49,9 +49,9 @@ QCpanelUI <- function(id, metadata){
     tags$h1("MA plots"),
     shinyWidgets::dropdownButton(
       checkboxInput(ns("ma.show.guidelines"), label = "Show guidelines", value = TRUE),
-      selectInput(ns('ma.sample1'),'Sample 1',choices = meta[,1],selected = meta[1,1]),
-      selectInput(ns('ma.sample2'),'Sample 2',choices = meta[,1],selected=meta[2,1]),
-      textInput(ns('plotMAFileName'), 'File name for MA plot download', value ='MAPlot.png'),
+      selectInput(ns('ma.sample1'), 'Sample 1', choices = meta[, 1], selected = meta[1, 1]),
+      selectInput(ns('ma.sample2'), 'Sample 2', choices = meta[, 1], selected = meta[2, 1]),
+      textInput(ns('plotMAFileName'), 'File name for MA plot download', value = 'MAPlot.png'),
       downloadButton(ns('downloadMAPlot'), 'Download MA Plot'),
       
       status = "info",
@@ -101,15 +101,41 @@ QCpanelServer <- function(id, expression.matrix, metadata){
     })
     output[['pca']] <- renderPlot(pca.plot())
     
-    qc.ma.plot <- reactive({
-      myplot <- qc_ma_plot(expression.matrix=expression.matrix,
-                           metadata=metadata,
-                           i=match(input[['ma.sample1']],metadata[,1]),
-                           j=match(input[['ma.sample2']],metadata[,1]),
-                           include.guidelines=input[['ma.show.guidelines']])
+    ma.plot <- reactive({
+      df <- tibble::tibble(
+        gene_id = rownames(expression.matrix),
+        gene_name = anno$NAME[match(gene_id, anno$ENSEMBL)],
+        exp1 = expression.matrix[, match(input[['ma.sample1']], colnames(expression.matrix))],
+        exp2 = expression.matrix[, match(input[['ma.sample2']], colnames(expression.matrix))],
+        l1 = log2(exp1),
+        l2 = log2(exp2),
+        log2exp = (l1 + l2) / 2,
+        log2FC = l1 - l2,
+        pval = 1,
+        pvalAdj = 1
+      )  %>%
+        dplyr::filter(exp1 != 0, exp2 != 0)
+      myplot <- ma_plot(
+        genes.de.results = df,
+        alpha = 0.05,
+        add.colours = TRUE,
+        point.colours = rep(scales::hue_pal()(1), 4),
+        add.expression.colour.gradient = FALSE,
+        add.guide.lines = input[['ma.show.guidelines']],
+        guide.line.colours = rep("gray60", 2),
+        add.labels.auto = FALSE,
+        add.labels.custom = FALSE,
+      )
+      # myplot <- qc_ma_plot(
+      #   expression.matrix = expression.matrix,
+      #   metadata = metadata,
+      #   i = match(input[['ma.sample1']], metadata[,1]),
+      #   j = match(input[['ma.sample2']], metadata[,1]),
+      #   include.guidelines = input[['ma.show.guidelines']]
+      # )
       myplot
     })
-    output[['ma']] <- renderPlot(qc.ma.plot())
+    output[['ma']] <- renderPlot(ma.plot())
     
     output[['downloadJSIPlot']] <- downloadHandler(
       filename = function() { input[['plotJSIFileName']] },

@@ -103,6 +103,7 @@ jaccard_heatmap <- function(
 #' expression matrix using the specified number of most abundant genes as
 #' input. A metadata column is used as annotation.
 #' @inheritParams jaccard_heatmap
+#' @inheritParams volcano_enhance
 #' @param annotation.id a column index denoting which column of the metadata
 #' should be used to colour the points and draw confidence ellipses
 #' @param show.labels whether to label the points with the sample names
@@ -116,7 +117,8 @@ plot_pca <- function(
   annotation.id = NULL, 
   n.abundant = NULL,
   show.labels,
-  show.ellipses
+  show.ellipses,
+  label.force = 1
 ){
   annotation.name <- colnames(metadata)[annotation.id]
   n.abundant <- min(n.abundant, nrow(expression.matrix))
@@ -151,15 +153,19 @@ plot_pca <- function(
   }
   if(show.labels){
     pca.plot <- pca.plot +
-      ggrepel::geom_label_repel(data = expr.PCA,aes(x = .data$PC1, y = .data$PC2, colour = .data$condition,label = .data$name))
+      ggrepel::geom_label_repel(data = expr.PCA,
+                                mapping = aes(x = PC1, y = PC2, colour = condition, label = name),
+                                max.overlaps = nrow(expr.PCA),
+                                force = label.force,
+                                point.size = NA)
   }
   
   pca.plot
 }
 
-qc_ma_plot = function(expression.matrix, metadata, i, j,include.guidelines=TRUE){
+qc_ma_plot = function(expression.matrix, metadata, i, j, include.guidelines = TRUE){
   # mask away the zeros
-  zero.mask <- !(expression.matrix[,i] == 0 | expression.matrix[,j] == 0)
+  zero.mask <- !(expression.matrix[, i] == 0 | expression.matrix[,j] == 0)
   l1 <- log2(expression.matrix[zero.mask, i])
   l2 <- log2(expression.matrix[zero.mask, j])
 
@@ -170,17 +176,17 @@ qc_ma_plot = function(expression.matrix, metadata, i, j,include.guidelines=TRUE)
   lower.lim <- -upper.lim
   expr.MA <- data.frame(A = a, M = m)
   #define MA plot
-  p <- ggplot(expr.MA, aes(x=.data$A, y=.data$M, color='red', fill='red')) +
-    geom_point(alpha=0.05)+
-    theme_minimal()+
-    theme(legend.position = "none")+ 
+  p <- ggplot(expr.MA, aes(x = .data$A, y = .data$M, color = 'red', fill = 'red')) +
+    geom_point(alpha = 0.05) +
+    theme_minimal() +
+    theme(legend.position = "none") + 
     ylim(lower.lim, upper.lim)
   
-  if (include.guidelines){
-   p <- p+ geom_hline(yintercept=0.5,colour='gray60')+
-            geom_hline(yintercept=-0.5,colour='gray60')+
-            geom_hline(yintercept=1,colour='gray60')+
-            geom_hline(yintercept=-1,colour='gray60')
+  if(include.guidelines){
+   p <- p + geom_hline(yintercept = 0.5, colour = 'gray60') +
+            geom_hline(yintercept = -0.5, colour = 'gray60') +
+            geom_hline(yintercept = 1, colour = 'gray60') +
+            geom_hline(yintercept = -1, colour = 'gray60')
   }
   p
 }

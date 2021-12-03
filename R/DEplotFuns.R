@@ -170,7 +170,7 @@ volcano_enhance <- function(
     if(raster){
       vp <- vp + ggrastr::rasterise(geom_point(alpha = alpha, colour = colours))
     }else{
-      vp <- vp + geom_point(alpha = alpha, colour = colours)
+      vp <- vp + geom_point(alpha = alpha, colour = colours, fill = colours)
     }
   }
   
@@ -390,7 +390,7 @@ ma_enhance <- function(
     if(raster){
       p <- p + ggrastr::rasterise(geom_point(alpha = alpha, colour = colours))
     }else{
-      p <- p + geom_point(alpha = alpha, colour = colours)
+      p <- p + geom_point(alpha = alpha, colour = colours, fill = colours)
     }
   }
   

@@ -10,7 +10,8 @@ plot_pca(
   annotation.id = NULL,
   n.abundant = NULL,
   show.labels,
-  show.ellipses
+  show.ellipses,
+  label.force = 1
 )
 }
 \arguments{
@@ -32,6 +33,10 @@ should be used to colour the points and draw confidence ellipses}
 \item{show.labels}{whether to label the points with the sample names}
 
 \item{show.ellipses}{whether to draw confidence ellipses}
+
+\item{label.force}{passed to the force argument of ggrepel::geom_label_repel;
+higher values make labels overlap less (at the cost of them being further
+away from the points they are labelling)}
 }
 \value{
 The PCA plot as a ggplot object.
