@@ -49,8 +49,8 @@ QCpanelUI <- function(id, metadata){
     tags$h1("MA plots"),
     shinyWidgets::dropdownButton(
       checkboxInput(ns("ma.show.guidelines"), label = "Show guidelines", value = TRUE),
-      selectInput(ns('ma.sample1'), 'Sample 1', choices = meta[, 1], selected = meta[1, 1]),
-      selectInput(ns('ma.sample2'), 'Sample 2', choices = meta[, 1], selected = meta[2, 1]),
+      selectInput(ns('ma.sample1'), 'Sample 1', choices = metadata[, 1], selected = metadata[1, 1]),
+      selectInput(ns('ma.sample2'), 'Sample 2', choices = metadata[, 1], selected = metadata[2, 1]),
       textInput(ns('plotMAFileName'), 'File name for MA plot download', value = 'MAPlot.png'),
       downloadButton(ns('downloadMAPlot'), 'Download MA Plot'),
       

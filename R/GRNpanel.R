@@ -26,7 +26,7 @@ GRNpanelUI <- function(id){
       ),
       
       mainPanel(
-        visNetworkOutput(ns('plot')),
+        visNetwork::visNetworkOutput(ns('plot')),
       )
     )
   )

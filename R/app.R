@@ -18,6 +18,7 @@ bulkApp <- function(...){
     theme = shinythemes::shinytheme("flatly"),
     tabPanel("RNAseq",
              tabsetPanel(
+               sampleSelectPanelUI("SampleSelect"),
                QCpanelUI("QC", metadata),
                DEpanelUI("DE", metadata),
                DEplotPanelUI("DEplot"),
@@ -37,6 +38,7 @@ bulkApp <- function(...){
   )
   
   server <- function(input, output, session){
+    sampleSelectPanelServer("SampleSelect", expression.matrix, metadata)
     QCpanelServer("QC", expression.matrix, metadata)
     DEresults <- DEpanelServer("DE", expression.matrix, metadata, anno)
     DEplotPanelServer("DEplot", DEresults, anno)
