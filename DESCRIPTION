@@ -1,20 +1,27 @@
 Package: bulkAnalyseR
 Title: Shiny app for bulk sequencing data
 Version: 0.1.0
-Authors@R: 
-    person(given = "First",
-           family = "Last",
-           role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: GPL (>= 3)
+Authors@R: c(
+            person("Ilias", "Moutsopoulos", , "im383@cam.ac.uk", c("aut", "cre")),
+            person("Eleanor", "Williams", , "ecw63@cam.ac.uk", role = c("aut", "ctb")),
+            person("Irina", "Mohorianu", , "iim22@cam.ac.uk", role = c("aut", "ctb"))
+            )
+Maintainer: Ilias Moutsopoulos <im383@cam.ac.uk>
+Description: Given an expression matrix from a bulk RNA-Seq experiment,
+        pre-processes it and creates a shiny app for interactive data 
+        analysis and visualisation. The app contains quality checks,
+        differential expression analysis, volcano and cross plots,
+        enrichment analysis and gene regulatory network inference,
+        and can be customised to contain more panels by the user.
+License: GPL2
 Encoding: UTF-8
+URL: https://github.com/Core-Bioinformatics/bulkAnalyseR
+BugReports: https://github.com/Core-Bioinformatics/bulkAnalyseR/issues
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Depends: 
-    R (>= 2.10)
+    R (>= 4.0)
 Imports: 
     ggplot2,
     shinythemes,
