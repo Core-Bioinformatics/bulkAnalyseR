@@ -156,3 +156,31 @@ plot_pca <- function(
   
   pca.plot
 }
+
+qc_ma_plot = function(expression.matrix, metadata, i, j,include.guidelines=TRUE){
+  # mask away the zeros
+  zero.mask <- !(expression.matrix[,i] == 0 | expression.matrix[,j] == 0)
+  l1 <- log2(expression.matrix[zero.mask, i])
+  l2 <- log2(expression.matrix[zero.mask, j])
+
+  #calculate M and A
+  m <- l1 - l2
+  a <- 0.5 * (l1 + l2)
+  upper.lim <- max(abs(m))
+  lower.lim <- -upper.lim
+  expr.MA <- data.frame(A = a, M = m)
+  #define MA plot
+  p <- ggplot(expr.MA, aes(x=.data$A, y=.data$M, color='red', fill='red')) +
+    geom_point(alpha=0.05)+
+    theme_minimal()+
+    theme(legend.position = "none")+ 
+    ylim(lower.lim, upper.lim)
+  
+  if (include.guidelines){
+   p <- p+ geom_hline(yintercept=0.5,colour='gray60')+
+            geom_hline(yintercept=-0.5,colour='gray60')+
+            geom_hline(yintercept=1,colour='gray60')+
+            geom_hline(yintercept=-1,colour='gray60')
+  }
+  p
+}
