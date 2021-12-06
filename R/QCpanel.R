@@ -64,21 +64,22 @@ QCpanelUI <- function(id, metadata){
 
 #' @rdname QCpanel
 #' @export
-QCpanelServer <- function(id, expression.matrix, metadata){
+QCpanelServer <- function(id, expression.matrix, metadata, anno){
   # check whether inputs (other than id) are reactive or not
   stopifnot({
-    !is.reactive(expression.matrix)
-    !is.reactive(metadata)
+    is.reactive(expression.matrix)
+    is.reactive(metadata)
+    !is.reactive(anno)
   })
   
   moduleServer(id, function(input, output, session){
     jaccard.plot <- reactive({
-      meta <- lapply(metadata, function(x) factor(x, levels = unique(x))) %>% 
+      meta <- lapply(metadata(), function(x) factor(x, levels = unique(x))) %>% 
         as.data.frame() %>%
         dplyr::arrange(dplyr::across(input[['jaccard.annotations']]))
       
       myplot <- jaccard_heatmap(
-        expression.matrix = expression.matrix[, meta[, 1]],
+        expression.matrix = expression.matrix()[, meta[, 1]],
         metadata = meta,
         top.annotation.ids = match(input[['jaccard.annotations']], colnames(meta)),
         n.abundant = input[['jaccard.n.abundant']], 
@@ -90,9 +91,9 @@ QCpanelServer <- function(id, expression.matrix, metadata){
     
     pca.plot <- reactive({
       myplot <- plot_pca(
-        expression.matrix = expression.matrix,
-        metadata = metadata,
-        annotation.id = match(input[['pca.annotation']], colnames(metadata)),
+        expression.matrix = expression.matrix(),
+        metadata = metadata(),
+        annotation.id = match(input[['pca.annotation']], colnames(metadata())),
         n.abundant = input[['pca.n.abundant']],
         show.labels = input[['pca.show.labels']],
         show.ellipses = input[['pca.show.ellipses']]
@@ -102,11 +103,13 @@ QCpanelServer <- function(id, expression.matrix, metadata){
     output[['pca']] <- renderPlot(pca.plot())
     
     ma.plot <- reactive({
+      updateSelectInput(session, 'ma.sample1', choices = metadata()[, 1], selected = metadata()[1, 1])
+      updateSelectInput(session, 'ma.sample2', choices = metadata()[, 1], selected = metadata()[2, 1])
       df <- tibble::tibble(
-        gene_id = rownames(expression.matrix),
+        gene_id = rownames(expression.matrix()),
         gene_name = anno$NAME[match(gene_id, anno$ENSEMBL)],
-        exp1 = expression.matrix[, match(input[['ma.sample1']], colnames(expression.matrix))],
-        exp2 = expression.matrix[, match(input[['ma.sample2']], colnames(expression.matrix))],
+        exp1 = expression.matrix()[, match(input[['ma.sample1']], colnames(expression.matrix()))],
+        exp2 = expression.matrix()[, match(input[['ma.sample2']], colnames(expression.matrix()))],
         l1 = log2(exp1),
         l2 = log2(exp2),
         log2exp = (l1 + l2) / 2,
@@ -127,10 +130,10 @@ QCpanelServer <- function(id, expression.matrix, metadata){
         add.labels.custom = FALSE,
       )
       # myplot <- qc_ma_plot(
-      #   expression.matrix = expression.matrix,
-      #   metadata = metadata,
-      #   i = match(input[['ma.sample1']], metadata[,1]),
-      #   j = match(input[['ma.sample2']], metadata[,1]),
+      #   expression.matrix = expression.matrix(),
+      #   metadata = metadata(),
+      #   i = match(input[['ma.sample1']], metadata()[,1]),
+      #   j = match(input[['ma.sample2']], metadata()[,1]),
       #   include.guidelines = input[['ma.show.guidelines']]
       # )
       myplot

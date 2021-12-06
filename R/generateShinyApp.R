@@ -78,7 +78,7 @@ generateShinyApp <- function(
   organism = "hsapiens",
   org.db = "org.Hs.eg.db",
   theme = "flatly",
-  panels.default = c("QC", "DE", "DEplot", "Enrichment", "Cross", "GRN"),
+  panels.default = c("SampleSelect", "QC", "DE", "DEplot", "Enrichment", "Cross", "GRN"),
   panels.extra = tibble::tibble(
     UIfun = NULL, 
     UIvars = NULL, 
@@ -189,6 +189,7 @@ generateAppFile <- function(
     "tabPanel('RNAseq',",
     "tabsetPanel("
   )
+  if("SampleSelect" %in% panels.default) code.ui <- c(code.ui, "sampleSelectPanelUI('SampleSelect'),")
   if("QC" %in% panels.default) code.ui <- c(code.ui, "QCpanelUI('QC', metadata),")
   if("DE" %in% panels.default){
     code.ui <- c(code.ui, "DEpanelUI('DE', metadata),")
@@ -204,14 +205,25 @@ generateAppFile <- function(
   lines.out <- c(lines.out, code.ui, "")
   
   code.server <- c("server <- function(input, output, session){")
+  if("SampleSelect" %in% panels.default){
+    code.server <- c(
+      code.server,
+      "filteredInputs <- sampleSelectPanelServer('SampleSelect', expression.matrix, metadata)",
+      "expression.matrix <- reactive(filteredInputs()[['expression.matrix']])",
+      "metadata <- reactive(filteredInputs()[['metadata']])"
+    )
+  }else{
+    code.server <- c(
+      code.server,
+      "expression.matrix <- reactiveVal(expression.matrix)",
+      "metadata <- reactiveVal(metadata)"
+    )
+  }
   if("QC" %in% panels.default){
-    code.server <- c(code.server, "QCpanelServer('QC', expression.matrix, metadata)")
+    code.server <- c(code.server, "QCpanelServer('QC', expression.matrix, metadata, anno)")
   }
   if("DE" %in% panels.default){
-    code.server <- c(
-      code.server, 
-      glue::glue("DEresults <- DEpanelServer('DE', expression.matrix, metadata, anno)")
-    )
+    code.server <- c(code.server, "DEresults <- DEpanelServer('DE', expression.matrix, metadata, anno)")
     if("DEplot" %in% panels.default){
       code.server <- c(code.server, "DEplotPanelServer('DEplot', DEresults, anno)")
     }
@@ -222,16 +234,10 @@ generateAppFile <- function(
       )
     }
     if("Cross" %in% panels.default){
-      code.server <- c(
-        code.server, 
-        glue::glue("crossPanelServer('Cross', expression.matrix, metadata, anno)")
-      )
+      code.server <- c(code.server, "crossPanelServer('Cross', expression.matrix, metadata, anno)")
     }
     if("GRN" %in% panels.default){
-      code.server <- c(
-        code.server,
-        glue::glue("GRNpanelServer('GRN', expression.matrix, anno)")
-      )
+      code.server <- c(code.server, "GRNpanelServer('GRN', expression.matrix, anno)")
     }
     
   }

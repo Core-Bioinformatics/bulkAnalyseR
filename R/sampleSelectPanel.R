@@ -13,6 +13,8 @@ sampleSelectPanelUI <- function(id){
   
   tabPanel(
     'Sample select',
+    actionButton(ns('goSamples'), label = 'Use the selected samples!', 
+                 width = "100%", class = "btn-primary btn-lg"),
     DT::dataTableOutput(ns('tbl'))
   )
 }
@@ -20,6 +22,7 @@ sampleSelectPanelUI <- function(id){
 #' @rdname sampleSelectPanel
 #' @export
 sampleSelectPanelServer <- function(id, expression.matrix, metadata){
+  ns <- NS(id)
   # check whether inputs (other than id) are reactive or not
   stopifnot({
     !is.reactive(expression.matrix)
@@ -27,37 +30,68 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata){
   })
   
   moduleServer(id, function(input, output, session){
-    # output[["tbl"]] <- DT::renderDataTable({
-    #   addCheckboxButtons <- paste0(
-    #     '<input type="checkbox" name="row', 
-    #     seq_len(nrow(metadata)), 
-    #     '" value="', 
-    #     seq_len(nrow(metadata)), 
-    #     '">', 
-    #     ""
-    #   )
-    #   cbind(Selected = addCheckboxButtons, metadata)
-    # }, callback = htmlwidgets::JS(
-    #   "function(table) {
-    #     table.on('change.dt', 'tr td input:checkbox', function() {
-    #       setTimeout(function () {
-    #         Shiny.onInputChange('rows', $(this).add('tr td input:checkbox:checked').parent().siblings(':last-child').map(function() {
-    #           return $(this).text();
-    #         }).get())
-    #       }, 10); 
-    #     });
-    #   }"
-    # ),
-    # escape = FALSE
-    # )
+    # create a character vector of shiny inputs
+    shinyInput = function(FUN, len, id, value, ...) {
+      if (length(value) == 1) value <- rep(value, len)
+      inputs = character(len)
+      for (i in seq_len(len)) {
+        inputs[i] = as.character(FUN(ns(paste0(id, i)), label = NULL, value = value[i]))
+      }
+      inputs
+    }
+    
+    # obtain the values of inputs
+    shinyValue = function(id, len) {
+      unlist(lapply(seq_len(len), function(i) {
+        value = input[[paste0(id, i)]]
+        if (is.null(value)) TRUE else value
+      }))
+    }
+    
+    n <- nrow(metadata)
+    df = cbind(
+      data.frame(selected = shinyInput(checkboxInput, n, 'cb_', value = TRUE, width='1px')),
+      metadata
+    )
+    
+    loopData = reactive({
+      df$selected <<- shinyInput(checkboxInput, n, 'cb_', value = shinyValue('cb_', n), width='1px')
+      df
+    })
+    
+    tbl <- DT::renderDataTable(
+      isolate(loopData()),
+      escape = FALSE, 
+      selection = 'none',
+      options = list(
+        dom = 't', paging = FALSE, ordering = FALSE,
+        preDrawCallback = DT::JS('function() { Shiny.unbindAll(this.api().table().node()); }'),
+        drawCallback = DT::JS('function() { Shiny.bindAll(this.api().table().node()); } ')
+      ))
+    
+    output[["tbl"]] = tbl
+    
+    proxy = DT::dataTableProxy('tbl')
+    
+    observe({
+      DT::replaceData(proxy, loopData(), resetPaging = FALSE)
+    })
+    
+    filteredInputs <- eventReactive(input[["goSamples"]], {
+      list("expression.matrix" = expression.matrix[, shinyValue('cb_', n)],
+           "metadata" = metadata[shinyValue('cb_', n), ])
+    },
+    ignoreNULL = FALSE
+    )
+    
   })
 }
 
-QCpanelApp <- function(){
+sampleSelectPanelApp <- function(){
   shinyApp(
-    ui = fluidPage(QCpanelUI('qc', metadata)),
+    ui = fluidPage(sampleSelectPanelUI('SampleSelect')),
     server = function(input, output, session){
-      QCpanelServer('qc', expression.matrix, metadata)
+      sampleSelectPanelServer('SampleSelect', expression.matrix, metadata)
     }
   )
 }

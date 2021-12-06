@@ -53,14 +53,19 @@ enrichmentPanelServer <- function(id, DEresults, organism){
     }, 
     {
       inputdata = DEresults()
-      enrichment <- gprofiler2::gost(query = inputdata$DEtableSubset$gene_id,
-                                     organism = organism,
-                                     correction_method = 'fdr',
-                                     custom_bg = inputdata$DEtable$gene_id,
-                                     sources = input[['gprofilerSources']])
-      enrichment$result[, c('query', 'significant', 'p_value', 'term_size',
-                            'query_size', 'intersection_size', 'precision', 'recall',
-                            'term_id', 'source', 'term_name', 'effective_domain_size')]
+      gostres <- gprofiler2::gost(query = inputdata$DEtableSubset$gene_id,
+                                  organism = organism,
+                                  correction_method = 'fdr',
+                                  custom_bg = inputdata$DEtable$gene_id,
+                                  sources = input[['gprofilerSources']],
+                                  evcodes = TRUE)
+      gostres$result <- gostres$result %>%
+        mutate(parents = sapply(parents, toString),
+               intersection_names = sapply(intersection, function(x){
+                 ensids <- strsplit(x, split = ",")[[1]]
+                 names <- inputdata$DEtable$gene_name[match(ensids, inputdata$DEtable$gene_id)]
+                 paste(names, collapse = ",")
+               }))
     })
     
     #Jitter plot and save coordinates

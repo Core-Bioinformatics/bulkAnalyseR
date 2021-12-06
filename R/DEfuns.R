@@ -28,13 +28,12 @@ DEanalysis_edger <- function(
     expression.matrix[matrixStats::rowMins(expression.matrix) != 
                         matrixStats::rowMaxs(expression.matrix), ]
     
-  group <- c(rep(0, sum(condition == var1)), rep(1, sum(condition == var2)))
   design <- stats::model.matrix(~ 0 + as.factor(condition))
   
-  edger <- edgeR::DGEList(counts = expression.matrix, group = group)
+  edger <- edgeR::DGEList(counts = expression.matrix, group = condition)
   edger <- edgeR::estimateDisp(edger, design)
   if(is.na(edger$common.dispersion)){ # if there are no replicates
-    edger.noreps <- edgeR::DGEList(counts = expression.matrix, group = group)
+    edger.noreps <- edgeR::DGEList(counts = expression.matrix, group = condition)
     edger.noreps <- edgeR::calcNormFactors(edger.noreps)
     edger.noreps <- edgeR::estimateDisp(edger.noreps, tagwise=FALSE)
     edger$common.dispersion <- edger.noreps$common.dispersion
@@ -42,7 +41,8 @@ DEanalysis_edger <- function(
     edger$tagwise.dispersion <- edger.noreps$tagwise.dispersion
   }
   edger.fit = edgeR::glmFit(y = edger, design = design)
-  edger.lrt <- edgeR::glmLRT(edger.fit, contrast = c(-1, 1))
+  if(var1 < var2) contrast <- c(-1, 1) else contrast <- c(1, -1)
+  edger.lrt <- edgeR::glmLRT(edger.fit, contrast = contrast)
   edger.table <- edger.lrt$table
   
   output = tibble::tibble(
