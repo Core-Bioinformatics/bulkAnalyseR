@@ -26,7 +26,7 @@ GRNpanelUI <- function(id){
       ),
       
       mainPanel(
-        visNetworkOutput(ns('plot')),
+        visNetwork::visNetworkOutput(ns('plot')),
       )
     )
   )
@@ -37,7 +37,7 @@ GRNpanelUI <- function(id){
 GRNpanelServer <- function(id, expression.matrix, anno){
   
   stopifnot({
-    !is.reactive(expression.matrix)
+    is.reactive(expression.matrix)
     !is.reactive(anno)
   })
   
@@ -47,7 +47,8 @@ GRNpanelServer <- function(id, expression.matrix, anno){
     
     GRNresults <- eventReactive(input[["goGRN"]], {
       target.genes <- anno$ENSEMBL[match(input[["targetGenes"]], anno$NAME)]
-      GENIE3::GENIE3(expression.matrix, targets = target.genes)
+      set.seed(13)
+      GENIE3::GENIE3(expression.matrix(), targets = target.genes)
     })
     
     GRNplot <- reactive({
@@ -70,7 +71,7 @@ GRNpanelServer <- function(id, expression.matrix, anno){
     output[['download']] <- downloadHandler(
       filename = function() {input[['plotFileName']]},
       content = function(file) {
-        GRNplot() %>% visSave(file)
+        GRNplot() %>% visNetwork::visSave(file)
       }
     )
     

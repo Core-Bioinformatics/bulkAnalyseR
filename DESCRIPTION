@@ -50,4 +50,5 @@ Imports:
     ggnewscale,
     ggrastr,
     GENIE3,
-    visNetwork
+    visNetwork,
+    DT

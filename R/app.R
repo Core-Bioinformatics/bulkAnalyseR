@@ -18,6 +18,7 @@ bulkApp <- function(...){
     theme = shinythemes::shinytheme("flatly"),
     tabPanel("RNAseq",
              tabsetPanel(
+               sampleSelectPanelUI("SampleSelect"),
                QCpanelUI("QC", metadata),
                DEpanelUI("DE", metadata),
                DEplotPanelUI("DEplot"),
@@ -37,7 +38,12 @@ bulkApp <- function(...){
   )
   
   server <- function(input, output, session){
-    QCpanelServer("QC", expression.matrix, metadata)
+    # expression.matrix <- reactiveVal(expression.matrix)
+    # metadata <- reactiveVal(metadata)
+    filteredInputs <- sampleSelectPanelServer("SampleSelect", expression.matrix, metadata)
+    expression.matrix <- reactive(filteredInputs()[["expression.matrix"]])
+    metadata <- reactive(filteredInputs()[["metadata"]])
+    QCpanelServer("QC", expression.matrix, metadata, anno)
     DEresults <- DEpanelServer("DE", expression.matrix, metadata, anno)
     DEplotPanelServer("DEplot", DEresults, anno)
     enrichmentPanelServer("Enrichment", DEresults, organism = "mmusculus")

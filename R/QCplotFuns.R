@@ -127,7 +127,8 @@ plot_pca <- function(
     as.data.frame() %>%
     dplyr::filter(seq_len(nrow(expression.matrix)) %in% 
                     utils::tail(order(rowSums(expression.matrix)), n.abundant)) %>%
-    t() %>%
+    t()
+  expr.PCA.list <- expr.PCA.list[, apply(expr.PCA.list, 2, function(x) max(x) != min(x))] %>%
     stats::prcomp(center = TRUE, scale = TRUE)
   
   expr.PCA <- dplyr::mutate(
@@ -135,11 +136,11 @@ plot_pca <- function(
     name = factor(metadata[, 1], levels = metadata[, 1]),
     condition = factor(metadata[, annotation.id], levels = unique(metadata[, annotation.id]))
   )
-  if (min(table(metadata[,annotation.id]))<=2){
-  expr.PCA.2<-expr.PCA
-  expr.PCA.2$PC1<-expr.PCA.2$PC1*1.001
-  expr.PCA.2$PC2<-expr.PCA.2$PC2*1.001
-  expr.PCA.full<-rbind(expr.PCA,expr.PCA.2)
+  if(min(table(metadata[, annotation.id])) <= 2){
+    expr.PCA.2 <- expr.PCA
+    expr.PCA.2$PC1 <- expr.PCA.2$PC1 * 1.001
+    expr.PCA.2$PC2 <- expr.PCA.2$PC2 * 1.001
+    expr.PCA.full <- rbind(expr.PCA, expr.PCA.2)
   }
   else {expr.PCA.full<-expr.PCA}
   pca.plot <- ggplot(expr.PCA.full, aes(x = .data$PC1, y = .data$PC2, colour = .data$condition)) +
@@ -168,7 +169,7 @@ qc_ma_plot = function(expression.matrix, metadata, i, j, include.guidelines = TR
   zero.mask <- !(expression.matrix[, i] == 0 | expression.matrix[,j] == 0)
   l1 <- log2(expression.matrix[zero.mask, i])
   l2 <- log2(expression.matrix[zero.mask, j])
-
+  
   #calculate M and A
   m <- l1 - l2
   a <- 0.5 * (l1 + l2)
@@ -183,10 +184,10 @@ qc_ma_plot = function(expression.matrix, metadata, i, j, include.guidelines = TR
     ylim(lower.lim, upper.lim)
   
   if(include.guidelines){
-   p <- p + geom_hline(yintercept = 0.5, colour = 'gray60') +
-            geom_hline(yintercept = -0.5, colour = 'gray60') +
-            geom_hline(yintercept = 1, colour = 'gray60') +
-            geom_hline(yintercept = -1, colour = 'gray60')
+    p <- p + geom_hline(yintercept = 0.5, colour = 'gray60') +
+      geom_hline(yintercept = -0.5, colour = 'gray60') +
+      geom_hline(yintercept = 1, colour = 'gray60') +
+      geom_hline(yintercept = -1, colour = 'gray60')
   }
   p
 }

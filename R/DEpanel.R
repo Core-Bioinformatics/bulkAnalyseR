@@ -56,18 +56,24 @@ DEpanelUI <- function(id, metadata){
 DEpanelServer <- function(id, expression.matrix, metadata, anno){
   # check whether inputs (other than id) are reactive or not
   stopifnot({
-    !is.reactive(expression.matrix)
-    !is.reactive(metadata)
+    is.reactive(expression.matrix)
+    is.reactive(metadata)
     !is.reactive(anno)
   })
   
   moduleServer(id, function(input, output, session){
     
+    observe({
+      updateSelectInput(session, 'variable1', choices = unique(metadata()[[ncol(metadata())]]))
+      updateSelectInput(session, 'variable2', choices = unique(metadata()[[ncol(metadata())]]),
+                        selected = unique(metadata()[[ncol(metadata())]])[2])
+    })
+    
     DEresults <- eventReactive(input[["goDE"]], {
-      condition.indices <- metadata[[ncol(metadata)]] %in% c(input[['variable1']], input[['variable2']])
+      condition.indices <- metadata()[[ncol(metadata())]] %in% c(input[['variable1']], input[['variable2']])
       DEtable <- DEanalysis_edger(
-        expression.matrix = expression.matrix[, condition.indices],
-        condition = metadata[[ncol(metadata)]][condition.indices],
+        expression.matrix = expression.matrix()[, condition.indices],
+        condition = metadata()[[ncol(metadata())]][condition.indices],
         var1 = input[['variable1']],
         var2 = input[['variable2']],
         anno = anno
@@ -86,7 +92,7 @@ DEpanelServer <- function(id, expression.matrix, metadata, anno){
     
     #Define output table (only DE genes)
     output[['data']] <- renderDataTable(DEresults()$DEtableSubset)
-
+    
     #DE data download
     output[['download']] <- downloadHandler(
       filename = function() {

@@ -76,8 +76,8 @@ crossPanelUI <- function(id, metadata){
 crossPanelServer <- function(id, expression.matrix, metadata, anno){
   # check whether inputs (other than id) are reactive or not
   stopifnot({
-    !is.reactive(expression.matrix)
-    !is.reactive(metadata)
+    is.reactive(expression.matrix)
+    is.reactive(metadata)
     !is.reactive(anno)
   })
   
@@ -85,20 +85,29 @@ crossPanelServer <- function(id, expression.matrix, metadata, anno){
     
     updateSelectizeInput(session, "geneName", choices = anno$NAME, server = TRUE)
     
+    observe({
+      updateSelectInput(session, 'DE1var1', choices = unique(metadata()[[ncol(metadata())]]))
+      updateSelectInput(session, 'DE1var2', choices = unique(metadata()[[ncol(metadata())]]),
+                        selected = unique(metadata()[[ncol(metadata())]])[2])
+      updateSelectInput(session, 'DE2var1', choices = unique(metadata()[[ncol(metadata())]]))
+      updateSelectInput(session, 'DE2var2', choices = unique(metadata()[[ncol(metadata())]]),
+                        selected = unique(metadata()[[ncol(metadata())]])[2])
+    })
+    
     DEresults <- eventReactive(input[["goDE"]], {
-      condition.indices <- metadata[[ncol(metadata)]] %in% c(input[['DE1var1']], input[['DE1var2']])
+      condition.indices <- metadata()[[ncol(metadata())]] %in% c(input[['DE1var1']], input[['DE1var2']])
       DEtable1 <- DEanalysis_edger(
-        expression.matrix = expression.matrix[, condition.indices],
-        condition = metadata[[ncol(metadata)]][condition.indices],
+        expression.matrix = expression.matrix()[, condition.indices],
+        condition = metadata()[[ncol(metadata())]][condition.indices],
         var1 = input[['DE1var1']],
         var2 = input[['DE1var2']],
         anno = anno
       )
       
-      condition.indices <- metadata[[ncol(metadata)]] %in% c(input[['DE2var1']], input[['DE2var2']])
+      condition.indices <- metadata()[[ncol(metadata())]] %in% c(input[['DE2var1']], input[['DE2var2']])
       DEtable2 <- DEanalysis_edger(
-        expression.matrix = expression.matrix[, condition.indices],
-        condition = metadata[[ncol(metadata)]][condition.indices],
+        expression.matrix = expression.matrix()[, condition.indices],
+        condition = metadata()[[ncol(metadata())]][condition.indices],
         var1 = input[['DE2var1']],
         var2 = input[['DE2var2']],
         anno = anno
