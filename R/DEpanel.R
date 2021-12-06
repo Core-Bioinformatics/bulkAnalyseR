@@ -23,6 +23,9 @@ DEpanelUI <- function(id, metadata){
       # Sidebar panel for inputs ----
       sidebarPanel(
         
+        selectInput(ns('condition'), 'Metadata column to use:', colnames(metadata)[-1], 
+                    selected = colnames(metadata)[ncol(metadata)]),
+        
         # Input: Selector variables to compare
         selectInput(ns('variable1'), 'Condition 1:', unique(metadata[[ncol(metadata)]])),
         selectInput(ns('variable2'), 'Condition 2:', unique(metadata[[ncol(metadata)]]),
@@ -64,16 +67,16 @@ DEpanelServer <- function(id, expression.matrix, metadata, anno){
   moduleServer(id, function(input, output, session){
     
     observe({
-      updateSelectInput(session, 'variable1', choices = unique(metadata()[[ncol(metadata())]]))
-      updateSelectInput(session, 'variable2', choices = unique(metadata()[[ncol(metadata())]]),
-                        selected = unique(metadata()[[ncol(metadata())]])[2])
+      updateSelectInput(session, 'variable1', choices = unique(metadata()[[input[["condition"]]]]))
+      updateSelectInput(session, 'variable2', choices = unique(metadata()[[input[["condition"]]]]),
+                        selected = unique(metadata()[[input[["condition"]]]])[2])
     })
     
     DEresults <- eventReactive(input[["goDE"]], {
-      condition.indices <- metadata()[[ncol(metadata())]] %in% c(input[['variable1']], input[['variable2']])
+      condition.indices <- metadata()[[input[["condition"]]]] %in% c(input[['variable1']], input[['variable2']])
       DEtable <- DEanalysis_edger(
         expression.matrix = expression.matrix()[, condition.indices],
-        condition = metadata()[[ncol(metadata())]][condition.indices],
+        condition = metadata()[[input[["condition"]]]][condition.indices],
         var1 = input[['variable1']],
         var2 = input[['variable2']],
         anno = anno
