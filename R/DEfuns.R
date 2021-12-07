@@ -1,11 +1,12 @@
 #' Perform differential expression (DE) analysis on an expression matrix
 #' @description This function performs DE analysis on an expression using
-#' edgeR, given a vector of sample conditions.
+#' edgeR or DESeq2, given a vector of sample conditions.
 #' @inheritParams DEpanel
 #' @param condition a vector of the same length as the number of columns of
 #' expression.matrix, containing the sample conditions; this is usually the
 #' last column of the metadata
-#' @param var1,var2 conditions (contained in condition) to perform DE between
+#' @param var1,var2 conditions (contained in condition) to perform DE between;
+#' note that DESeq2 requires at least two replicates per condition
 #' @return A tibble with the differential expression results for all genes.
 #' Columns are 
 #' * gene_id (usually ENSEMBL ID matching one of the rows of the
@@ -17,6 +18,11 @@
 #' * pvalAdj (adjusted p-value using the Benjamini Hochberg correction)
 #' @export
 #' @examples
+#' @name DEanalysis
+NULL
+
+#' @rdname DEanalysis
+#' @export
 DEanalysis_edger <- function(
   expression.matrix,
   condition,
@@ -54,3 +60,13 @@ DEanalysis_edger <- function(
     pval = edger.table$PValue,
     pvalAdj = stats::p.adjust(pval, method = 'BH'),
   )}
+
+#' @rdname DEanalysis
+#' @export
+DEanalysis_deseq <- function(
+  expression.matrix,
+  condition,
+  var1,
+  var2,
+  anno
+)
