@@ -27,8 +27,9 @@ DEanalysis_edger <- function(
   expression.matrix <- # Remove genes of constant expression
     expression.matrix[matrixStats::rowMins(expression.matrix) != 
                         matrixStats::rowMaxs(expression.matrix), ]
-    
-  design <- stats::model.matrix(~ 0 + as.factor(condition))
+  
+  condition <- as.factor(condition)  
+  design <- stats::model.matrix(~ 0 + condition)
   
   edger <- edgeR::DGEList(counts = expression.matrix, group = condition)
   edger <- edgeR::estimateDisp(edger, design)

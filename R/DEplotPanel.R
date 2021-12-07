@@ -98,7 +98,7 @@ DEplotPanelServer <- function(id, DEresults, anno){
           pval.threshold = results$pvalThreshold, 
           lfc.threshold = results$lfcThreshold,
           add.labels.auto = input[["autoLabel"]],
-          n.labels.auto = c(10, 10),
+          n.labels.auto = c(5, 5, 5),
           add.labels.custom = length(input[["geneName"]]) > 0,
           genes.to.label = input[["geneName"]]
         )
