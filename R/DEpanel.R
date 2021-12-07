@@ -31,6 +31,8 @@ DEpanelUI <- function(id, metadata){
         selectInput(ns('variable2'), 'Condition 2:', unique(metadata[[ncol(metadata)]]),
                     selected = unique(metadata[[ncol(metadata)]])[2]),
         
+        selectInput(ns('pipeline'), 'DE pipeline:', c("edgeR", "DESeq2")),
+        
         #DE thresholds
         sliderInput(ns('lfcThreshold'), label = 'logFC threshold',
                     min = 0, value = 1, max = 5, step = 0.5),
@@ -70,6 +72,16 @@ DEpanelServer <- function(id, expression.matrix, metadata, anno){
       updateSelectInput(session, 'variable1', choices = unique(metadata()[[input[["condition"]]]]))
       updateSelectInput(session, 'variable2', choices = unique(metadata()[[input[["condition"]]]]),
                         selected = unique(metadata()[[input[["condition"]]]])[2])
+    })
+    
+    observe({
+      condition.indices <- metadata()[[input[["condition"]]]] %in% c(input[['variable1']], input[['variable2']])
+      if(any(summary(as.factor(metadata()[[input[["condition"]]]][condition.indices])) < 2)){
+        choices <- "edgeR"
+      }else{
+        choices <- c("edgeR", "DESeq2")
+      }
+      updateSelectInput(session, 'pipeline', choices = choices)
     })
     
     DEresults <- eventReactive(input[["goDE"]], {
