@@ -16,9 +16,15 @@ crossPanelUI <- function(id, metadata){
     sidebarLayout(
       
       sidebarPanel(
+        selectInput(ns('condition1'), 'Metadata column to use for comparison #1:', colnames(metadata)[-1], 
+                    selected = colnames(metadata)[ncol(metadata)]),
+        
         selectInput(ns('DE1var1'), 'DE comparison #1 Condition 1:', unique(metadata[[ncol(metadata)]])),
         selectInput(ns('DE1var2'), 'DE comparison #1 Condition 2:', unique(metadata[[ncol(metadata)]]),
                     selected = unique(metadata[[ncol(metadata)]])[2]),
+        
+        selectInput(ns('condition2'), 'Metadata column to use for comparison #2:', colnames(metadata)[-1], 
+                    selected = colnames(metadata)[ncol(metadata)]),
         
         selectInput(ns('DE2var1'), 'DE comparison #2 Condition 1:', unique(metadata[[ncol(metadata)]])),
         selectInput(ns('DE2var2'), 'DE comparison #2 Condition 2:', unique(metadata[[ncol(metadata)]]),
@@ -86,28 +92,28 @@ crossPanelServer <- function(id, expression.matrix, metadata, anno){
     updateSelectizeInput(session, "geneName", choices = anno$NAME, server = TRUE)
     
     observe({
-      updateSelectInput(session, 'DE1var1', choices = unique(metadata()[[ncol(metadata())]]))
-      updateSelectInput(session, 'DE1var2', choices = unique(metadata()[[ncol(metadata())]]),
-                        selected = unique(metadata()[[ncol(metadata())]])[2])
-      updateSelectInput(session, 'DE2var1', choices = unique(metadata()[[ncol(metadata())]]))
-      updateSelectInput(session, 'DE2var2', choices = unique(metadata()[[ncol(metadata())]]),
-                        selected = unique(metadata()[[ncol(metadata())]])[2])
+      updateSelectInput(session, 'DE1var1', choices = unique(metadata()[[input[["condition1"]]]]))
+      updateSelectInput(session, 'DE1var2', choices = unique(metadata()[[input[["condition1"]]]]),
+                        selected = unique(metadata()[[input[["condition1"]]]])[2])
+      updateSelectInput(session, 'DE2var1', choices = unique(metadata()[[input[["condition2"]]]]))
+      updateSelectInput(session, 'DE2var2', choices = unique(metadata()[[input[["condition2"]]]]),
+                        selected = unique(metadata()[[input[["condition2"]]]])[2])
     })
     
     DEresults <- eventReactive(input[["goDE"]], {
-      condition.indices <- metadata()[[ncol(metadata())]] %in% c(input[['DE1var1']], input[['DE1var2']])
+      condition.indices <- metadata()[[input[["condition1"]]]] %in% c(input[['DE1var1']], input[['DE1var2']])
       DEtable1 <- DEanalysis_edger(
         expression.matrix = expression.matrix()[, condition.indices],
-        condition = metadata()[[ncol(metadata())]][condition.indices],
+        condition = metadata()[[input[["condition1"]]]][condition.indices],
         var1 = input[['DE1var1']],
         var2 = input[['DE1var2']],
         anno = anno
       )
       
-      condition.indices <- metadata()[[ncol(metadata())]] %in% c(input[['DE2var1']], input[['DE2var2']])
+      condition.indices <- metadata()[[input[["condition2"]]]] %in% c(input[['DE2var1']], input[['DE2var2']])
       DEtable2 <- DEanalysis_edger(
         expression.matrix = expression.matrix()[, condition.indices],
-        condition = metadata()[[ncol(metadata())]][condition.indices],
+        condition = metadata()[[input[["condition2"]]]][condition.indices],
         var1 = input[['DE2var1']],
         var2 = input[['DE2var2']],
         anno = anno

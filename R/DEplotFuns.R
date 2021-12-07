@@ -246,9 +246,8 @@ volcano_enhance <- function(
     if(add.labels.auto){
       if(length(n.labels.auto) == 1) n.labels.auto <- rep(n.labels.auto, 3)
       df.significant <- dplyr::filter(df, 
-                                      abs(log2FC) > lfc.threshold,
-                                      log10pval < logp.threshold,
                                       !(name %in% genes.to.label))
+      df.significant <- df.significant[order(abs(df.significant$log10pval), decreasing=TRUE), ]
       df.lowest.p.vals <- head(df.significant, n.labels.auto[1])
       df.rest <- tail(df.significant, nrow(df.significant) - n.labels.auto[1])
       
@@ -256,8 +255,15 @@ volcano_enhance <- function(
       df.highest.lfc <- head(df.rest, n.labels.auto[2])
       df.rest <- tail(df.rest, nrow(df.rest) - n.labels.auto[2])
       
-      df.rest <- df.rest[order(df.rest$log2exp, decreasing=TRUE), ]
-      df.highest.abn <- head(df.rest, n.labels.auto[3])
+      df.rest <- dplyr::filter(df.rest, 
+                               abs(log2FC) > lfc.threshold,
+                               log10pval < logp.threshold)
+      if(nrow(df.rest) > 0){
+        df.rest <- df.rest[order(df.rest$log2exp, decreasing=TRUE), ]
+        df.highest.abn <- head(df.rest, n.labels.auto[3])
+      }else{
+        df.highest.abn <- tibble::tibble()
+      }
       
       df.label <- rbind(df.lowest.p.vals, df.highest.lfc, df.highest.abn, df.label) %>%
         dplyr::distinct(name, .keep_all = TRUE)
@@ -305,7 +311,7 @@ ma_plot <- function(
     dplyr::filter(!is.na(log10pval))
   
   p <- ggplot(data = df, 
-                mapping = aes(x = log2exp, y = log2FC)) +
+              mapping = aes(x = log2exp, y = log2FC)) +
     ggplot2::theme_minimal() +
     xlab("Average log2(exp)") +
     ylab("log2(FC)")
@@ -464,9 +470,8 @@ ma_enhance <- function(
     if(add.labels.auto){
       if(length(n.labels.auto) == 1) n.labels.auto <- rep(n.labels.auto, 3)
       df.significant <- dplyr::filter(df, 
-                                      abs(log2FC) > lfc.threshold,
-                                      log10pval < logp.threshold,
                                       !(name %in% genes.to.label))
+      df.significant <- df.significant[order(abs(df.significant$log10pval), decreasing=TRUE), ]
       df.lowest.p.vals <- head(df.significant, n.labels.auto[1])
       df.rest <- tail(df.significant, nrow(df.significant) - n.labels.auto[1])
       
@@ -474,8 +479,15 @@ ma_enhance <- function(
       df.highest.lfc <- head(df.rest, n.labels.auto[2])
       df.rest <- tail(df.rest, nrow(df.rest) - n.labels.auto[2])
       
-      df.rest <- df.rest[order(df.rest$log2exp, decreasing=TRUE), ]
-      df.highest.abn <- head(df.rest, n.labels.auto[3])
+      df.rest <- dplyr::filter(df.rest, 
+                               abs(log2FC) > lfc.threshold,
+                               log10pval < logp.threshold)
+      if(nrow(df.rest) > 0){
+        df.rest <- df.rest[order(df.rest$log2exp, decreasing=TRUE), ]
+        df.highest.abn <- head(df.rest, n.labels.auto[3])
+      }else{
+        df.highest.abn <- tibble::tibble()
+      }
       
       df.label <- rbind(df.lowest.p.vals, df.highest.lfc, df.highest.abn, df.label) %>%
         dplyr::distinct(name, .keep_all = TRUE)
