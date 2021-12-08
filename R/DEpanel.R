@@ -31,6 +31,8 @@ DEpanelUI <- function(id, metadata){
         selectInput(ns('variable2'), 'Condition 2:', unique(metadata[[ncol(metadata)]]),
                     selected = unique(metadata[[ncol(metadata)]])[2]),
         
+        selectInput(ns('pipeline'), 'DE pipeline:', c("edgeR", "DESeq2")),
+        
         #DE thresholds
         sliderInput(ns('lfcThreshold'), label = 'logFC threshold',
                     min = 0, value = 1, max = 5, step = 0.5),
@@ -72,8 +74,19 @@ DEpanelServer <- function(id, expression.matrix, metadata, anno){
                         selected = unique(metadata()[[input[["condition"]]]])[2])
     })
     
+    observe({
+      condition.indices <- metadata()[[input[["condition"]]]] %in% c(input[['variable1']], input[['variable2']])
+      if(any(summary(as.factor(metadata()[[input[["condition"]]]][condition.indices])) < 2)){
+        choices <- "edgeR"
+      }else{
+        choices <- c("edgeR", "DESeq2")
+      }
+      updateSelectInput(session, 'pipeline', choices = choices)
+    })
+    
     DEresults <- eventReactive(input[["goDE"]], {
       condition.indices <- metadata()[[input[["condition"]]]] %in% c(input[['variable1']], input[['variable2']])
+      if(input[["pipeline"]] == "edgeR"){
       DEtable <- DEanalysis_edger(
         expression.matrix = expression.matrix()[, condition.indices],
         condition = metadata()[[input[["condition"]]]][condition.indices],
@@ -81,6 +94,15 @@ DEpanelServer <- function(id, expression.matrix, metadata, anno){
         var2 = input[['variable2']],
         anno = anno
       )
+      }else if(input[["pipeline"]] == "DESeq2"){
+        DEtable <- DEanalysis_deseq2(
+          expression.matrix = expression.matrix()[, condition.indices],
+          condition = metadata()[[input[["condition"]]]][condition.indices],
+          var1 = input[['variable1']],
+          var2 = input[['variable2']],
+          anno = anno
+        )
+      }
       
       DEtableSubset <- DEtable %>%
         dplyr::filter(abs(log2FC) > input[["lfcThreshold"]] & pvalAdj < input[["pvalThreshold"]])

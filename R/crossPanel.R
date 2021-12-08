@@ -23,12 +23,16 @@ crossPanelUI <- function(id, metadata){
         selectInput(ns('DE1var2'), 'DE comparison #1 Condition 2:', unique(metadata[[ncol(metadata)]]),
                     selected = unique(metadata[[ncol(metadata)]])[2]),
         
+        selectInput(ns('pipeline1'), 'DE pipeline for comparison #1:', c("edgeR", "DESeq2")),
+        
         selectInput(ns('condition2'), 'Metadata column to use for comparison #2:', colnames(metadata)[-1], 
                     selected = colnames(metadata)[ncol(metadata)]),
         
         selectInput(ns('DE2var1'), 'DE comparison #2 Condition 1:', unique(metadata[[ncol(metadata)]])),
         selectInput(ns('DE2var2'), 'DE comparison #2 Condition 2:', unique(metadata[[ncol(metadata)]]),
                     selected = unique(metadata[[ncol(metadata)]])[2]),
+        
+        selectInput(ns('pipeline2'), 'DE pipeline for comparison #2:', c("edgeR", "DESeq2")),
         
         sliderInput(ns('lfcThreshold'), label = 'logFC threshold',
                     min = 0, value = 1, max = 5, step = 0.5),
@@ -100,24 +104,64 @@ crossPanelServer <- function(id, expression.matrix, metadata, anno){
                         selected = unique(metadata()[[input[["condition2"]]]])[2])
     })
     
+    observe({
+      condition.indices <- metadata()[[input[["condition1"]]]] %in% c(input[['DE1var1']], input[['DE1var2']])
+      if(any(summary(as.factor(metadata()[[input[["condition1"]]]][condition.indices])) < 2)){
+        choices <- "edgeR"
+      }else{
+        choices <- c("edgeR", "DESeq2")
+      }
+      updateSelectInput(session, 'pipeline1', choices = choices)
+    })
+    
+    observe({
+      condition.indices <- metadata()[[input[["condition2"]]]] %in% c(input[['DE2var1']], input[['DE2var2']])
+      if(any(summary(as.factor(metadata()[[input[["condition2"]]]][condition.indices])) < 2)){
+        choices <- "edgeR"
+      }else{
+        choices <- c("edgeR", "DESeq2")
+      }
+      updateSelectInput(session, 'pipeline2', choices = choices)
+    })
+    
     DEresults <- eventReactive(input[["goDE"]], {
       condition.indices <- metadata()[[input[["condition1"]]]] %in% c(input[['DE1var1']], input[['DE1var2']])
-      DEtable1 <- DEanalysis_edger(
-        expression.matrix = expression.matrix()[, condition.indices],
-        condition = metadata()[[input[["condition1"]]]][condition.indices],
-        var1 = input[['DE1var1']],
-        var2 = input[['DE1var2']],
-        anno = anno
-      )
+      if(input[["pipeline1"]] == "edgeR"){
+        DEtable1 <- DEanalysis_edger(
+          expression.matrix = expression.matrix()[, condition.indices],
+          condition = metadata()[[input[["condition1"]]]][condition.indices],
+          var1 = input[['DE1var1']],
+          var2 = input[['DE1var2']],
+          anno = anno
+        )
+      }else if(input[["pipeline1"]] == "DESeq2"){
+        DEtable1 <- DEanalysis_deseq2(
+          expression.matrix = expression.matrix()[, condition.indices],
+          condition = metadata()[[input[["condition1"]]]][condition.indices],
+          var1 = input[['DE1var1']],
+          var2 = input[['DE1var2']],
+          anno = anno
+        )
+      }
       
       condition.indices <- metadata()[[input[["condition2"]]]] %in% c(input[['DE2var1']], input[['DE2var2']])
-      DEtable2 <- DEanalysis_edger(
-        expression.matrix = expression.matrix()[, condition.indices],
-        condition = metadata()[[input[["condition2"]]]][condition.indices],
-        var1 = input[['DE2var1']],
-        var2 = input[['DE2var2']],
-        anno = anno
-      )
+      if(input[["pipeline2"]] == "edgeR"){
+        DEtable2 <- DEanalysis_edger(
+          expression.matrix = expression.matrix()[, condition.indices],
+          condition = metadata()[[input[["condition2"]]]][condition.indices],
+          var1 = input[['DE2var1']],
+          var2 = input[['DE2var2']],
+          anno = anno
+        )
+      }else if(input[["pipeline2"]] == "DESeq2"){
+        DEtable2 <- DEanalysis_deseq2(
+          expression.matrix = expression.matrix()[, condition.indices],
+          condition = metadata()[[input[["condition2"]]]][condition.indices],
+          var1 = input[['DE2var1']],
+          var2 = input[['DE2var2']],
+          anno = anno
+        )
+      }
       
       DEtable1Subset <- DEtable1 %>%
         dplyr::filter(abs(log2FC) > input[["lfcThreshold"]] & pvalAdj < input[["pvalThreshold"]])
