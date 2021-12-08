@@ -1,1 +1,1 @@
-# shiny-bulk-template
+# bulkAnalyseR

@@ -28,6 +28,7 @@ Imports:
     shiny,
     gprofiler2,
     edgeR,
+    DESeq2,
     stats,
     ggrepel,
     utils,
