@@ -126,22 +126,42 @@ crossPanelServer <- function(id, expression.matrix, metadata, anno){
     
     DEresults <- eventReactive(input[["goDE"]], {
       condition.indices <- metadata()[[input[["condition1"]]]] %in% c(input[['DE1var1']], input[['DE1var2']])
-      DEtable1 <- DEanalysis_edger(
-        expression.matrix = expression.matrix()[, condition.indices],
-        condition = metadata()[[input[["condition1"]]]][condition.indices],
-        var1 = input[['DE1var1']],
-        var2 = input[['DE1var2']],
-        anno = anno
-      )
+      if(input[["pipeline1"]] == "edgeR"){
+        DEtable1 <- DEanalysis_edger(
+          expression.matrix = expression.matrix()[, condition.indices],
+          condition = metadata()[[input[["condition1"]]]][condition.indices],
+          var1 = input[['DE1var1']],
+          var2 = input[['DE1var2']],
+          anno = anno
+        )
+      }else if(input[["pipeline1"]] == "DESeq2"){
+        DEtable1 <- DEanalysis_deseq2(
+          expression.matrix = expression.matrix()[, condition.indices],
+          condition = metadata()[[input[["condition1"]]]][condition.indices],
+          var1 = input[['DE1var1']],
+          var2 = input[['DE1var2']],
+          anno = anno
+        )
+      }
       
       condition.indices <- metadata()[[input[["condition2"]]]] %in% c(input[['DE2var1']], input[['DE2var2']])
-      DEtable2 <- DEanalysis_edger(
-        expression.matrix = expression.matrix()[, condition.indices],
-        condition = metadata()[[input[["condition2"]]]][condition.indices],
-        var1 = input[['DE2var1']],
-        var2 = input[['DE2var2']],
-        anno = anno
-      )
+      if(input[["pipeline2"]] == "edgeR"){
+        DEtable2 <- DEanalysis_edger(
+          expression.matrix = expression.matrix()[, condition.indices],
+          condition = metadata()[[input[["condition2"]]]][condition.indices],
+          var1 = input[['DE2var1']],
+          var2 = input[['DE2var2']],
+          anno = anno
+        )
+      }else if(input[["pipeline2"]] == "DESeq2"){
+        DEtable2 <- DEanalysis_deseq2(
+          expression.matrix = expression.matrix()[, condition.indices],
+          condition = metadata()[[input[["condition2"]]]][condition.indices],
+          var1 = input[['DE2var1']],
+          var2 = input[['DE2var2']],
+          anno = anno
+        )
+      }
       
       DEtable1Subset <- DEtable1 %>%
         dplyr::filter(abs(log2FC) > input[["lfcThreshold"]] & pvalAdj < input[["pvalThreshold"]])
