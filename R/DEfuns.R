@@ -59,14 +59,38 @@ DEanalysis_edger <- function(
     log2FC = edger.table$logFC,
     pval = edger.table$PValue,
     pvalAdj = stats::p.adjust(pval, method = 'BH'),
-  )}
+  )
+}
 
 #' @rdname DEanalysis
 #' @export
-DEanalysis_deseq <- function(
+DEanalysis_deseq2 <- function(
   expression.matrix,
   condition,
   var1,
   var2,
   anno
-)
+){
+  
+  expression.matrix <- round(expression.matrix)
+  expression.matrix <- # Remove genes of constant expression
+    expression.matrix[matrixStats::rowMins(expression.matrix) != 
+                        matrixStats::rowMaxs(expression.matrix), ]
+  
+  condition <- as.factor(condition)  
+  design <- stats::model.matrix(~ 0 + condition)
+  
+  deseq <- DESeq2::DESeqDataSetFromMatrix(expression.matrix, data.frame(condition), design)
+  deseq <- DESeq2::DESeq(deseq)
+  if(var1 < var2) contrast <- c(-1, 1) else contrast <- c(1, -1)
+  deseq.res <- DESeq2::results(deseq, contrast = contrast)
+  
+  output <- tibble::tibble(
+    gene_id = rownames(expression.matrix),
+    gene_name = anno$NAME[match(gene_id, anno$ENSEMBL)],
+    log2exp = log2(rowMeans(expression.matrix)),
+    log2FC = deseq.res$log2FoldChange,
+    pval = deseq.res$pvalue,
+    pvalAdj = stats::p.adjust(pval, method = 'BH'),
+  )
+}

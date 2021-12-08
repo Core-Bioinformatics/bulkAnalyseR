@@ -86,6 +86,7 @@ DEpanelServer <- function(id, expression.matrix, metadata, anno){
     
     DEresults <- eventReactive(input[["goDE"]], {
       condition.indices <- metadata()[[input[["condition"]]]] %in% c(input[['variable1']], input[['variable2']])
+      if(input[["pipeline"]] == "edgeR"){
       DEtable <- DEanalysis_edger(
         expression.matrix = expression.matrix()[, condition.indices],
         condition = metadata()[[input[["condition"]]]][condition.indices],
@@ -93,6 +94,15 @@ DEpanelServer <- function(id, expression.matrix, metadata, anno){
         var2 = input[['variable2']],
         anno = anno
       )
+      }else if(input[["pipeline"]] == "DESeq2"){
+        DEtable <- DEanalysis_deseq2(
+          expression.matrix = expression.matrix()[, condition.indices],
+          condition = metadata()[[input[["condition"]]]][condition.indices],
+          var1 = input[['variable1']],
+          var2 = input[['variable2']],
+          anno = anno
+        )
+      }
       
       DEtableSubset <- DEtable %>%
         dplyr::filter(abs(log2FC) > input[["lfcThreshold"]] & pvalAdj < input[["pvalThreshold"]])
