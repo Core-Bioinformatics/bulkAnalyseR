@@ -27,3 +27,15 @@ The heatmap as detailed in the ComplexHeatmap package.
 \description{
 This function creates a heatmap to visualise an expression matrix
 }
+\examples{
+expression.matrix <- as.matrix(read.csv(
+  system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+  row.names = 1
+))
+expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
+metadata <- data.frame(
+  srr = colnames(expression.matrix.preproc), 
+  timepoint = rep(c("0h", "12h", "36h"), each = 2)
+)
+print(plot_heatmap(head(expression.matrix.preproc), NULL, metadata))
+}

@@ -23,7 +23,7 @@ proceeding without denoising data is not recommended}
 noise analysis (printed to the console); default is FALSE}
 
 \item{normalisation.method}{the normalisation method to be used; default is
-quantile; any unrecognised input will reusult in no normalisation being
+quantile; any unrecognised input will result in no normalisation being
 applied, but proceeding with un-normalised data is not recommended}
 
 \item{...}{optional arguments passed on to \code{noisyr::noisyr_counts()}}
