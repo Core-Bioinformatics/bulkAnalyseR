@@ -102,9 +102,11 @@ QCpanelServer <- function(id, expression.matrix, metadata, anno){
     })
     output[['pca']] <- renderPlot(pca.plot())
     
-    ma.plot <- reactive({
+    observe({
       updateSelectInput(session, 'ma.sample1', choices = metadata()[, 1], selected = metadata()[1, 1])
       updateSelectInput(session, 'ma.sample2', choices = metadata()[, 1], selected = metadata()[2, 1])
+    })
+    ma.plot <- reactive({
       df <- tibble::tibble(
         gene_id = rownames(expression.matrix()),
         gene_name = anno$NAME[match(gene_id, anno$ENSEMBL)],
