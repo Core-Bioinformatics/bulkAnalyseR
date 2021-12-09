@@ -50,6 +50,15 @@ DEplotPanelUI <- function(id){
           onStatus = FALSE
         ),
       ),
+      shinyWidgets::switchInput(
+        inputId = ns("highlightSelected"),
+        label = "Highlight selected DE genes?",
+        labelWidth = "80px",
+        onLabel = 'No',
+        offLabel = 'Yes',
+        value = FALSE,
+        onStatus = FALSE
+      ),
       selectInput(ns("geneName"), "Genes to highlight:", multiple = TRUE, choices = character(0)),
       textInput(ns('plotFileName'), 'File name for plot download', value ='DEPlot.png'),
       downloadButton(ns('download'), 'Download Plot'),
@@ -78,7 +87,17 @@ DEplotPanelServer <- function(id, DEresults, anno){
     updateSelectizeInput(session, "geneName", choices = anno$NAME, server = TRUE)
     
     DEplot <- reactive({
-      results = DEresults()
+      results = DEresults()$DE()
+      selectedGenes = DEresults()$selectedGenes()
+      
+      if(!(input[["highlightSelected"]]) & length(selectedGenes)){
+        selectedGeneNames <- anno$NAME[match(selectedGenes, anno$ENSEMBL)]
+        highlightGenes <- c(selectedGeneNames, input[["geneName"]])
+      }
+      else{
+        highlightGenes <- input[["geneName"]]
+      }
+      
 
       if(input[['plotType']] == 'Volcano'){
         myplot <- volcano_plot(
@@ -87,8 +106,8 @@ DEplotPanelServer <- function(id, DEresults, anno){
           lfc.threshold = results$lfcThreshold,
           add.labels.auto = input[["autoLabel"]],
           n.labels.auto = c(5, 5, 5),
-          add.labels.custom = length(input[["geneName"]]) > 0,
-          genes.to.label = input[["geneName"]],
+          add.labels.custom = length(highlightGenes) > 0,
+          genes.to.label = highlightGenes,
           log10pval.cap = !(input[['capPVal']])
         )
       }
@@ -99,8 +118,8 @@ DEplotPanelServer <- function(id, DEresults, anno){
           lfc.threshold = results$lfcThreshold,
           add.labels.auto = input[["autoLabel"]],
           n.labels.auto = c(5, 5, 5),
-          add.labels.custom = length(input[["geneName"]]) > 0,
-          genes.to.label = input[["geneName"]]
+          add.labels.custom = length(highlightGenes) > 0,
+          genes.to.label = highlightGenes
         )
       }
       
@@ -113,7 +132,7 @@ DEplotPanelServer <- function(id, DEresults, anno){
     #Define output table when you click on gene with all genes or only DE
     output[['data']] <- renderTable({
       req(input[['plot_click']])
-      results = DEresults()
+      results = DEresults()$DE()
       if (input[['allGenes']]){
         data <- results$DEtable
       }else{

@@ -6,6 +6,7 @@
 \usage{
 preprocessExpressionMatrix(
   expression.matrix,
+  denoise = TRUE,
   output.plot = FALSE,
   normalisation.method = c("quantile", "rpm"),
   ...
@@ -15,11 +16,15 @@ preprocessExpressionMatrix(
 \item{expression.matrix}{the expression matrix; rows correspond to genes and
 columns correspond to samples}
 
+\item{denoise}{whether to use noisyR to denoise the expression matrix;
+proceeding without denoising data is not recommended}
+
 \item{output.plot}{whether to create an expression-similarity plot for the
 noise analysis (printed to the console); default is FALSE}
 
 \item{normalisation.method}{the normalisation method to be used; default is
-quantile}
+quantile; any unrecognised input will reusult in no normalisation being
+applied, but proceeding with un-normalised data is not recommended}
 
 \item{...}{optional arguments passed on to \code{noisyr::noisyr_counts()}}
 }
