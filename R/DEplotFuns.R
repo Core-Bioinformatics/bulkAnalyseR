@@ -265,25 +265,19 @@ volcano_enhance <- function(
     
     if(add.labels.auto){
       if(length(n.labels.auto) == 1) n.labels.auto <- rep(n.labels.auto, 3)
-      df.significant <- dplyr::filter(df, 
-                                      !(name %in% genes.to.label))
-      df.significant <- df.significant[order(abs(df.significant$log10pval), decreasing=TRUE), ]
-      df.lowest.p.vals <- utils::head(df.significant, n.labels.auto[1])
-      df.rest <- utils::tail(df.significant, nrow(df.significant) - n.labels.auto[1])
+      df.significant <- dplyr::filter(df, !(name %in% genes.to.label))
       
-      df.rest <- df.rest[order(abs(df.rest$log2FC), decreasing=TRUE), ]
-      df.highest.lfc <- utils::head(df.rest, n.labels.auto[2])
+      df.significant <- df.significant[order(abs(df.significant$log2FC), decreasing=TRUE), ]
+      df.highest.lfc <- utils::head(df.significant, n.labels.auto[1])
+      df.rest <- utils::tail(df.significant, nrow(df.significant) - n.labels.auto[1]) %>%
+        dplyr::filter(abs(log2FC) > lfc.threshold, log10pval < logp.threshold)
+      
+      df.rest <- df.rest[order(abs(df.rest$log10pval), decreasing=TRUE), ]
+      df.lowest.p.vals <- utils::head(df.rest, n.labels.auto[2])
       df.rest <- utils::tail(df.rest, nrow(df.rest) - n.labels.auto[2])
       
-      df.rest <- dplyr::filter(df.rest, 
-                               abs(log2FC) > lfc.threshold,
-                               log10pval < logp.threshold)
-      if(nrow(df.rest) > 0){
-        df.rest <- df.rest[order(df.rest$log2exp, decreasing=TRUE), ]
-        df.highest.abn <- utils::head(df.rest, n.labels.auto[3])
-      }else{
-        df.highest.abn <- tibble::tibble()
-      }
+      df.rest <- df.rest[order(df.rest$log2exp, decreasing=TRUE), ]
+      df.highest.abn <- utils::head(df.rest, n.labels.auto[3])
       
       df.label <- rbind(df.lowest.p.vals, df.highest.lfc, df.highest.abn, df.label) %>%
         dplyr::distinct(name, .keep_all = TRUE)
@@ -293,7 +287,7 @@ volcano_enhance <- function(
     vp <- vp +
       ggrepel::geom_label_repel(data = df.label, 
                                 mapping = aes(x = log2FC, y = -log10pval, label = name),
-                                max.overlaps = nrow(df.label),
+                                max.overlaps = Inf,
                                 force = label.force,
                                 point.size = NA)
   }
@@ -510,25 +504,19 @@ ma_enhance <- function(
     
     if(add.labels.auto){
       if(length(n.labels.auto) == 1) n.labels.auto <- rep(n.labels.auto, 3)
-      df.significant <- dplyr::filter(df, 
-                                      !(name %in% genes.to.label))
-      df.significant <- df.significant[order(abs(df.significant$log10pval), decreasing=TRUE), ]
-      df.lowest.p.vals <- utils::head(df.significant, n.labels.auto[1])
-      df.rest <- utils::tail(df.significant, nrow(df.significant) - n.labels.auto[1])
+      df.significant <- dplyr::filter(df, !(name %in% genes.to.label))
+      browser()
+      df.significant <- df.significant[order(abs(df.significant$log2FC), decreasing=TRUE), ]
+      df.highest.lfc <- utils::head(df.significant, n.labels.auto[1])
+      df.rest <- utils::tail(df.significant, nrow(df.significant) - n.labels.auto[1]) %>%
+        dplyr::filter(abs(log2FC) > lfc.threshold, log10pval < logp.threshold)
       
-      df.rest <- df.rest[order(abs(df.rest$log2FC), decreasing=TRUE), ]
-      df.highest.lfc <- utils::head(df.rest, n.labels.auto[2])
+      df.rest <- df.rest[order(abs(df.rest$log10pval), decreasing=TRUE), ]
+      df.lowest.p.vals <- utils::head(df.rest, n.labels.auto[2])
       df.rest <- utils::tail(df.rest, nrow(df.rest) - n.labels.auto[2])
       
-      df.rest <- dplyr::filter(df.rest, 
-                               abs(log2FC) > lfc.threshold,
-                               log10pval < logp.threshold)
-      if(nrow(df.rest) > 0){
-        df.rest <- df.rest[order(df.rest$log2exp, decreasing=TRUE), ]
-        df.highest.abn <- utils::head(df.rest, n.labels.auto[3])
-      }else{
-        df.highest.abn <- tibble::tibble()
-      }
+      df.rest <- df.rest[order(df.rest$log2exp, decreasing=TRUE), ]
+      df.highest.abn <- utils::head(df.rest, n.labels.auto[3])
       
       df.label <- rbind(df.lowest.p.vals, df.highest.lfc, df.highest.abn, df.label) %>%
         dplyr::distinct(name, .keep_all = TRUE)
@@ -538,7 +526,7 @@ ma_enhance <- function(
     p <- p +
       ggrepel::geom_label_repel(data = df.label, 
                                 mapping = aes(x = log2exp, y = log2FC, label = name),
-                                max.overlaps = nrow(df.label),
+                                max.overlaps = Inf,
                                 force = label.force,
                                 point.size = NA)
   }

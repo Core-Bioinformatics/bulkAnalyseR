@@ -141,7 +141,11 @@ cross_plot = function(
                      "did you forget to supply genes.to.label or annotation?"))
     }
     cp <- cp +
-      ggrepel::geom_label_repel(aes(x = lfc1, y = lfc2, label = gene_name), df.label)
+      ggrepel::geom_label_repel(data = df.label,
+                                mapping = aes(x = lfc1, y = lfc2, label = gene_name),
+                                max.overlaps = Inf,
+                                force = label.force,
+                                point.size = NA)
   }
   
   if(labels.per.region > 0){
@@ -166,7 +170,7 @@ cross_plot = function(
     cp <- cp +
       ggrepel::geom_label_repel(data = df.top.distances,
                                 mapping = aes(x = lfc1, y = lfc2, label = gene_name),
-                                max.overlaps = nrow(df.top.distances),
+                                max.overlaps = Inf,
                                 force = label.force,
                                 point.size = NA)
   }

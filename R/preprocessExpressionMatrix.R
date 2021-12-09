@@ -4,10 +4,13 @@
 #' \code{\link{generateShinyApp}}.
 #' @param expression.matrix the expression matrix; rows correspond to genes and
 #' columns correspond to samples
+#' @param denoise whether to use noisyR to denoise the expression matrix; 
+#' proceeding without denoising data is not recommended
 #' @param output.plot whether to create an expression-similarity plot for the
 #' noise analysis (printed to the console); default is FALSE
 #' @param normalisation.method the normalisation method to be used; default is
-#' quantile
+#' quantile; any unrecognised input will reusult in no normalisation being 
+#' applied, but proceeding with un-normalised data is not recommended
 #' @param ... optional arguments passed on to \code{noisyr::noisyr_counts()}
 #' @return The denoised, normalised expression matrix; some rows (genes)
 #' may have been removed by noisyR.
@@ -20,11 +23,16 @@
 #' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
 preprocessExpressionMatrix <- function(
   expression.matrix,
+  denoise = TRUE,
   output.plot = FALSE,
   normalisation.method = c("quantile", "rpm"),
   ...
 ){
-  expression.matrix <- noisyr_counts_with_plot(expression.matrix, output.plot = output.plot, ...)
+  if(denoise){
+    expression.matrix <- noisyr_counts_with_plot(expression.matrix, output.plot = output.plot, ...)
+  }else{
+    warning("Denoise was set to FALSE, proceeding without denoising data is not recommended")
+  }
   if(normalisation.method[1] == "quantile"){
     message("Performing ", normalisation.method[1], " normalisation...")
     expression.matrix.normalised <- preprocessCore::normalize.quantiles(expression.matrix)
