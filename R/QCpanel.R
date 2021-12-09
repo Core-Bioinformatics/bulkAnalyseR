@@ -143,9 +143,9 @@ QCpanelServer <- function(id, expression.matrix, metadata, anno){
     output[['downloadJSIPlot']] <- downloadHandler(
       filename = function() { input[['plotJSIFileName']] },
       content = function(file) {
-        png(file)
+        grDevices::png(file)
         print(jaccard.plot())
-        dev.off()
+        grDevices::dev.off()
         
       }
     )

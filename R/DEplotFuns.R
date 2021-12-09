@@ -23,13 +23,36 @@
 #' the parameter genes.to.label must also be specified; default is FALSE
 #' @param ... parameters passed on to \code{\link{volcano_enhance}}
 #' @return The volcano plot as a ggplot object.
-#' @seealso \code{\link{volcano_enhance}}
 #' @export
 #' @examples
+#' expression.matrix <- as.matrix(read.csv(
+#'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+#'   row.names = 1
+#' ))
+#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[, 1:4]
+#' 
+#' anno <- AnnotationDbi::select(
+#'   getExportedValue('org.Mm.eg.db', 'org.Mm.eg.db'),
+#'   keys = rownames(expression.matrix),
+#'   keytype = 'ENSEMBL',
+#'   columns = 'SYMBOL'
+#' ) %>%
+#'   dplyr::distinct(ENSEMBL, .keep_all = TRUE) %>%
+#'   dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))
+#'   
+#' edger <- DEanalysis_edger(
+#'   expression.matrix = expression.matrix.preproc,
+#'   condition = rep(c("0h", "12h"), each = 2),
+#'   var1 = "0h",
+#'   var2 = "12h",
+#'   anno = anno
+#' )
+#' vp <- volcano_plot(edger)
+#' print(vp)
 volcano_plot <- function(
   genes.de.results,
   pval.threshold = 0.05, 
-  lfc.threshold = 0.5,
+  lfc.threshold = 1,
   alpha = 0.1,
   xlims = NULL,
   log10pval.cap = TRUE,
@@ -88,10 +111,8 @@ volcano_plot <- function(
   
 }
 
-#' Add features to a volcano plot visualising differential expression (DE) results
-#' @description This function adds features to a volcano plot and is usually
-#' called indirectly by \code{\link{volcano_plot}}
-#' @inheritParams volcano_plot
+#' @description \code{\link{volcano_enhance}} is called indirectly by 
+#' \code{\link{volcano_plot}} to add extra features.
 #' @param vp volcano plot as a ggplot object (usually passed by \code{\link{volcano_plot}})
 #' @param df data frame of DE results for all genes (usually passed by 
 #' \code{\link{volcano_plot}})
@@ -129,9 +150,8 @@ volcano_plot <- function(
 #' higher values make labels overlap less (at the cost of them being further
 #' away from the points they are labelling)
 #' @return The enhanced volcano plot as a ggplot object.
-#' @seealso \code{\link{volcano_plot}}
 #' @export
-#' @examples
+#' @rdname volcano_plot
 volcano_enhance <- function(
   vp,
   df,
@@ -248,19 +268,19 @@ volcano_enhance <- function(
       df.significant <- dplyr::filter(df, 
                                       !(name %in% genes.to.label))
       df.significant <- df.significant[order(abs(df.significant$log10pval), decreasing=TRUE), ]
-      df.lowest.p.vals <- head(df.significant, n.labels.auto[1])
-      df.rest <- tail(df.significant, nrow(df.significant) - n.labels.auto[1])
+      df.lowest.p.vals <- utils::head(df.significant, n.labels.auto[1])
+      df.rest <- utils::tail(df.significant, nrow(df.significant) - n.labels.auto[1])
       
       df.rest <- df.rest[order(abs(df.rest$log2FC), decreasing=TRUE), ]
-      df.highest.lfc <- head(df.rest, n.labels.auto[2])
-      df.rest <- tail(df.rest, nrow(df.rest) - n.labels.auto[2])
+      df.highest.lfc <- utils::head(df.rest, n.labels.auto[2])
+      df.rest <- utils::tail(df.rest, nrow(df.rest) - n.labels.auto[2])
       
       df.rest <- dplyr::filter(df.rest, 
                                abs(log2FC) > lfc.threshold,
                                log10pval < logp.threshold)
       if(nrow(df.rest) > 0){
         df.rest <- df.rest[order(df.rest$log2exp, decreasing=TRUE), ]
-        df.highest.abn <- head(df.rest, n.labels.auto[3])
+        df.highest.abn <- utils::head(df.rest, n.labels.auto[3])
       }else{
         df.highest.abn <- tibble::tibble()
       }
@@ -290,13 +310,36 @@ volcano_enhance <- function(
 #' inferred from the data
 #' @param ... parameters passed on to \code{\link{ma_enhance}}
 #' @return The MA plot as a ggplot object.
-#' @seealso \code{\link{ma_enhance}}
 #' @export
 #' @examples
+#' expression.matrix <- as.matrix(read.csv(
+#'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+#'   row.names = 1
+#' ))
+#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[, 1:4]
+#' 
+#' anno <- AnnotationDbi::select(
+#'   getExportedValue('org.Mm.eg.db', 'org.Mm.eg.db'),
+#'   keys = rownames(expression.matrix),
+#'   keytype = 'ENSEMBL',
+#'   columns = 'SYMBOL'
+#' ) %>%
+#'   dplyr::distinct(ENSEMBL, .keep_all = TRUE) %>%
+#'   dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))
+#'   
+#' edger <- DEanalysis_edger(
+#'   expression.matrix = expression.matrix.preproc,
+#'   condition = rep(c("0h", "12h"), each = 2),
+#'   var1 = "0h",
+#'   var2 = "12h",
+#'   anno = anno
+#' )
+#' mp <- ma_plot(edger)
+#' print(mp)
 ma_plot <- function(
   genes.de.results,
   pval.threshold = 0.05, 
-  lfc.threshold = 0.5,
+  lfc.threshold = 1,
   alpha = 0.1,
   ylims = NULL,
   add.colours = TRUE,
@@ -348,16 +391,14 @@ ma_plot <- function(
 }
 
 #' Add features to an MA plot visualising differential expression (DE) results
-#' @description This function adds features to an MA plot and is usually
-#' called indirectly by \code{\link{ma_plot}}
-#' @inheritParams volcano_enhance
+#' @description \code{\link{ma_enhance}} is called indirectly by 
+#' \code{\link{ma_plot}} to add extra features.
 #' @param p MA plot as a ggplot object (usually passed by \code{\link{ma_plot}})
 #' @param df data frame of DE results for all genes (usually passed by 
 #' \code{\link{ma_plot}})
 #' @return The enhanced MA plot as a ggplot object.
-#' @seealso \code{\link{ma_plot}}
 #' @export
-#' @examples
+#' @rdname ma_plot
 ma_enhance <- function(
   p,
   df,
@@ -472,19 +513,19 @@ ma_enhance <- function(
       df.significant <- dplyr::filter(df, 
                                       !(name %in% genes.to.label))
       df.significant <- df.significant[order(abs(df.significant$log10pval), decreasing=TRUE), ]
-      df.lowest.p.vals <- head(df.significant, n.labels.auto[1])
-      df.rest <- tail(df.significant, nrow(df.significant) - n.labels.auto[1])
+      df.lowest.p.vals <- utils::head(df.significant, n.labels.auto[1])
+      df.rest <- utils::tail(df.significant, nrow(df.significant) - n.labels.auto[1])
       
       df.rest <- df.rest[order(abs(df.rest$log2FC), decreasing=TRUE), ]
-      df.highest.lfc <- head(df.rest, n.labels.auto[2])
-      df.rest <- tail(df.rest, nrow(df.rest) - n.labels.auto[2])
+      df.highest.lfc <- utils::head(df.rest, n.labels.auto[2])
+      df.rest <- utils::tail(df.rest, nrow(df.rest) - n.labels.auto[2])
       
       df.rest <- dplyr::filter(df.rest, 
                                abs(log2FC) > lfc.threshold,
                                log10pval < logp.threshold)
       if(nrow(df.rest) > 0){
         df.rest <- df.rest[order(df.rest$log2exp, decreasing=TRUE), ]
-        df.highest.abn <- head(df.rest, n.labels.auto[3])
+        df.highest.abn <- utils::head(df.rest, n.labels.auto[3])
       }else{
         df.highest.abn <- tibble::tibble()
       }

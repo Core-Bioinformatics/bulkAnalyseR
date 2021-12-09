@@ -4,7 +4,7 @@
 #' \code{\link{generateShinyApp}}.
 #' @param expression.matrix the expression matrix; rows correspond to genes and
 #' columns correspond to samples
-#' @param noisyr.plot whether to create an expression-similarity plot for the
+#' @param output.plot whether to create an expression-similarity plot for the
 #' noise analysis (printed to the console); default is FALSE
 #' @param normalisation.method the normalisation method to be used; default is
 #' quantile

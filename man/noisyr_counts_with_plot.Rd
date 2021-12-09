@@ -39,6 +39,9 @@ minimising the coefficient of variation across samples; all possible values for
 method.chosen can be viewed by \code{\link[noisyr]{get_methods_calculate_noise_threshold}}}
 
 \item{...}{optional arguments passed on to \code{noisyr::noisyr_counts()}}
+
+\item{output.plot}{whether to create an expression-similarity plot for the
+noise analysis (printed to the console); default is FALSE}
 }
 \value{
 The denoised expression matrix.

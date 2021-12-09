@@ -60,7 +60,7 @@ enrichmentPanelServer <- function(id, DEresults, organism){
                                   sources = input[['gprofilerSources']],
                                   evcodes = TRUE)
       gostres$result <- gostres$result %>%
-        mutate(parents = sapply(parents, toString),
+        dplyr::mutate(parents = sapply(parents, toString),
                intersection_names = sapply(intersection, function(x){
                  ensids <- strsplit(x, split = ",")[[1]]
                  names <- inputdata$DEtable$gene_name[match(ensids, inputdata$DEtable$gene_id)]

@@ -2,12 +2,13 @@
 % Please edit documentation in R/DEplotFuns.R
 \name{ma_plot}
 \alias{ma_plot}
+\alias{ma_enhance}
 \title{Create an MA plot visualising differential expression (DE) results}
 \usage{
 ma_plot(
   genes.de.results,
   pval.threshold = 0.05,
-  lfc.threshold = 0.5,
+  lfc.threshold = 1,
   alpha = 0.1,
   ylims = NULL,
   add.colours = TRUE,
@@ -16,6 +17,31 @@ ma_plot(
   add.labels.auto = TRUE,
   add.labels.custom = FALSE,
   ...
+)
+
+ma_enhance(
+  p,
+  df,
+  pval.threshold,
+  lfc.threshold,
+  alpha,
+  add.colours,
+  point.colours = c("#bfbfbf", "orange", "red", "blue"),
+  raster = FALSE,
+  add.expression.colour.gradient,
+  colour.gradient.scale = list(left = c("#99e6ff", "#000066"), right = c("#99e6ff",
+    "#000066")),
+  colour.gradient.breaks = waiver(),
+  colour.gradient.limits = NULL,
+  add.guide.lines,
+  guide.line.colours = c("green", "blue"),
+  add.labels.auto,
+  add.labels.custom,
+  annotation = NULL,
+  n.labels.auto = c(5, 5, 5),
+  genes.to.label = NULL,
+  seed = 0,
+  label.force = 1
 )
 }
 \arguments{
@@ -50,14 +76,95 @@ highest |log2(fold-change)| and expression; default is TRUE}
 the parameter genes.to.label must also be specified; default is FALSE}
 
 \item{...}{parameters passed on to \code{\link{ma_enhance}}}
+
+\item{p}{MA plot as a ggplot object (usually passed by \code{\link{ma_plot}})}
+
+\item{df}{data frame of DE results for all genes (usually passed by
+\code{\link{ma_plot}})}
+
+\item{point.colours}{a vector of 4 colours to colour genes with both pval
+and lfc under thresholds, just pval under threshold, just lfc under threshold,
+both pval and lfc over threshold (DE genes) respectively; only used if
+add.colours is TRUE}
+
+\item{raster}{whether to rasterize non-DE genes with ggraster to reduce
+memory usage; particularly useful when saving plots to files}
+
+\item{colour.gradient.scale}{a vector of two colours to create a colour
+gradient for colouring the DE genes based on expression; a named list with
+components left and right can be supplied to use two different colour scales;
+only used if add.expression.colour.gradient is TRUE}
+
+\item{colour.gradient.breaks}{parameters to customise
+the legend of the colour gradient scale; especially useful if creating
+multiple plots or a plot with two scales;
+only used if add.expression.colour.gradient is TRUE}
+
+\item{colour.gradient.limits}{parameters to customise
+the legend of the colour gradient scale; especially useful if creating
+multiple plots or a plot with two scales;
+only used if add.expression.colour.gradient is TRUE}
+
+\item{guide.line.colours}{a vector with two colours to be used to colour
+the guide lines; the first colour is used for the p-value and log2(fold-change)
+thresholds and the second for double those values}
+
+\item{annotation}{annotation data frame containing a match between the gene
+field of df (usually ENSEMBL IDs) and the gene names that should be shown
+in the plot labels; not necessary if df already contains gene names}
+
+\item{n.labels.auto}{a integer vector of length 3 denoting the number of
+genes that should be automatically labelled; the first entry corresponds to
+DE genes with the lowest p-value, the second to those with highest absolute
+log2(fold-change) and the third to those with highest expression; a single
+integer can also be specified, to be used for all 3 entries; default is 5}
+
+\item{genes.to.label}{a vector of gene names to be labelled in the
+plot; if names are present those are shown as the labels (but the values are
+the ones matched - this is to allow custom gene names to be presented)}
+
+\item{seed}{the random seed to be used for reproducibility; only used for
+ggrepel::geom_label_repel if labels are present}
+
+\item{label.force}{passed to the force argument of ggrepel::geom_label_repel;
+higher values make labels overlap less (at the cost of them being further
+away from the points they are labelling)}
 }
 \value{
 The MA plot as a ggplot object.
+
+The enhanced MA plot as a ggplot object.
 }
 \description{
 This function creates an MA plot to visualise the results
 of a DE analysis.
+
+\code{\link{ma_enhance}} is called indirectly by
+\code{\link{ma_plot}} to add extra features.
 }
-\seealso{
-\code{\link{ma_enhance}}
+\examples{
+expression.matrix <- as.matrix(read.csv(
+  system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+  row.names = 1
+))
+expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[, 1:4]
+
+anno <- AnnotationDbi::select(
+  getExportedValue('org.Mm.eg.db', 'org.Mm.eg.db'),
+  keys = rownames(expression.matrix),
+  keytype = 'ENSEMBL',
+  columns = 'SYMBOL'
+) \%>\%
+  dplyr::distinct(ENSEMBL, .keep_all = TRUE) \%>\%
+  dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))
+  
+edger <- DEanalysis_edger(
+  expression.matrix = expression.matrix.preproc,
+  condition = rep(c("0h", "12h"), each = 2),
+  var1 = "0h",
+  var2 = "12h",
+  anno = anno
+)
+mp <- ma_plot(edger)
+print(mp)
 }

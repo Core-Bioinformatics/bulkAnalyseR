@@ -1,6 +1,5 @@
 #' @import shiny
 #' @import ggplot2
-#' @importFrom magrittr `%>%`
 #' @importFrom rlang .data
 bulkApp <- function(...){
   
