@@ -33,7 +33,7 @@ thresholds to determine whether a gene is DE}
 \item{mask}{whether to hide genes that were not called DE in either
 comparison; default is FALSE}
 
-\item{labnames, cols.choson}{the legend labels and colours for the 4
+\item{labnames, cols.chosen}{the legend labels and colours for the 4
 categories of genes ("not DE", "DE both", "DE comparison 1", "DE comparison 2")}
 
 \item{labels.per.region}{how many labels to show in each region of the plot;
@@ -67,4 +67,42 @@ The cross plot as a ggplot object.
 \description{
 This function creates a cross plot visualising the differences
 in log2(fold-change) between two DE analyses.
+}
+\examples{
+expression.matrix <- as.matrix(read.csv(
+  system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+  row.names = 1
+))
+expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[, 1:4]
+
+anno <- AnnotationDbi::select(
+  getExportedValue('org.Mm.eg.db', 'org.Mm.eg.db'),
+  keys = rownames(expression.matrix),
+  keytype = 'ENSEMBL',
+  columns = 'SYMBOL'
+) \%>\%
+  dplyr::distinct(ENSEMBL, .keep_all = TRUE) \%>\%
+  dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))
+  
+edger <- DEanalysis_edger(
+  expression.matrix = expression.matrix.preproc,
+  condition = rep(c("0h", "12h"), each = 2),
+  var1 = "0h",
+  var2 = "12h",
+  anno = anno
+)
+deseq <- DEanalysis_edger(
+  expression.matrix = expression.matrix.preproc,
+  condition = rep(c("0h", "12h"), each = 2),
+  var1 = "0h",
+  var2 = "12h",
+  anno = anno
+)
+cross_plot(
+  DEtable1 = edger, 
+  DEtable2 = deseq,
+  DEtable1Subset = dplyr::filter(edger, abs(log2FC) > 1, pvalAdj < 0.05),
+  DEtable2Subset = dplyr::filter(deseq, abs(log2FC) > 1, pvalAdj < 0.05),
+  labels.per.region = 0
+)
 }

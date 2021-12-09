@@ -15,13 +15,13 @@ preprocessExpressionMatrix(
 \item{expression.matrix}{the expression matrix; rows correspond to genes and
 columns correspond to samples}
 
+\item{output.plot}{whether to create an expression-similarity plot for the
+noise analysis (printed to the console); default is FALSE}
+
 \item{normalisation.method}{the normalisation method to be used; default is
 quantile}
 
 \item{...}{optional arguments passed on to \code{noisyr::noisyr_counts()}}
-
-\item{noisyr.plot}{whether to create an expression-similarity plot for the
-noise analysis (printed to the console); default is FALSE}
 }
 \value{
 The denoised, normalised expression matrix; some rows (genes)

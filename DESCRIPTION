@@ -52,4 +52,8 @@ Imports:
     ggrastr,
     GENIE3,
     visNetwork,
-    DT
+    DT,
+    scales
+Suggests:
+    org.Hs.eg.db,
+    org.Mm.eg.db

@@ -7,10 +7,10 @@
 plot_pca(
   expression.matrix,
   metadata,
-  annotation.id = NULL,
+  annotation.id,
   n.abundant = NULL,
-  show.labels,
-  show.ellipses,
+  show.labels = FALSE,
+  show.ellipses = TRUE,
   label.force = 1
 )
 }
@@ -45,4 +45,16 @@ The PCA plot as a ggplot object.
 This function creates a PCA plot between all samples in the
 expression matrix using the specified number of most abundant genes as
 input. A metadata column is used as annotation.
+}
+\examples{
+expression.matrix <- as.matrix(read.csv(
+  system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+  row.names = 1
+))
+expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
+metadata <- data.frame(
+  srr = colnames(expression.matrix.preproc), 
+  timepoint = rep(c("0h", "12h", "36h"), each = 2)
+)
+plot_pca(expression.matrix.preproc, metadata, 2)
 }

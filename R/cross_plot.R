@@ -7,7 +7,7 @@
 #' contain all genes, while the second two should only contain DE genes
 #' @param mask whether to hide genes that were not called DE in either
 #' comparison; default is FALSE
-#' @param labnames,cols.choson the legend labels and colours for the 4
+#' @param labnames,cols.chosen the legend labels and colours for the 4
 #' categories of genes ("not DE", "DE both", "DE comparison 1", "DE comparison 2")
 #' @param labels.per.region how many labels to show in each region of the plot;
 #' the plot is split in 8 regions using the axes and major diagonals, and the
@@ -18,6 +18,42 @@
 #' @return The cross plot as a ggplot object.
 #' @export
 #' @examples
+#' expression.matrix <- as.matrix(read.csv(
+#'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+#'   row.names = 1
+#' ))
+#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[, 1:4]
+#' 
+#' anno <- AnnotationDbi::select(
+#'   getExportedValue('org.Mm.eg.db', 'org.Mm.eg.db'),
+#'   keys = rownames(expression.matrix),
+#'   keytype = 'ENSEMBL',
+#'   columns = 'SYMBOL'
+#' ) %>%
+#'   dplyr::distinct(ENSEMBL, .keep_all = TRUE) %>%
+#'   dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))
+#'   
+#' edger <- DEanalysis_edger(
+#'   expression.matrix = expression.matrix.preproc,
+#'   condition = rep(c("0h", "12h"), each = 2),
+#'   var1 = "0h",
+#'   var2 = "12h",
+#'   anno = anno
+#' )
+#' deseq <- DEanalysis_edger(
+#'   expression.matrix = expression.matrix.preproc,
+#'   condition = rep(c("0h", "12h"), each = 2),
+#'   var1 = "0h",
+#'   var2 = "12h",
+#'   anno = anno
+#' )
+#' cross_plot(
+#'   DEtable1 = edger, 
+#'   DEtable2 = deseq,
+#'   DEtable1Subset = dplyr::filter(edger, abs(log2FC) > 1, pvalAdj < 0.05),
+#'   DEtable2Subset = dplyr::filter(deseq, abs(log2FC) > 1, pvalAdj < 0.05),
+#'   labels.per.region = 0
+#' )
 cross_plot = function(
   DEtable1,
   DEtable2,
@@ -123,7 +159,7 @@ cross_plot = function(
     for(region in 1:8){
       df.lab.sub <- dplyr::filter(df.lab, quad == region) %>%
         dplyr::arrange(desc(dist))
-      df.top.dist <- head(df.lab.sub, labels.per.region)
+      df.top.dist <- utils::head(df.lab.sub, labels.per.region)
       df.top.distances <- rbind(df.top.distances, df.top.dist)
     }
     set.seed(seed = seed)

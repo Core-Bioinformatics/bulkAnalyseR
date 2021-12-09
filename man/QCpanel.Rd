@@ -8,7 +8,7 @@
 \usage{
 QCpanelUI(id, metadata)
 
-QCpanelServer(id, expression.matrix, metadata)
+QCpanelServer(id, expression.matrix, metadata, anno)
 }
 \arguments{
 \item{id}{the input slot that will be used to access the value}
@@ -22,6 +22,11 @@ that will be tested for differential expression}
 \item{expression.matrix}{the expression matrix; rows correspond to genes and
 columns correspond to samples; usually preprocessed by
 \code{\link{preprocessExpressionMatrix}}}
+
+\item{anno}{annotation data frame containing a match between the row names
+of the expression.matrix (usually ENSEMBL IDs) and the gene names that
+should be rendered within the app and in output files; this object is
+created by \code{\link{generateShinyApp}} using the org.db specified}
 }
 \description{
 These are the UI and server components of the QC panel of the

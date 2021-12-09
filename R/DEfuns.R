@@ -16,8 +16,41 @@
 #' * log2FC (log2(fold-change) of the gene between conditions)
 #' * pval (p-value of the gene being called DE)
 #' * pvalAdj (adjusted p-value using the Benjamini Hochberg correction)
-#' @export
 #' @examples
+#' expression.matrix <- as.matrix(read.csv(
+#'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+#'   row.names = 1
+#' ))
+#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[, 1:4]
+#' 
+#' anno <- AnnotationDbi::select(
+#'   getExportedValue('org.Mm.eg.db', 'org.Mm.eg.db'),
+#'   keys = rownames(expression.matrix),
+#'   keytype = 'ENSEMBL',
+#'   columns = 'SYMBOL'
+#' ) %>%
+#'   dplyr::distinct(ENSEMBL, .keep_all = TRUE) %>%
+#'   dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))
+#'   
+#' edger <- DEanalysis_edger(
+#'   expression.matrix = expression.matrix.preproc,
+#'   condition = rep(c("0h", "12h"), each = 2),
+#'   var1 = "0h",
+#'   var2 = "12h",
+#'   anno = anno
+#' )
+#' deseq <- DEanalysis_edger(
+#'   expression.matrix = expression.matrix.preproc,
+#'   condition = rep(c("0h", "12h"), each = 2),
+#'   var1 = "0h",
+#'   var2 = "12h",
+#'   anno = anno
+#' )
+#' # DE genes with log2(fold-change) > 5 in both pipelines
+#' intersect(
+#'   dplyr::filter(edger, abs(log2FC) > 5, pvalAdj < 0.05)$gene_name,
+#'   dplyr::filter(deseq, abs(log2FC) > 5, pvalAdj < 0.05)$gene_name
+#' )
 #' @name DEanalysis
 NULL
 

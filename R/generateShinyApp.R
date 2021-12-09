@@ -44,23 +44,23 @@
 #'   srr = colnames(expression.matrix.preproc), 
 #'   timepoint = rep(c("0h", "12h", "36h"), each = 2)
 #' )
-#' generateShinyApp(
+#' app.dir <- generateShinyApp(
 #'   expression.matrix = expression.matrix.preproc,
 #'   metadata = metadata,
-#'   shiny.dir = "shiny_Yang2019",
+#'   shiny.dir = paste0(tempdir(), "ssshiny_Yang2019"),
 #'   app.title = "Shiny app for the Yang 2019 data",
 #'   organism = "mmusculus",
 #'   org.db = "org.Mm.eg.db"
 #' )
-#' 
+#' # runApp(app.dir)
 #' 
 #' # Example of an app with a second copy of the QC panel
 #' 
-#' generateShinyApp(
+#' app.dir.qc2 <- generateShinyApp(
 #'   expression.matrix = expression.matrix.preproc,
 #'   metadata = metadata,
-#'   shiny.dir = "shiny_Yang2019_QC2",
-#'   app.title = "Shiny app for two timepoints from the Yang 2019 data",
+#'   shiny.dir = paste0(tempdir(), "shiny_Yang2019_QC2"),
+#'   app.title = "Shiny app for the Yang 2019 data",
 #'   organism = "mmusculus",
 #'   org.db = "org.Mm.eg.db",
 #'   panels.extra = tibble::tibble(
@@ -70,6 +70,7 @@
 #'     serverVars = "'QC2', expression.matrix, metadata"
 #'   )
 #' )
+#' # runApp(app.dir.qc2)
 generateShinyApp <- function(
   expression.matrix,
   metadata,

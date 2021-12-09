@@ -27,6 +27,16 @@ jaccard_index <- function(a, b){
 #' @return The JSI heatmap as detailed in the ComplexHeatmap package.
 #' @export
 #' @examples
+#' expression.matrix <- as.matrix(read.csv(
+#'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+#'   row.names = 1
+#' ))
+#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
+#' metadata <- data.frame(
+#'   srr = colnames(expression.matrix.preproc), 
+#'   timepoint = rep(c("0h", "12h", "36h"), each = 2)
+#' )
+#' print(jaccard_heatmap(expression.matrix.preproc, metadata, n.abundant = 500))
 jaccard_heatmap <- function(
   expression.matrix,
   metadata,
@@ -111,13 +121,23 @@ jaccard_heatmap <- function(
 #' @return The PCA plot as a ggplot object.
 #' @export
 #' @examples
+#' expression.matrix <- as.matrix(read.csv(
+#'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+#'   row.names = 1
+#' ))
+#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
+#' metadata <- data.frame(
+#'   srr = colnames(expression.matrix.preproc), 
+#'   timepoint = rep(c("0h", "12h", "36h"), each = 2)
+#' )
+#' plot_pca(expression.matrix.preproc, metadata, 2)
 plot_pca <- function(
   expression.matrix,
   metadata,
-  annotation.id = NULL, 
+  annotation.id, 
   n.abundant = NULL,
-  show.labels,
-  show.ellipses,
+  show.labels = FALSE,
+  show.ellipses = TRUE,
   label.force = 1
 ){
   annotation.name <- colnames(metadata)[annotation.id]
@@ -142,7 +162,7 @@ plot_pca <- function(
     expr.PCA.2$PC2 <- expr.PCA.2$PC2 * 1.001
     expr.PCA.full <- rbind(expr.PCA, expr.PCA.2)
   }
-  else {expr.PCA.full<-expr.PCA}
+  else {expr.PCA.full <- expr.PCA}
   pca.plot <- ggplot(expr.PCA.full, aes(x = .data$PC1, y = .data$PC2, colour = .data$condition)) +
     theme_minimal() +
     geom_point() +
@@ -150,7 +170,8 @@ plot_pca <- function(
          y = paste0("PC2 (proportion of variance = ", summary(expr.PCA.list)$importance[2, 2] * 100, "%)"),
          colour = annotation.name)
   if(show.ellipses){
-    pca.plot <- pca.plot + ggforce::geom_mark_ellipse(aes(fill = .data$condition, colour = .data$condition), show.legend = FALSE)
+    pca.plot <- pca.plot + 
+      ggforce::geom_mark_ellipse(aes(fill = .data$condition, colour = .data$condition), show.legend = FALSE)
   }
   if(show.labels){
     pca.plot <- pca.plot +
