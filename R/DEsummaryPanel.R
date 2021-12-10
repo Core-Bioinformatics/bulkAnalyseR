@@ -131,7 +131,7 @@ DEsummaryPanelServer <- function(id, expression.matrix, metadata, DEresults, ann
         as.data.frame() %>%
         dplyr::arrange(dplyr::across(input[['heatmap.annotations']]))
       
-      myplot <- plot_heatmap(
+      myplot <- expression_heatmap(
         expression.matrix = subsetExpression[, meta[, 1]],
         top.annotation.ids = match(input[['heatmap.annotations']], colnames(meta)),
         metadata = meta,
