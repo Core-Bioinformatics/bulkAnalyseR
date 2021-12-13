@@ -9,7 +9,7 @@
 #' @param output.plot whether to create an expression-similarity plot for the
 #' noise analysis (printed to the console); default is FALSE
 #' @param normalisation.method the normalisation method to be used; default is
-#' quantile; any unrecognised input will reusult in no normalisation being 
+#' quantile; any unrecognised input will result in no normalisation being 
 #' applied, but proceeding with un-normalised data is not recommended
 #' @param ... optional arguments passed on to \code{noisyr::noisyr_counts()}
 #' @return The denoised, normalised expression matrix; some rows (genes)

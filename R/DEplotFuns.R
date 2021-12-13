@@ -505,7 +505,6 @@ ma_enhance <- function(
     if(add.labels.auto){
       if(length(n.labels.auto) == 1) n.labels.auto <- rep(n.labels.auto, 3)
       df.significant <- dplyr::filter(df, !(name %in% genes.to.label))
-      browser()
       df.significant <- df.significant[order(abs(df.significant$log2FC), decreasing=TRUE), ]
       df.highest.lfc <- utils::head(df.significant, n.labels.auto[1])
       df.rest <- utils::tail(df.significant, nrow(df.significant) - n.labels.auto[1]) %>%

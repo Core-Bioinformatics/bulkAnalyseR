@@ -79,7 +79,7 @@ generateShinyApp <- function(
   organism = "hsapiens",
   org.db = "org.Hs.eg.db",
   theme = "flatly",
-  panels.default = c("SampleSelect", "QC", "DE", "DEplot", "Enrichment", "Cross", "GRN"),
+  panels.default = c("SampleSelect", "QC", "DE", "DEplot", "DEsummary","Enrichment", "Cross", "GRN"),
   panels.extra = tibble::tibble(
     UIfun = NULL, 
     UIvars = NULL, 
@@ -195,6 +195,7 @@ generateAppFile <- function(
   if("DE" %in% panels.default){
     code.ui <- c(code.ui, "DEpanelUI('DE', metadata),")
     if("DEplot" %in% panels.default) code.ui <- c(code.ui, "DEplotPanelUI('DEplot'),")
+    if("DEsummary" %in% panels.default) code.ui <- c(code.ui, "DEsummaryPanelUI('DEsummary', metadata),")
     if("Enrichment" %in% panels.default) code.ui <- c(code.ui, "enrichmentPanelUI('Enrichment'),")
   }
   if("Cross" %in% panels.default) code.ui <- c(code.ui, "crossPanelUI('Cross', metadata),")
@@ -227,6 +228,9 @@ generateAppFile <- function(
     code.server <- c(code.server, "DEresults <- DEpanelServer('DE', expression.matrix, metadata, anno)")
     if("DEplot" %in% panels.default){
       code.server <- c(code.server, "DEplotPanelServer('DEplot', DEresults, anno)")
+    }
+    if("DEsummary" %in% panels.default){
+      code.server <- c(code.server, "DEsummaryPanelServer('DEsummary', expression.matrix, metadata, DEresults, anno)")
     }
     if("Enrichment" %in% panels.default){
       code.server <- c(

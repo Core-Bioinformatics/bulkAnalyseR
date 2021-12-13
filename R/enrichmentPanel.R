@@ -52,7 +52,7 @@ enrichmentPanelServer <- function(id, DEresults, organism){
       input[["goEnrichment"]]
     }, 
     {
-      inputdata = DEresults()
+      inputdata = DEresults()$DE()
       gostres <- gprofiler2::gost(query = inputdata$DEtableSubset$gene_id,
                                   organism = organism,
                                   correction_method = 'fdr',

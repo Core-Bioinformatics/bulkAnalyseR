@@ -46,11 +46,19 @@ DEpanelUI <- function(id, metadata){
         #download file name and button
         textInput(ns('fileName'),'File name for download', value ='DEset.csv', placeholder = 'DEset.csv'),
         downloadButton(ns('download'), 'Download Table'),
+        hr(),
+        tags$b("Gene selection"),
+        div("\nSelect genes of interest by clicking on the corresponds rows in the table\n"),
+        div(style="margin-bottom:10px"),
+        actionButton(ns('resetSelection'), label = "Reset row selection"),
+        div(style="margin-bottom:10px"),
+        actionButton(ns('selectTop50'), label = "Select top 50 genes")
+        
       ),
       
       #Main panel for displaying table of DE genes
       mainPanel(
-        dataTableOutput(ns('data'))
+        DT::dataTableOutput(ns('data'))
       )
     )
   )
@@ -87,13 +95,13 @@ DEpanelServer <- function(id, expression.matrix, metadata, anno){
     DEresults <- eventReactive(input[["goDE"]], {
       condition.indices <- metadata()[[input[["condition"]]]] %in% c(input[['variable1']], input[['variable2']])
       if(input[["pipeline"]] == "edgeR"){
-      DEtable <- DEanalysis_edger(
-        expression.matrix = expression.matrix()[, condition.indices],
-        condition = metadata()[[input[["condition"]]]][condition.indices],
-        var1 = input[['variable1']],
-        var2 = input[['variable2']],
-        anno = anno
-      )
+        DEtable <- DEanalysis_edger(
+          expression.matrix = expression.matrix()[, condition.indices],
+          condition = metadata()[[input[["condition"]]]][condition.indices],
+          var1 = input[['variable1']],
+          var2 = input[['variable2']],
+          anno = anno
+        )
       }else if(input[["pipeline"]] == "DESeq2"){
         DEtable <- DEanalysis_deseq2(
           expression.matrix = expression.matrix()[, condition.indices],
@@ -105,7 +113,8 @@ DEpanelServer <- function(id, expression.matrix, metadata, anno){
       }
       
       DEtableSubset <- DEtable %>%
-        dplyr::filter(abs(log2FC) > input[["lfcThreshold"]] & pvalAdj < input[["pvalThreshold"]])
+        dplyr::filter(abs(log2FC) > input[["lfcThreshold"]] & pvalAdj < input[["pvalThreshold"]]) %>%
+        dplyr::arrange(desc(abs(log2FC)))
       
       #the thresholds are returned here so that MA/volcano and table display 
       #don't use new thresholds without the button being used
@@ -114,9 +123,15 @@ DEpanelServer <- function(id, expression.matrix, metadata, anno){
                   'lfcThreshold' = input[["lfcThreshold"]], 
                   'pvalThreshold' = input[["pvalThreshold"]]))
     })
-    
+
     #Define output table (only DE genes)
-    output[['data']] <- renderDataTable(DEresults()$DEtableSubset)
+    dataTable <- reactive({
+      DEresults()$DEtableSubset %>% 
+        DT::datatable() %>%
+        DT::formatSignif(columns = c('log2exp', 'log2FC', 'pval', 'pvalAdj'), digits = 3)
+    })
+    
+    output[['data']] <- DT::renderDataTable(dataTable())
     
     #DE data download
     output[['download']] <- downloadHandler(
@@ -128,7 +143,25 @@ DEpanelServer <- function(id, expression.matrix, metadata, anno){
       }
     )
     
-    DEresults
+    #Output selected genes
+    selectedGenes <- reactive({
+      DEresults()$DEtableSubset$gene_id[input$data_rows_selected]
+    })
+    
+    proxy = DT::dataTableProxy('data')
+    
+    observeEvent(input[['resetSelection']], {
+      proxy %>% DT::selectRows(NULL)
+    })
+    
+    observeEvent(input[['selectTop50']], {
+      proxy %>% DT::selectRows(selected = 1:50)
+    })
+    
+    return(reactive(list('DE' = DEresults,
+                         'selectedGenes' = reactive(selectedGenes())
+    )))
+    
     
   })
 }
