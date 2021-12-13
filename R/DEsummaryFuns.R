@@ -16,12 +16,12 @@
 #'   timepoint = rep(c("0h", "12h", "36h"), each = 2)
 #' )
 #' print(expression_heatmap(head(expression.matrix.preproc), NULL, metadata))
-expression_heatmap <- function(expression.matrix.subset,
-                         top.annotation.ids = NULL,
-                         metadata,
-                         type = 'Log2 Expression')
-{
-  
+expression_heatmap <- function(
+  expression.matrix.subset,
+  top.annotation.ids = NULL,
+  metadata,
+  type = 'Log2 Expression'
+){
   heatmat <- as.matrix(expression.matrix.subset)
   
   if(!is.null(top.annotation.ids)){
@@ -50,10 +50,10 @@ expression_heatmap <- function(expression.matrix.subset,
     top.annotation <- NULL
   }
   if (type != 'Z-score'){
-      breaks <- seq(min(heatmat), 
-                    max(heatmat),
-                    (max(heatmat) - min(heatmat))/9)
-      colours = c("#FFFFFF",RColorBrewer::brewer.pal(n = 9, name = "YlOrRd"))
+    breaks <- seq(min(heatmat), 
+                  max(heatmat),
+                  (max(heatmat) - min(heatmat))/9)
+    colours = c("#FFFFFF",RColorBrewer::brewer.pal(n = 9, name = "YlOrRd"))
   }
   else {
     breaks <- seq(-3,3,6/9)

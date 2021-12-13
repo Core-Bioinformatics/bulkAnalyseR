@@ -21,6 +21,7 @@ bulkApp <- function(...){
                QCpanelUI("QC", metadata),
                DEpanelUI("DE", metadata),
                DEplotPanelUI("DEplot"),
+               DEsummaryPanelUI("DEsummary", metadata),
                enrichmentPanelUI("Enrichment"),
                crossPanelUI("Cross", metadata),
                GRNpanelUI("GRN"),
@@ -45,6 +46,7 @@ bulkApp <- function(...){
     QCpanelServer("QC", expression.matrix, metadata, anno)
     DEresults <- DEpanelServer("DE", expression.matrix, metadata, anno)
     DEplotPanelServer("DEplot", DEresults, anno)
+    DEsummaryPanelServer("DEsummary", expression.matrix, metadata, DEresults, anno)
     enrichmentPanelServer("Enrichment", DEresults, organism = "mmusculus")
     crossPanelServer("Cross", expression.matrix, metadata, anno)
     GRNpanelServer("GRN", expression.matrix, anno)

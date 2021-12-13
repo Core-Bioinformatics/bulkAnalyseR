@@ -28,6 +28,15 @@ DEplotPanelUI <- function(id){
         onStatus = FALSE
       ),
       shinyWidgets::switchInput(
+        inputId = ns("highlightSelected"),
+        label = "Highlight selected DE genes?",
+        labelWidth = "80px",
+        onLabel = 'No',
+        offLabel = 'Yes',
+        value = FALSE,
+        onStatus = FALSE
+      ),
+      shinyWidgets::switchInput(
         inputId = ns('allGenes'),
         label = "Showing on click:", 
         labelWidth = "80px",
@@ -50,16 +59,7 @@ DEplotPanelUI <- function(id){
           onStatus = FALSE
         ),
       ),
-      shinyWidgets::switchInput(
-        inputId = ns("highlightSelected"),
-        label = "Highlight selected DE genes?",
-        labelWidth = "80px",
-        onLabel = 'No',
-        offLabel = 'Yes',
-        value = FALSE,
-        onStatus = FALSE
-      ),
-      selectInput(ns("geneName"), "Genes to highlight:", multiple = TRUE, choices = character(0)),
+      selectInput(ns("geneName"), "Other genes to highlight:", multiple = TRUE, choices = character(0)),
       textInput(ns('plotFileName'), 'File name for plot download', value ='DEPlot.png'),
       downloadButton(ns('download'), 'Download Plot'),
       
