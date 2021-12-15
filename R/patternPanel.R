@@ -93,6 +93,7 @@ patternPanelServer <- function(id, expression.matrix, metadata, anno){
       subset.idxs <- metadata()[[input[["condition"]]]] %in% input[["series"]]
       mat <- expression.matrix()[, subset.idxs]
       condition <- metadata()[subset.idxs, input[["condition"]]]
+      condition <- factor(condition, levels = input[["series"]])
       tbl <- calculate_condition_mean_sd_per_gene(mat, condition)
       patterns <- make_pattern_matrix(tbl)[, "pattern"]
       shinyjs::enable("goPatterns")

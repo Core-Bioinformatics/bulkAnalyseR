@@ -8,7 +8,7 @@ expression_heatmap(
   expression.matrix.subset,
   top.annotation.ids = NULL,
   metadata,
-  type = "Log2 Expression"
+  type = c("Z-score", "Log2 Expression", "Expression")
 )
 }
 \arguments{
