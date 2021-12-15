@@ -79,6 +79,7 @@ DEplotPanelServer <- function(id, DEresults, anno){
   # check whether inputs (other than id) are reactive or not
   stopifnot({
     is.reactive(DEresults)
+    !is.reactive(anno)
   })
   
   moduleServer(id, function(input, output, session){

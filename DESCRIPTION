@@ -53,7 +53,8 @@ Imports:
     GENIE3,
     visNetwork,
     DT,
-    scales
+    scales,
+    shinyjs
 Suggests:
     org.Hs.eg.db,
     org.Mm.eg.db

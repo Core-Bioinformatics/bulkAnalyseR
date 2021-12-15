@@ -23,6 +23,7 @@ bulkApp <- function(...){
                DEplotPanelUI("DEplot"),
                DEsummaryPanelUI("DEsummary", metadata),
                enrichmentPanelUI("Enrichment"),
+               patternPanelUI("Patterns", metadata),
                crossPanelUI("Cross", metadata),
                GRNpanelUI("GRN"),
              )),
@@ -48,6 +49,7 @@ bulkApp <- function(...){
     DEplotPanelServer("DEplot", DEresults, anno)
     DEsummaryPanelServer("DEsummary", expression.matrix, metadata, DEresults, anno)
     enrichmentPanelServer("Enrichment", DEresults, organism = "mmusculus")
+    patternPanelServer("Patterns", expression.matrix, metadata, anno)
     crossPanelServer("Cross", expression.matrix, metadata, anno)
     GRNpanelServer("GRN", expression.matrix, anno)
     peaksPanelServer("chip", ChIPseqdata)

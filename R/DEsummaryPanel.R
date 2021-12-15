@@ -101,14 +101,6 @@ DEsummaryPanelServer <- function(id, expression.matrix, metadata, DEresults, ann
     
     heatmap.plot <- bindEvent( 
       x = reactive({
-        if(input[["heatmap.processing"]] == 'Expression'){
-          expression.mat <- expression.matrix()
-        }else if(input[["heatmap.processing"]] == 'Log2 Expression'){
-          expression.mat <- log2(expression.matrix()+1)
-        }else if(input[["heatmap.processing"]] == 'Z-score'){
-          expression.mat <- t(scale(t(expression.matrix())))
-        }
-        
         selectedGenes = DEresults()$selectedGenes()
         if(length(selectedGenes)){
           selectedGeneNames <- anno$NAME[match(selectedGenes, anno$ENSEMBL)]

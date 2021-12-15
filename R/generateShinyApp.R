@@ -79,7 +79,8 @@ generateShinyApp <- function(
   organism = "hsapiens",
   org.db = "org.Hs.eg.db",
   theme = "flatly",
-  panels.default = c("SampleSelect", "QC", "DE", "DEplot", "DEsummary","Enrichment", "Cross", "GRN"),
+  panels.default = c("SampleSelect", "QC", "DE", "DEplot", "DEsummary",
+                     "Patterns", "Enrichment", "Cross", "GRN"),
   panels.extra = tibble::tibble(
     UIfun = NULL, 
     UIvars = NULL, 
@@ -167,7 +168,7 @@ generateAppFile <- function(
   
   shiny.dir <- normalizePath(shiny.dir)
   code.source.objects <- c(
-    paste0("r.files <- list.files(path = '", shiny.dir, "', pattern = '\\.R$')"),
+    paste0("r.files <- list.files(path = getwd(), pattern = '\\.R$')"),
     "r.files <- setdiff(r.files, 'app.R')",
     "for(fl in r.files) source(fl)",
     "rda.files <- list.files(pattern = '\\.rda$')",
@@ -198,6 +199,7 @@ generateAppFile <- function(
     if("DEsummary" %in% panels.default) code.ui <- c(code.ui, "DEsummaryPanelUI('DEsummary', metadata),")
     if("Enrichment" %in% panels.default) code.ui <- c(code.ui, "enrichmentPanelUI('Enrichment'),")
   }
+  if("Patterns" %in% panels.default) code.ui <- c(code.ui, "patternPanelUI('Patterns', metadata),")
   if("Cross" %in% panels.default) code.ui <- c(code.ui, "crossPanelUI('Cross', metadata),")
   if("GRN" %in% panels.default) code.ui <- c(code.ui, "GRNpanelUI('GRN'),")
   for(i in seq_len(nrow(panels.extra))){
@@ -240,6 +242,9 @@ generateAppFile <- function(
     }
     if("Cross" %in% panels.default){
       code.server <- c(code.server, "crossPanelServer('Cross', expression.matrix, metadata, anno)")
+    }
+    if("Patterns" %in% panels.default){
+      code.server <- c(code.server, "patternPanelServer('Patterns', expression.matrix, metadata, anno)")
     }
     if("GRN" %in% panels.default){
       code.server <- c(code.server, "GRNpanelServer('GRN', expression.matrix, anno)")
