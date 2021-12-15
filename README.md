@@ -61,10 +61,10 @@ By default, the app will have 6 panels: QC, DE, DE summary, Volcano/MA plots, Pa
 
 By default, the app will look like this:
 
-<img src="https://github.com/Core-Bioinformatics/bulkAnalyseR/blob/master/vignettes/figures/ScreenShot.png?raw=true" width="900">
+![ScreenShot](vignettes/figures/ScreenShot.png)
 *Screenshot from sample bulkAnalyseR app*
 
-See [vignette](www.vignettelink.com) for more details ont the individual panels.
+See [vignette](www.vignettelink.com) for more details on the individual panels.
 
 You can also add extra panels and data using the *panels.extra* and *data.extra* parameters.
 
