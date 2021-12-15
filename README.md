@@ -98,7 +98,7 @@ generateShinyApp(
   expression.matrix = exp.proc,
   metadata = meta,
   shiny.dir = "shiny_Yang2019",
-  app.title = "Shiny app for two timepoints from the Yang 2019 data",
+  app.title = "Shiny app for three timepoints from the Yang 2019 data",
   organism = "mmusculus",
   org.db = "org.Mm.eg.db"
 )
