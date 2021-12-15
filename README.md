@@ -7,7 +7,7 @@
 
 Bulk mRNA-seq experiments are essential for exploring a wide range of biological questions. To bring closer the data analysis to its interpretation and facilitate both interactive, exploratory tasks and thes haring of easily accessible information, we present *bulkAnalyseR* an R package that offers a seamless, customisable solution for most bulk RNAseq datasets. By integrating state-of-the-art approaches without relying on extensive computational support, and replacing static images with interactive panels, our aimis to further support and strengthen the re-usability of data. *bulkAnalyseR* enables performing standard analyses of bulk data, using an expression matrix as starting point, and presents it in an interactive web-based interface, making it easy to explore and verify hypotheses.  Moreover,   the   app   can   be   easily   shared   and   published, incentivising research reproducibility and allowing others to explore the same data to enhance the biological conclusions.
 
-Preprint: AAA 
+Preprint: AAA
 
 *Workflow diagram of the **bulkAnalyseR** pipeline*
 
@@ -43,7 +43,7 @@ Then you could have this metadata table:
 
 ### Denoising and normalisation
 
-Before using the expression matrix to create our shiny app, some preprocessing should be performed. *bulkAnalyseR* contains the function **preprocessExpressionMatrix** which takes the expression matrix as input then denoises the data using [*noisyR*](https://github.com/Core-Bioinformatics/noisyR) and normalises using either quantile (by default) or RPM normalisation (specified using *normalisation.method* parameter). By specifying *output.plot = TRUE*, you can also print the expression-similarity line plots from *noisyR* to console and you can specify further parameters from the noisyR [*noisyr_counts*](https://core-bioinformatics.github.io/noisyR/reference/noisyr_counts.html).
+Before using the expression matrix to create our shiny app, some preprocessing should be performed. *bulkAnalyseR* contains the function **preprocessExpressionMatrix** which takes the expression matrix as input then denoises the data using [*noisyR*](https://github.com/Core-Bioinformatics/noisyR) and normalises using either quantile (by default) or RPM normalisation (specified using *normalisation.method* parameter).
 
 It is not recommended to use data which has not been denoised and normalised as input to *generateShinyApp*. You can also perform your own preprocessing outside *preprocessExpressionMatrix*.
 
@@ -61,6 +61,7 @@ By default, the app will have 6 panels: QC, DE, DE summary, Volcano/MA plots, Pa
 
 By default, the app will look like this:
 
+<img src="https://github.com/Core-Bioinformatics/bulkAnalyseR/blob/master/vignettes/figures/ScreenShot.png?raw=true" width="900">
 *Screenshot from sample bulkAnalyseR app*
 
 See [vignette](www.vignettelink.com) for more details ont the individual panels.
