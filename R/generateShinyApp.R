@@ -34,6 +34,9 @@
 #' the data.extra and packages.extra arguments
 #' @return The path to shiny.dir (invisibly).
 #' @export
+#' @import shiny
+#' @import ggplot2
+#' @importFrom rlang .data
 #' @examples
 #' expression.matrix <- as.matrix(read.csv(
 #'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
