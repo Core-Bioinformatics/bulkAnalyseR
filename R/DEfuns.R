@@ -67,7 +67,7 @@ DEanalysis_edger <- function(
     expression.matrix[matrixStats::rowMins(expression.matrix) != 
                         matrixStats::rowMaxs(expression.matrix), ]
   
-  condition <- as.factor(condition)  
+  condition <- factor(condition, levels = unique(condition))  
   design <- stats::model.matrix(~ 0 + condition)
   
   edger <- edgeR::DGEList(counts = expression.matrix, group = condition)
