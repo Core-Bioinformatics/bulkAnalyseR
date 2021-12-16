@@ -13,6 +13,7 @@ crossPanelUI <- function(id, metadata){
   
   tabPanel(
     'Cross plot',
+    shinyjs::useShinyjs(),
     sidebarLayout(
       
       sidebarPanel(
@@ -125,6 +126,7 @@ crossPanelServer <- function(id, expression.matrix, metadata, anno){
     })
     
     DEresults <- reactive({
+      shinyjs::disable("goDE")
       condition.indices <- metadata()[[input[["condition1"]]]] %in% c(input[['DE1var1']], input[['DE1var2']])
       if(input[["pipeline1"]] == "edgeR"){
         DEtable1 <- DEanalysis_edger(
@@ -170,6 +172,7 @@ crossPanelServer <- function(id, expression.matrix, metadata, anno){
       
       # the thresholds are returned here so that the plot display 
       # doesn't use new thresholds without the button being used
+      shinyjs::enable("goDE")
       return(list('DEtable1' = DEtable1,
                   'DEtable2' = DEtable2,
                   "DEtable1Subset" = DEtable1Subset,
@@ -177,6 +180,9 @@ crossPanelServer <- function(id, expression.matrix, metadata, anno){
                   'lfcThreshold' = input[["lfcThreshold"]], 
                   'pvalThreshold' = input[["pvalThreshold"]]))
     }) %>%
+      bindCache(metadata(), input[["condition1"]], input[['DE1var1']], input[['DE1var2']],
+                input[["pipeline1"]], input[["condition2"]], input[['DE2var1']], input[['DE2var2']],
+                input[["pipeline2"]], input[["lfcThreshold"]], input[["pvalThreshold"]]) %>%
       bindEvent(input[["goDE"]])
     
     cp <- reactive({

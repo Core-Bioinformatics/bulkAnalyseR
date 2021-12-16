@@ -14,6 +14,7 @@ enrichmentPanelUI <- function(id){
   
   tabPanel(
     'Enrichment',
+    shinyjs::useShinyjs(),
     sidebarLayout(
       # Sidebar panel for inputs ----
       sidebarPanel(
@@ -48,6 +49,7 @@ enrichmentPanelServer <- function(id, DEresults, organism){
     
     #Run enrichment
     getenrichmentData <- reactive({
+      shinyjs::disable("goEnrichment")
       inputdata = DEresults()$DE()
       gostres <- gprofiler2::gost(query = inputdata$DEtableSubset$gene_id,
                                   organism = organism,
@@ -57,19 +59,22 @@ enrichmentPanelServer <- function(id, DEresults, organism){
                                   evcodes = TRUE)
       gostres$result <- gostres$result %>%
         dplyr::mutate(parents = sapply(parents, toString),
-               intersection_names = sapply(intersection, function(x){
-                 ensids <- strsplit(x, split = ",")[[1]]
-                 names <- inputdata$DEtable$gene_name[match(ensids, inputdata$DEtable$gene_id)]
-                 paste(names, collapse = ",")
-               }))
+                      intersection_names = sapply(intersection, function(x){
+                        ensids <- strsplit(x, split = ",")[[1]]
+                        names <- inputdata$DEtable$gene_name[match(ensids, inputdata$DEtable$gene_id)]
+                        paste(names, collapse = ",")
+                      }))
+      shinyjs::enable("goEnrichment")
+      return(gostres$result)
     }) %>%
       bindCache(DEresults()$DE()$DEtableSubset$gene_id, input[['gprofilerSources']]) %>%
       bindEvent(input[["goEnrichment"]])
     
     #Jitter plot and save coordinates
     getenrichmentPlot <- reactive({
-      jitter.plot = ggplot(getenrichmentData(), aes(x = source, y = p_value, colour = source)) + 
-        geom_jitter()
+      set.seed(13)
+      jitter.plot = ggplot(getenrichmentData(), ) + 
+        geom_jitter(aes(x = source, y = p_value, colour = source))
       jitter.build <- ggplot_build(jitter.plot)
       x = jitter.build$data[[1]]$x
       df = getenrichmentData()
@@ -82,15 +87,15 @@ enrichmentPanelServer <- function(id, DEresults, organism){
     source <- NULL; p_value <- NULL
     plotenrichmentPlot <- reactive({
       plotdata <- getenrichmentPlot()
-      return(      ggplot(plotdata, aes(x = jitter, y = `-log10(pVal)`, colour = source)) + 
-                     geom_point() + 
-                     theme_bw()+ 
-                     scale_x_continuous(breaks = seq(1, length(unique(plotdata$source)), 1), 
-                                        labels = unique(plotdata$source)) + 
-                     xlab("")
-      )
+      myplot <- ggplot(plotdata) + 
+        geom_point(aes(x = jitter, y = `-log10(pVal)`, colour = source)) + 
+        theme_bw()+ 
+        scale_x_continuous(breaks = seq(1, length(unique(plotdata$source)), 1), 
+                           labels = unique(plotdata$source)) + 
+        xlab("")
+      return(myplot)
     })
-    output[['plot']]<-renderPlot({plotenrichmentPlot()})
+    output[['plot']] <- renderPlot(plotenrichmentPlot())
     
     
     #Define clicking on enrichment data table

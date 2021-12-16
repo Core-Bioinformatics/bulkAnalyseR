@@ -139,8 +139,11 @@ patternPanelServer <- function(id, expression.matrix, metadata, anno){
     
     line.plot <- reactive({
       genes <- names(patterns.list()$patterns)[patterns.list()$patterns == input[["pattern"]]]
+      genes <- anno$NAME[match(genes, anno$ENSEMBL)]
+      tbl <- patterns.list()$tbl
+      tbl$gene <- anno$NAME[match(tbl$gene, anno$ENSEMBL)]
       myplot <- plot_line_pattern(
-        tbl = patterns.list()$tbl, 
+        tbl = tbl,
         genes = genes, 
         type = input[['line.processing']],
         show.legend = ifelse(length(genes) <= 10, TRUE, FALSE)

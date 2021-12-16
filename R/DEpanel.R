@@ -18,6 +18,7 @@ DEpanelUI <- function(id, metadata){
   
   tabPanel(
     'Differential expression',
+    shinyjs::useShinyjs(),
     sidebarLayout(
       
       # Sidebar panel for inputs ----
@@ -93,6 +94,7 @@ DEpanelServer <- function(id, expression.matrix, metadata, anno){
     })
     
     DEresults <- reactive({
+      shinyjs::disable("goDE")
       condition.indices <- metadata()[[input[["condition"]]]] %in% c(input[['variable1']], input[['variable2']])
       if(input[["pipeline"]] == "edgeR"){
         DEtable <- DEanalysis_edger(
@@ -118,6 +120,7 @@ DEpanelServer <- function(id, expression.matrix, metadata, anno){
       
       #the thresholds are returned here so that MA/volcano and table display 
       #don't use new thresholds without the button being used
+      shinyjs::enable("goDE")
       return(list('DEtable' = DEtable,
                   "DEtableSubset" = DEtableSubset,
                   'lfcThreshold' = input[["lfcThreshold"]], 
