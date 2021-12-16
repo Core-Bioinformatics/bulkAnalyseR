@@ -111,7 +111,7 @@ DEsummaryPanelServer <- function(id, expression.matrix, metadata, DEresults, ann
           geneSet <- anno$NAME[match(head(DEresults()$DE()$DEtableSubset$gene_id, 50), anno$ENSEMBL)]
         }
         geneIDs <- anno$ENSEMBL[match(geneSet, anno$NAME)]
-        subsetExpression <- expression.mat[geneIDs, , drop = FALSE]
+        subsetExpression <- expression.matrix()[geneIDs, , drop = FALSE]
         rownames(subsetExpression) <- geneSet
         
         meta <- lapply(metadata(), function(x) factor(x, levels = unique(x))) %>% 
