@@ -49,7 +49,7 @@ It is not recommended to use data which has not been denoised and normalised as 
 
 Main function: *preprocessExpressionMatrix()* 
 
-Supporting functions: *noisyr_counts_with_plot()*
+Supporting function: *noisyr_counts_with_plot()*
 
 ## Generating shiny app
 
@@ -57,7 +57,7 @@ The central function in *bulkAnalyseR* is **generateShinyApp**. This function cr
 
 Calling *generateShinyApp* with these parameters will create a folder with your chosen name in which there will be 2 data files *expression_matrix.rda* and *metadata.rda* and *app.R* which defines the app. To see the app, you can call *shiny::runApp()* with the name of the folder and the app will start. The app generated is standalone and can be shared with collaborators or published online through a platform like [shinyapps.io](https://www.shinyapps.io/). This provides an easy way for anyone to explore the data and verify the conclusions, increasing access and promoting reproducibility of the bioinformatics analysis.
 
-By default, the app will have 6 panels: QC, DE, DE summary, Volcano/MA plots, Patterns, Cross plots, GRN. You can choose to remove one or more panels using the *default.panels* parameter. 
+By default, the app will have 8 panels: Sample select, Quality checks, Differential expression, Volcano and MA plots, DE summary, Expression patterns, Cross plots, GRN inference. You can choose to remove one or more panels using the *default.panels* parameter. 
 
 By default, the app will look like this:
 
@@ -66,13 +66,11 @@ By default, the app will look like this:
 
 See [vignette](www.vignettelink.com) for more details on the individual panels.
 
-You can also add extra panels and data using the *panels.extra* and *data.extra* parameters.
+You can also add custom extra panels and data using the *panels.extra* and *data.extra* parameters.
 
 Main function: *generateShinyApp()* 
 
-Panel server functions: *DEpanelServer*, *DEplotPanelServer*, *DEsummaryPanelServer*, *GRNpanelServer*, *QCpanelServer*, *crossPanelServer*, *enrichmentPanelServer*, *patternPanelServer*, *sampleSelectPanelServer*
-
-Panel UI functions: *DEpanelUI*, *DEplotPanelUI*, *DEsummaryPanelUI*, *GRNpanelUI*, *QCpanelUI*, *crossPanelUI*, *enrichmentPanelUI*, *patternPanelUI*, *sampleSelectPanelUI*
+Panel functions (with UI and server components): *sampleSelectPanel*, *QCpanel*, *DEpanel*, *DEplotPanel*, *DEsummaryPanel*, *enrichmentPanel*, *patternPanel*, *crossPanel*, *GRNpanel*
 
 Supporting functions: *DEanalysis_deseq2*, *DEanalysis_edger*, *calculate_condition_mean_sd_per_gene*, *determine_uds*, *expression_heatmap*, *jaccard_heatmap*, *ma_enhance*, *ma_plot*, *make_heatmap_matrix*, *make_pattern_matrix*, *plot_line_pattern*, *plot_pca*, *volcano_enhance*, *volcano_plot*
 
@@ -84,34 +82,38 @@ A shiny app for the [Yang et al 2019 data](https://www.sciencedirect.com/science
 library(bulkAnalyseR) 
 
 #load expression matrix
-exp <- as.matrix(read.csv(system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), row.names = 1))
+expression.matrix <- as.matrix(read.csv(
+  system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+  row.names = 1
+))
 
 #create metadata table
-meta <- data.frame(srr = colnames(exp), 
+metadata <- data.frame(srr = colnames(expression.matrix), 
                    timepoint = rep(c("0h", "12h", "36h"), each = 2))
 
 #run preprocessing
-exp.proc <- preprocessExpressionMatrix(exp)
+expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
 
 #create shiny app
+shiny.dir <- "shiny_Yang2019"
 generateShinyApp(
-  expression.matrix = exp.proc,
-  metadata = meta,
-  shiny.dir = "shiny_Yang2019",
+  expression.matrix = expression.matrix.preproc,
+  metadata = metadata,
+  shiny.dir = shiny.dir,
   app.title = "Shiny app for three timepoints from the Yang 2019 data",
   organism = "mmusculus",
   org.db = "org.Mm.eg.db"
 )
 
 #run shiny app
-shiny::runApp('shiny_Yang2019')
+shiny::runApp(shiny.dir)
 ```
 
 ## Installation guide
 
 *bulkAnalyseR* can be installed from CRAN using *install.packages("bulkAnalyseR")*. You also need to make sure all bioconductor dependencies are also installed.
 
-To install the latest stable version from GitHub, first install CRAN dependencies as well as *devtools* then use *devtools::install_github("Core-Bioinformatics/bulkAnalyseR")*.
+To install the latest stable development version from GitHub, first install CRAN dependencies as well as *devtools* then use *devtools::install_github("Core-Bioinformatics/bulkAnalyseR")*.
 
 ### Required CRAN packages (use *install.packages()*) ###
 
@@ -125,6 +127,7 @@ To install the latest stable version from GitHub, first install CRAN dependencie
 * shinythemes
 * shinyWidgets
 * shinyjqui
+* shinyjs
 * ggplot2
 * ggrepel
 * ggnewscale
@@ -147,6 +150,9 @@ To install the latest stable version from GitHub, first install CRAN dependencie
 * GENIE3
 * ComplexHeatmap
 
+### Bioconductor annotation packages (the one for your model organism is required, human and mouse ones are listed here)
+* org.Hs.eg.db
+* org.Mm.eg.db
 
 </div>
 
