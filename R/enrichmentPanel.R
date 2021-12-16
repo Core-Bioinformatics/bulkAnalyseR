@@ -63,7 +63,8 @@ enrichmentPanelServer <- function(id, DEresults, organism){
                  paste(names, collapse = ",")
                }))
     }) %>%
-      bindEvent(DEresults(), input[["goEnrichment"]])
+      bindCache(DEresults()$DE()$DEtableSubset$gene_id, input[['gprofilerSources']]) %>%
+      bindEvent(input[["goEnrichment"]])
     
     #Jitter plot and save coordinates
     getenrichmentPlot <- reactive({

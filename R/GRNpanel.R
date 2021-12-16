@@ -22,7 +22,6 @@ GRNpanelUI <- function(id){
         numericInput(ns("plotConnections"), "Connections to plot:", 5, 0, 100),
         textInput(ns('plotFileName'), 'File name for plot download', value ='GRNplot.html'),
         downloadButton(ns('download'), 'Download Plot'),
-        
       ),
       
       mainPanel(

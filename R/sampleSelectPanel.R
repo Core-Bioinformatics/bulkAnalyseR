@@ -81,7 +81,7 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata){
       list("expression.matrix" = expression.matrix[, shinyValue('cb_', n)],
            "metadata" = metadata[shinyValue('cb_', n), ])
     }) %>%
-      bindEvent(input[["goSamples"]])
+      bindEvent(input[["goSamples"]], ignoreNULL = FALSE)
     
   })
 }

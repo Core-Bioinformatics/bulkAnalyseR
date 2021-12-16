@@ -32,7 +32,8 @@ calculate_condition_mean_sd_per_gene <- function(expression.matrix, condition){
     condition = rep(levels(condition), times = nrow(expression.matrix)),
     mean = NA,
     sd = NA
-  )
+  ) %>%
+    dplyr::mutate(condition = factor(condition, levels = unique(condition)))
   
   pb = utils::txtProgressBar(min = 0, max = nrow(tbl), initial = 0, style = 3) 
   for(i in seq_len(nrow(tbl))){
@@ -63,7 +64,7 @@ determine_uds <- function(min1, max1, min2, max2){
 #' \code{\link{calculate_condition_mean_sd_per_gene}}.
 #' @param tbl the output of \code{\link{calculate_condition_mean_sd_per_gene}}
 #' @param n_sd number of standard deviations from the mean to use to
-#' construct the intervals; default is 1
+#' construct the intervals; default is 2
 #' @return A matrix of single character patterns between conditions. The last
 #' column is named pattern and is a concatenation of all other columns.
 #' @export
@@ -77,7 +78,7 @@ determine_uds <- function(min1, max1, min2, max2){
 #' tbl <- calculate_condition_mean_sd_per_gene(expression.matrix.preproc[1:10, ], condition)
 #' patmat <- make_pattern_matrix(tbl)
 #' patmat
-make_pattern_matrix <- function(tbl, n_sd = 1){
+make_pattern_matrix <- function(tbl, n_sd = 2){
   tbl <- tbl %>% dplyr::mutate(min = mean - n_sd * sd, max = mean + n_sd * sd)
   
   genes <- unique(tbl$gene)

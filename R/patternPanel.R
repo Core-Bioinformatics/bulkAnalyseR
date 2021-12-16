@@ -25,8 +25,11 @@ patternPanelUI <- function(id, metadata){
                               items = unique(metadata[[ncol(metadata)]]), 
                               connect = ns("series")),
         
+        selectInput(ns("nSD"), "Number of standard deviations from the mean to use for interval overlap:",
+                    c(1:5), selected = 2),
         div(style="margin-bottom:20px"),
         shinyjs::disabled(actionButton(ns('goPatterns'), label = 'Calculate expression patterns')),
+        div(style="margin-bottom:20px"),
         
         selectInput(ns('pattern'), 'Pattern to plot', choices = NULL),
       ),
@@ -95,24 +98,29 @@ patternPanelServer <- function(id, expression.matrix, metadata, anno){
       condition <- metadata()[subset.idxs, input[["condition"]]]
       condition <- factor(condition, levels = input[["series"]])
       tbl <- calculate_condition_mean_sd_per_gene(mat, condition)
-      patterns <- make_pattern_matrix(tbl)[, "pattern"]
+      patterns <- make_pattern_matrix(tbl, n_sd = as.numeric(input[["nSD"]]))[, "pattern"]
       shinyjs::enable("goPatterns")
       list("tbl" = tbl, "patterns" = patterns)
     }) %>%
+      bindCache(metadata(), input[["condition"]], input[["series"]], input[["nSD"]]) %>%
       bindEvent(input[["goPatterns"]])
     
     observe({
       pats <- unique(patterns.list()$patterns)
       updateSelectInput(
-        session, 
-        "pattern", 
+        session, "pattern", 
         choices = setdiff(pats, paste0(rep("S", nchar(pats[1])), collapse = ""))
       )
     })
     
     line.plot <- reactive({
       genes <- names(patterns.list()$patterns)[patterns.list()$patterns == input[["pattern"]]]
-      myplot <- plot_line_pattern(patterns.list()$tbl, genes, type = input[['line.processing']]) 
+      myplot <- plot_line_pattern(
+        tbl = patterns.list()$tbl, 
+        genes = genes, 
+        type = input[['line.processing']],
+        show.legend = ifelse(length(genes) <= 10, TRUE, FALSE)
+      ) 
       return(myplot)
     })
     
@@ -120,7 +128,7 @@ patternPanelServer <- function(id, expression.matrix, metadata, anno){
       genes <- names(patterns.list()$patterns)[patterns.list()$patterns == input[["pattern"]]]
       heatmat <- make_heatmap_matrix(patterns.list()$tbl, genes)
       rownames(heatmat) <- anno$NAME[match(rownames(heatmat), anno$ENSEMBL)]
-      if(nrow(heatmat) > 100) rownames(heatmat) <- NULL
+      if(nrow(heatmat) > 50) rownames(heatmat) <- NULL
       
       myplot <- expression_heatmap(
         expression.matrix.subset = heatmat,
