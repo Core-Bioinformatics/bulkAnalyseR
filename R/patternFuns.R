@@ -185,3 +185,36 @@ plot_line_pattern <- function(
   
   p
 }
+
+#' Rescale a matrix
+#' @description This function rescales the rows of a matrix according to the
+#' specified type.
+#' @param mat the matrix to rescale
+#' @param type type of rescaling; one of "Expression" (defautl, does nothing),
+#' "Log2 Expression" (returns log2(x + 1) for every value), "Mean Scaled" (each
+#' row is scaled by its average), "Z-score" (each row is centered and scaled
+#' to mean = 0 and sd = 1)
+#' @return The rescaled matrix.
+#' @export
+#' @examples
+#' mat = matrix(1:10, nrow = 2, ncol = 5)
+#' rescale_matrix(mat, type = "Expression")
+#' rescale_matrix(mat, type = "Log2 Expression")
+#' rescale_matrix(mat, type = "Mean Scaled")
+#' rescale_matrix(mat, type = "Z-score")
+rescale_matrix <- function(
+  mat, 
+  type = c('Expression', 'Log2 Expression', 'Mean Scaled', 'Z-score')
+){
+  type <- type [1]
+  if(type == 'Expression'){
+    mat <- mat
+  }else if(type == 'Log2 Expression'){
+    mat <- log2(mat + 1)
+  }else if(type == 'Mean Scaled'){
+    mat <- mat / rowMeans(mat)
+  }else if(type == 'Z-score'){
+    mat <- t(scale(t(mat)))
+  }
+  mat
+}

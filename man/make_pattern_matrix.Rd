@@ -4,13 +4,13 @@
 \alias{make_pattern_matrix}
 \title{Create a matrix of the patterns between conditions}
 \usage{
-make_pattern_matrix(tbl, n_sd = 1)
+make_pattern_matrix(tbl, n_sd = 2)
 }
 \arguments{
 \item{tbl}{the output of \code{\link{calculate_condition_mean_sd_per_gene}}}
 
 \item{n_sd}{number of standard deviations from the mean to use to
-construct the intervals; default is 1}
+construct the intervals; default is 2}
 }
 \value{
 A matrix of single character patterns between conditions. The last

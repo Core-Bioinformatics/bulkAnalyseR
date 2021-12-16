@@ -26,17 +26,24 @@ patternPanelUI <- function(id, metadata){
                               connect = ns("series")),
         
         selectInput(ns("nSD"), "Number of standard deviations from the mean to use for interval overlap:",
-                    c(1:5), selected = 2),
+                    c(1:10), selected = 2),
         div(style="margin-bottom:20px"),
         shinyjs::disabled(actionButton(ns('goPatterns'), label = 'Calculate expression patterns')),
         div(style="margin-bottom:20px"),
         
         selectInput(ns('pattern'), 'Pattern to plot', choices = NULL),
+        
+        textInput(ns('tableFileName'), 'File name for download', 
+                  value ='patternExpression.csv', placeholder = 'patternExpression.csv'),
+        downloadButton(ns('downloadTable'), 'Download grouped expression table'),
+        radioButtons(ns('downloadValues'), label = "Download values",
+                     choices = c('Expression', 'Log2 Expression', 'Mean Scaled', 'Z-score'), 
+                     selected = 'Expression'),
       ),
       mainPanel(
         shinyWidgets::dropdownButton(
           radioButtons(ns('line.processing'), label = "Heatmap values",
-                       choices = c('Expression','Log2 Expression','Mean Scaled'), 
+                       choices = c('Expression', 'Log2 Expression', 'Mean Scaled'), 
                        selected = 'Mean Scaled'),
           textInput(ns('plotLineFileName'), 'File name for line plot download', value ='LinePlot.png'),
           downloadButton(ns('downloadLinePlot'), 'Download Line Plot'),
@@ -48,7 +55,7 @@ patternPanelUI <- function(id, metadata){
         plotOutput(ns('plot_line')),
         shinyWidgets::dropdownButton(
           radioButtons(ns('heatmap.processing'), label = "Heatmap values",
-                       choices = c('Expression','Log2 Expression','Z-score'), 
+                       choices = c('Expression', 'Log2 Expression', 'Z-score'), 
                        selected = 'Z-score'),
           textInput(ns('plotHeatmapFileName'), 'File name for heatmap plot download', value ='HeatmapPlot.png'),
           downloadButton(ns('downloadHeatmapPlot'), 'Download Heatmap Plot'),
@@ -112,6 +119,23 @@ patternPanelServer <- function(id, expression.matrix, metadata, anno){
         choices = setdiff(pats, paste0(rep("S", nchar(pats[1])), collapse = ""))
       )
     })
+    
+    output[['downloadTable']] <- downloadHandler(
+      filename = function() {
+        paste(input[['tableFileName']])
+      },
+      content = function(file) {
+        mat <- make_heatmap_matrix(patterns.list()$tbl) %>%
+          rescale_matrix(type = input[["downloadValues"]])
+        df <- cbind(
+          tibble::tibble(gene_id = names(patterns.list()$patterns),
+                         gene_name = anno$NAME[match(gene_id, anno$ENSEMBL)],
+                         pattern = patterns.list()$patterns),
+          tibble::as_tibble(mat)
+        )
+        utils::write.csv(x = df, file = file, row.names = FALSE)
+      }
+    )
     
     line.plot <- reactive({
       genes <- names(patterns.list()$patterns)[patterns.list()$patterns == input[["pattern"]]]
