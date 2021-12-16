@@ -86,7 +86,7 @@ patternPanelServer <- function(id, expression.matrix, metadata, anno){
     observe({
       shinyjqui::updateOrderInput(session, "series", items = character(0))
       shinyjqui::updateOrderInput(session, "states", 
-                                  items = unique(metadata()[[input[["condition"]]]]))
+                                  items = as.character(unique(metadata()[[input[["condition"]]]])))
     })
     
     observe({
