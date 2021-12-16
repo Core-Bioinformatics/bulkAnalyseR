@@ -45,11 +45,12 @@ GRNpanelServer <- function(id, expression.matrix, anno){
     
     updateSelectizeInput(session, "targetGenes", choices = anno$NAME, server = TRUE)
     
-    GRNresults <- eventReactive(input[["goGRN"]], {
+    GRNresults <- reactive({
       target.genes <- anno$ENSEMBL[match(input[["targetGenes"]], anno$NAME)]
       set.seed(13)
       GENIE3::GENIE3(expression.matrix(), targets = target.genes)
-    })
+    }) %>%
+      bindEvent(input[["goGRN"]])
     
     GRNplot <- reactive({
       weightMat <- GRNresults()

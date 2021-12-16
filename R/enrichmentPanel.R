@@ -47,11 +47,7 @@ enrichmentPanelServer <- function(id, DEresults, organism){
   moduleServer(id, function(input, output, session){
     
     #Run enrichment
-    getenrichmentData <- eventReactive({
-      DEresults()
-      input[["goEnrichment"]]
-    }, 
-    {
+    getenrichmentData <- reactive({
       inputdata = DEresults()$DE()
       gostres <- gprofiler2::gost(query = inputdata$DEtableSubset$gene_id,
                                   organism = organism,
@@ -66,7 +62,8 @@ enrichmentPanelServer <- function(id, DEresults, organism){
                  names <- inputdata$DEtable$gene_name[match(ensids, inputdata$DEtable$gene_id)]
                  paste(names, collapse = ",")
                }))
-    })
+    }) %>%
+      bindEvent(DEresults(), input[["goEnrichment"]])
     
     #Jitter plot and save coordinates
     getenrichmentPlot <- reactive({

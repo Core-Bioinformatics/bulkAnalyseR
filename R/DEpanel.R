@@ -92,7 +92,7 @@ DEpanelServer <- function(id, expression.matrix, metadata, anno){
       updateSelectInput(session, 'pipeline', choices = choices)
     })
     
-    DEresults <- eventReactive(input[["goDE"]], {
+    DEresults <- reactive({
       condition.indices <- metadata()[[input[["condition"]]]] %in% c(input[['variable1']], input[['variable2']])
       if(input[["pipeline"]] == "edgeR"){
         DEtable <- DEanalysis_edger(
@@ -122,7 +122,8 @@ DEpanelServer <- function(id, expression.matrix, metadata, anno){
                   "DEtableSubset" = DEtableSubset,
                   'lfcThreshold' = input[["lfcThreshold"]], 
                   'pvalThreshold' = input[["pvalThreshold"]]))
-    })
+    }) %>%
+      bindEvent(input[["goDE"]])
 
     #Define output table (only DE genes)
     dataTable <- reactive({
@@ -150,13 +151,11 @@ DEpanelServer <- function(id, expression.matrix, metadata, anno){
     
     proxy = DT::dataTableProxy('data')
     
-    observeEvent(input[['resetSelection']], {
-      proxy %>% DT::selectRows(NULL)
-    })
+    observe({proxy %>% DT::selectRows(NULL)}) %>%
+      bindEvent(input[['resetSelection']])
     
-    observeEvent(input[['selectTop50']], {
-      proxy %>% DT::selectRows(selected = 1:50)
-    })
+    observe({proxy %>% DT::selectRows(selected = 1:50)}) %>%
+      bindEvent(input[['selectTop50']])
     
     return(reactive(list('DE' = DEresults,
                          'selectedGenes' = reactive(selectedGenes())

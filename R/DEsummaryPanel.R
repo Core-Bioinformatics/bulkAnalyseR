@@ -99,8 +99,7 @@ DEsummaryPanelServer <- function(id, expression.matrix, metadata, DEresults, ann
     })
     output[['pca']] <- renderPlot(pca.plot())
     
-    heatmap.plot <- bindEvent( 
-      x = reactive({
+    heatmap.plot <- reactive({
         selectedGenes = DEresults()$selectedGenes()
         if(length(selectedGenes)){
           selectedGeneNames <- anno$NAME[match(selectedGenes, anno$ENSEMBL)]
@@ -126,10 +125,8 @@ DEsummaryPanelServer <- function(id, expression.matrix, metadata, DEresults, ann
           type = input[["heatmap.processing"]]
         )
         return(myplot)
-      }), 
-      DEresults(),
-      input[['goHeatmap']]
-    )
+      }) %>%
+      bindEvent(DEresults(), input[['goHeatmap']])
     output[['heatmap']] <- renderPlot(heatmap.plot(), height = 800)
     
     output[['downloadHeatmapPlot']] <- downloadHandler(

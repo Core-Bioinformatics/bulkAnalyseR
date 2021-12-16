@@ -124,7 +124,7 @@ crossPanelServer <- function(id, expression.matrix, metadata, anno){
       updateSelectInput(session, 'pipeline2', choices = choices)
     })
     
-    DEresults <- eventReactive(input[["goDE"]], {
+    DEresults <- reactive({
       condition.indices <- metadata()[[input[["condition1"]]]] %in% c(input[['DE1var1']], input[['DE1var2']])
       if(input[["pipeline1"]] == "edgeR"){
         DEtable1 <- DEanalysis_edger(
@@ -176,7 +176,8 @@ crossPanelServer <- function(id, expression.matrix, metadata, anno){
                   "DEtable2Subset" = DEtable2Subset,
                   'lfcThreshold' = input[["lfcThreshold"]], 
                   'pvalThreshold' = input[["pvalThreshold"]]))
-    })
+    }) %>%
+      bindEvent(input[["goDE"]])
     
     cp <- reactive({
       results <- DEresults()

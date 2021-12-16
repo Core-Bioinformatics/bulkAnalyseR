@@ -77,12 +77,11 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata){
       DT::replaceData(proxy, loopData(), resetPaging = FALSE)
     })
     
-    filteredInputs <- eventReactive(input[["goSamples"]], {
+    filteredInputs <- reactive({
       list("expression.matrix" = expression.matrix[, shinyValue('cb_', n)],
            "metadata" = metadata[shinyValue('cb_', n), ])
-    },
-    ignoreNULL = FALSE
-    )
+    }) %>%
+      bindEvent(input[["goSamples"]])
     
   })
 }
