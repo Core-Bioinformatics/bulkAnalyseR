@@ -59,7 +59,7 @@ The central function in *bulkAnalyseR* is **generateShinyApp**. This function cr
 
 Calling *generateShinyApp* with these parameters will create a folder with your chosen name in which there will be 2 data files *expression_matrix.rda* and *metadata.rda* and *app.R* which defines the app. To see the app, you can call *shiny::runApp()* with the name of the folder and the app will start. The app generated is standalone and can be shared with collaborators or published online through a platform like [shinyapps.io](https://www.shinyapps.io/). This provides an easy way for anyone to explore the data and verify the conclusions, increasing access and promoting reproducibility of the bioinformatics analysis.
 
-By default, the app will have 8 panels: Sample select, Quality checks, Differential expression, Volcano and MA plots, DE summary, Expression patterns, Cross plots, GRN inference. You can choose to remove one or more panels using the *default.panels* parameter. 
+By default, the app will have 9 panels: Sample select, Quality checks, Differential expression, Volcano and MA plots, DE summary, Enrichment, Expression patterns, Cross plots, GRN inference. You can choose to remove one or more panels using the *default.panels* parameter. 
 
 By default, the app will look like this:
 
