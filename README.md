@@ -64,6 +64,7 @@ By default, the app will have 8 panels: Sample select, Quality checks, Different
 By default, the app will look like this:
 
 <img src="vignettes/figures/ScreenShot.png" alt="drawing" width="800"/>
+
 *Screenshot from sample bulkAnalyseR app*
 
 [comment]: <See [vignette](www.vignettelink.com) for more details on the individual panels.>
