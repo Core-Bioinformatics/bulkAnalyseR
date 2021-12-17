@@ -123,6 +123,9 @@ validateAppInputs <- function(
   expression.matrix = expression.matrix,
   metadata = metadata
 ){
+  if(!is.matrix(expression.matrix)){
+    stop("The expression matrix must be a matrix")
+  }
   if(ncol(expression.matrix) != nrow(metadata)){
     stop("Detected different number of columns in expression.matrix to rows in metadata")
   }else if(!identical(colnames(expression.matrix), metadata[[1]])){
