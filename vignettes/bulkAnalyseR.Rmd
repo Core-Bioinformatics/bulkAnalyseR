@@ -271,7 +271,7 @@ The pattern identification is done by calculating a confidence interval for each
 
 The grouped expression matrix can then be downloaded, showing which pattern each gene was assigned to. Plots are also created for the genes in the selected pattern ("Pattern to plot").
 
-```{r patterns, echo = FALSE, out.width = "80%"}
+```{r patterns, echo = FALSE, out.width = "30%"}
 knitr::include_graphics("figures/ExpressionPatterns.png") 
 ```
 
