@@ -9,7 +9,7 @@ Bulk mRNA-seq experiments are essential for exploring a wide range of biological
 
 [comment]: <Preprint: AAA>
 
-![ScreenShot](vignettes/figures/workflow.png)
+<img src="vignettes/figures/workflow.png" alt="drawing" width="800"/>
 *Workflow diagram of the **bulkAnalyseR** pipeline*
 
 ## Preprocessing step
@@ -62,7 +62,7 @@ By default, the app will have 8 panels: Sample select, Quality checks, Different
 
 By default, the app will look like this:
 
-![ScreenShot](vignettes/figures/ScreenShot.png)
+<img src="vignettes/figures/ScreenShot.png" alt="drawing" width="800"/>
 *Screenshot from sample bulkAnalyseR app*
 
 [comment]: <See [vignette](www.vignettelink.com) for more details on the individual panels.>
