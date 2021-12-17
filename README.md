@@ -10,6 +10,7 @@ Bulk mRNA-seq experiments are essential for exploring a wide range of biological
 [comment]: <Preprint: AAA>
 
 <img src="vignettes/figures/workflow.png" alt="drawing" width="500"/>
+
 *Workflow diagram of the **bulkAnalyseR** pipeline*
 
 ## Preprocessing step
