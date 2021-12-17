@@ -5,10 +5,11 @@
 
 <div style="text-align: justify"> 
 
-Bulk mRNA-seq experiments are essential for exploring a wide range of biological questions. To bring closer the data analysis to its interpretation and facilitate both interactive, exploratory tasks and the sharing of (easily accessible) information, we present *bulkAnalyseR* an R package that offers a seamless, customisable solution for most bulk RNAseq datasets. By integrating state-of-the-art approaches without relying on extensive computational support, and replacing static images with interactive panels, our aim is to further support and strengthen the reusability of data. *bulkAnalyseR* enables standard analyses of bulk data, using an expression matrix as starting poin. It presents the ouptuts of various steps in an interactive web-based interface, making it easy to generate, explore and verify hypotheses.  Moreover, the app can be easily shared and published, incentivising research reproducibility and allowing others to explore the same processed data and enhance the biological conclusions.
+Bulk mRNA-seq experiments are essential for exploring a wide range of biological questions. To bring closer the data analysis to its interpretation and facilitate both interactive, exploratory tasks and the sharing of (easily accessible) information, we present *bulkAnalyseR* an R package that offers a seamless, customisable solution for most bulk RNAseq datasets. By integrating state-of-the-art approaches without relying on extensive computational support, and replacing static images with interactive panels, our aim is to further support and strengthen the reusability of data. *bulkAnalyseR* enables standard analyses of bulk data, using an expression matrix as starting point. It presents the outputs of various steps in an interactive web-based interface, making it easy to generate, explore and verify hypotheses.  Moreover, the app can be easily shared and published, incentivising research reproducibility and allowing others to explore the same processed data and enhance the biological conclusions.
 
-Preprint: AAA
+[comment]: <Preprint: AAA>
 
+![ScreenShot](vignettes/figures/workflow.png)
 *Workflow diagram of the **bulkAnalyseR** pipeline*
 
 ## Preprocessing step
@@ -64,7 +65,7 @@ By default, the app will look like this:
 ![ScreenShot](vignettes/figures/ScreenShot.png)
 *Screenshot from sample bulkAnalyseR app*
 
-See [vignette](www.vignettelink.com) for more details on the individual panels.
+[comment]: <See [vignette](www.vignettelink.com) for more details on the individual panels.>
 
 You can also add custom extra panels and data using the *panels.extra* and *data.extra* parameters.
 
