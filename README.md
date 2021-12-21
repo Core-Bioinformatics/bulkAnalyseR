@@ -5,25 +5,25 @@
 
 <div style="text-align: justify"> 
 
-Bulk mRNA-seq experiments are essential for exploring a wide range of biological questions. To bring closer the data analysis to its interpretation and facilitate both interactive, exploratory tasks and the sharing of (easily accessible) information, we present *bulkAnalyseR* an R package that offers a seamless, customisable solution for most bulk RNAseq datasets. By integrating state-of-the-art approaches without relying on extensive computational support, and replacing static images with interactive panels, our aim is to further support and strengthen the reusability of data. *bulkAnalyseR* enables standard analyses of bulk data, using an expression matrix as starting point. It presents the outputs of various steps in an interactive web-based interface, making it easy to generate, explore and verify hypotheses.  Moreover, the app can be easily shared and published, incentivising research reproducibility and allowing others to explore the same processed data and enhance the biological conclusions.
+Bulk sequencing experiments (e.g. mRNAseq, sRNAseq etc) are essential for exploring a wide range of biological questions. To bring closer the data analysis to its interpretation and facilitate both interactive, exploratory tasks and the sharing of (easily accessible) information, we present *bulkAnalyseR*, an R package that offers a seamless, customisable solution for most bulk sequencing datasets. By integrating state-of-the-art approaches without relying on extensive computational support, and replacing static images with interactive panels, our aim is to further support and strengthen the reusability of data. *bulkAnalyseR* enables standard analyses of bulk data, using an expression matrix as starting point. It presents the outputs of various steps in an interactive web-based interface, making it easy to generate, explore and verify hypotheses. Moreover, the app can be easily shared and published, incentivising research reproducibility and allowing others to explore the same processed data.
 
 [comment]: <Preprint: AAA>
 
 <img src="vignettes/figures/workflow.png" alt="drawing" width="500"/>
 
-*Workflow diagram of the **bulkAnalyseR** pipeline*
+*Workflow diagram of the **bulkAnalyseR** pipeline. The input comprises a processed (i.e. normalised, noise corrected) expression matrix. Using **bulkAnalyseR** all standard steps related to differential expression analyses are handled seamlesley. The pairwaise comparison of differential expression outputs is also possible (using cross-plots and upset plots). Lastly, localised Gene Regulatory Networks can be created.*
 
 ## Preprocessing step
 
-### Defining expression matrix and metadata
+### Defining the input expression matrix and corresponding metadata
 
-To create a shiny app using *bulkAnalyseR*, you need an expression matrix and a metadata table loaded. 
+To create a shiny app using *bulkAnalyseR*, you need a processed (e.g. normalised, noise corrected) expression matrix and a corresponding metadata table loaded in your workspace. 
 
-The expression matrix should have genes on the rows (with the Ensembl ID as the row name) and samples on the columns. 
+The expression matrix is expected to have genes on the rows (with the Ensembl ID as the row name) and samples on the columns. 
 
-The first column of the metadata table must match the column names of the expression matrix. The other columns of the metadata table contain other pieces of information about the samples e.g. timepoint, treatment groups you want to compare between. 
+The first column of the metadata table must match the column names of the expression matrix. The other columns of the metadata table contain other information about the samples e.g. time points, treatment groups, demographic information etc; the differential expression analysis may take into account a subset of these columns. 
 
-For example, if you had this expression matrix (from [2019 paper by Yang et al](https://www.sciencedirect.com/science/article/pii/S2405471219301152)):
+We illustrate this on a case study from a 2019 paper by Yang et al (https://www.sciencedirect.com/science/article/pii/S2405471219301152). Using three time points, each with two replicates, for some bulk mRNAseq samples, we obtain the following matrices:
 
 |    |SRR7624365   |  SRR7624366 | SRR7624371   | SRR7624372  | SRR7624375  | SRR7624376 |
 |---|---|---|---|---|---|--- |
@@ -32,7 +32,7 @@ For example, if you had this expression matrix (from [2019 paper by Yang et al](
 |ENSMUSG00000051951| 6  | 4  | 2  | 0  | 47 | 37 |
 || ...  | ...  | ...  | ...  | ... | ... |
 
-Then you could have this metadata table:
+Below is an example of a metadata table:
 
 | srr        | timepoint |
 | ---        | ---       |
@@ -45,9 +45,9 @@ Then you could have this metadata table:
 
 ### Denoising and normalisation
 
-Before using the expression matrix to create our shiny app, some preprocessing should be performed. *bulkAnalyseR* contains the function **preprocessExpressionMatrix** which takes the expression matrix as input then denoises the data using [*noisyR*](https://github.com/Core-Bioinformatics/noisyR) and normalises using either quantile (by default) or RPM normalisation (specified using *normalisation.method* parameter).
+Before using the expression matrix to create a shiny app, some preprocessing should be performed. *bulkAnalyseR* contains the function **preprocessExpressionMatrix** which takes the raw expression matrix as input, then denoises the data using [*noisyR*](https://github.com/Core-Bioinformatics/noisyR) and normalises the expression levels using either quantile (by default) or RPM normalisation (specified using *normalisation.method* parameter).
 
-It is not recommended to use data which has not been denoised and normalised as input to *generateShinyApp*. You can also perform your own preprocessing outside *preprocessExpressionMatrix*.
+It is not recommended to use data which has not been denoised and normalised as input to *generateShinyApp*; noisy data is prone to spurious, un-reproducible patterns; analyses performed on unnormalised data are unlikely to be robust. You can also perform your own preprocessing outside *preprocessExpressionMatrix* function.
 
 Main function: *preprocessExpressionMatrix()* 
 
@@ -55,9 +55,9 @@ Supporting function: *noisyr_counts_with_plot()*
 
 ## Generating shiny app
 
-The central function in *bulkAnalyseR* is **generateShinyApp**. This function creates an app.R file and all required objects to run the app in .rda format in the target directory. The key inputs to **generateShinyApp** are *expression.matrix* (after being processed using *preprocessExpressionMatrix*) and *meta*. You can also specify the title, name for directory where the app should be saved, shiny theme as well as specifying the organism on which your data was generated.
+The central function in *bulkAnalyseR* is **generateShinyApp**. This function creates an app.R file and all required objects to run the app in .rda format in the target directory. The key inputs to **generateShinyApp** are *expression.matrix* (after being processed using *preprocessExpressionMatrix*) and *meta*. You can also specify the title, a folder name where the app will be saved, a shiny theme, as well as specifying the organism on which your data was generated.
 
-Calling *generateShinyApp* with these parameters will create a folder with your chosen name in which there will be 2 data files *expression_matrix.rda* and *metadata.rda* and *app.R* which defines the app. To see the app, you can call *shiny::runApp()* with the name of the folder and the app will start. The app generated is standalone and can be shared with collaborators or published online through a platform like [shinyapps.io](https://www.shinyapps.io/). This provides an easy way for anyone to explore the data and verify the conclusions, increasing access and promoting reproducibility of the bioinformatics analysis.
+Calling *generateShinyApp* with these parameters will create a folder with your chosen name in which there will be 2 files *expression_matrix.rda* and *metadata.rda* and *app.R* which defines the app. To see the app, you can call *shiny::runApp()* with the name of the folder as parameter. The app generated is standalone and can be shared with collaborators or published online through a platform like [shinyapps.io](https://www.shinyapps.io/). This provides an easy way for anyone to explore the data and verify the conclusions, increasing access and promoting reproducibility of the bioinformatics analysis.
 
 By default, the app will have 9 panels: Sample select, Quality checks, Differential expression, Volcano and MA plots, DE summary, Enrichment, Expression patterns, Cross plots, GRN inference. You can choose to remove one or more panels using the *default.panels* parameter. 
 
@@ -65,7 +65,7 @@ By default, the app will look like this:
 
 <img src="vignettes/figures/ScreenShot.png" alt="drawing" width="800"/>
 
-*Screenshot from sample bulkAnalyseR app*
+*Screenshot from Yang case study processed with the bulkAnalyseR app*
 
 [comment]: <See [vignette](www.vignettelink.com) for more details on the individual panels.>
 
@@ -114,9 +114,9 @@ shiny::runApp(shiny.dir)
 
 ## Installation guide
 
-*bulkAnalyseR* can be installed from CRAN using *install.packages("bulkAnalyseR")*. You also need to make sure all bioconductor dependencies are also installed.
+*bulkAnalyseR* can be installed from CRAN using *install.packages("bulkAnalyseR")*. Please make sure all bioconductor dependencies are also installed.
 
-To install the latest stable development version from GitHub, first install CRAN dependencies as well as *devtools* then use *devtools::install_github("Core-Bioinformatics/bulkAnalyseR")*.
+To install the latest stable development version from GitHub, first install the CRAN dependencies as well as *devtools* then use *devtools::install_github("Core-Bioinformatics/bulkAnalyseR")*.
 
 ### Required CRAN packages (use *install.packages()*) ###
 
