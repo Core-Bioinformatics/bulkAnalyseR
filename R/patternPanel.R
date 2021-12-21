@@ -171,7 +171,7 @@ patternPanelServer <- function(id, expression.matrix, metadata, anno){
       filename = function() { input[['plotLineFileName']] },
       content = function(file) {
         device <- function(..., width, height) grDevices::png(..., width = width, height = height, res = 300, units = "in")
-        ggsave(file, plot = pca.plot(), device = device)
+        ggsave(file, plot = line.plot(), device = device)
       }
     )
     
