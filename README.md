@@ -5,9 +5,17 @@
 
 <div style="text-align: justify"> 
 
-Bulk sequencing experiments (e.g. mRNAseq, sRNAseq etc) are essential for exploring a wide range of biological questions. To bring closer the data analysis to its interpretation and facilitate both interactive, exploratory tasks and the sharing of (easily accessible) information, we present *bulkAnalyseR*, an R package that offers a seamless, customisable solution for most bulk sequencing datasets. By integrating state-of-the-art approaches without relying on extensive computational support, and replacing static images with interactive panels, our aim is to further support and strengthen the reusability of data. *bulkAnalyseR* enables standard analyses of bulk data, using an expression matrix as starting point. It presents the outputs of various steps in an interactive web-based interface, making it easy to generate, explore and verify hypotheses. Moreover, the app can be easily shared and published, incentivising research reproducibility and allowing others to explore the same processed data.
+Bulk sequencing experiments (e.g. mRNAseq, sRNAseq etc) are essential for exploring a wide range of biological questions. To bring the data analysis closer to its interpretation and facilitate both interactive, exploratory tasks and the sharing of (easily accessible) information, we present *bulkAnalyseR*, an R package that offers a seamless, customisable solution for most bulk sequencing datasets. By integrating state-of-the-art approaches without relying on extensive computational support, and replacing static images with interactive panels, our aim is to further support and strengthen the reusability of data. *bulkAnalyseR* enables standard analyses of bulk data, using an expression matrix as starting point. It presents the outputs of various steps in an interactive web-based interface, making it easy to generate, explore and verify hypotheses. Moreover, the app can be easily shared and published, incentivising research reproducibility and allowing others to explore the same processed data.
 
 [comment]: <Preprint: AAA>
+
+If you are using components of this package in published research please cite the following papers along with the *bulkAnalyseR* manuscript:
+
+* **Noise removal:** Moutsopoulos, I. et al. (2021). noisyR: enhancing biological signal in sequencing datasets by characterizing random technical noise. Nucleic Acids Research, 49(14),
+e83–e83.
+* **Differential expression:** Robinson, M. D. et al. (2009). edgeR: a Bioconductor package for differential expression analysis of digital gene expression data. Bioinformatics, 26(1), 139–140. and	Love M.I., et al. Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2. Genome Biol. 2014; 15:550.
+* **Enrichment analysis:** Raudvere, U. et al. (2019). g:Profiler: a web server for functional enrichment analysis and conversions of gene lists (2019 update). Nucleic Acids Research, 47(W1), W191–W198.
+* **Gene regulatory network inference:** Huynh-Thu, V. A. et al. (2010). Inferring regulatory networks from expression data using tree-based methods. PloS one, 5(9), e12776.
 
 <img src="vignettes/figures/workflow.png" alt="drawing" width="500"/>
 
@@ -67,7 +75,7 @@ By default, the app will look like this:
 
 *Screenshot from Yang case study processed with the bulkAnalyseR app*
 
-[comment]: <See [vignette](www.vignettelink.com) for more details on the individual panels.>
+[comment]: <See [vignette](vignettes/bulkAnalyseR.html) for more details on the individual panels.>
 
 You can also add custom extra panels and data using the *panels.extra* and *data.extra* parameters.
 
