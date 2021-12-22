@@ -75,7 +75,7 @@ DEanalysis_edger <- function(
   if(is.na(edger$common.dispersion)){ # if there are no replicates
     edger.noreps <- edgeR::DGEList(counts = expression.matrix, group = condition)
     edger.noreps <- edgeR::calcNormFactors(edger.noreps)
-    edger.noreps <- edgeR::estimateDisp(edger.noreps, tagwise=FALSE)
+    edger.noreps <- edgeR::estimateGLMCommonDisp(edger.noreps,method="deviance",robust=TRUE,subset=NULL)
     edger$common.dispersion <- edger.noreps$common.dispersion
     edger$trended.dispersion <- edger.noreps$trended.dispersion
     edger$tagwise.dispersion <- edger.noreps$tagwise.dispersion

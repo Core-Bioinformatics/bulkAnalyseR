@@ -131,7 +131,7 @@ cross_plot = function(
   
   if(add.labels.custom){
     genes.to.rename <- genes.to.label[names(genes.to.label) != ""]
-    genes.to.label <- df$gene_name[(match(genes.to.label, c(df$gene_name, df$gene_id)) - 1) %% nrow(df) + 1]
+#    genes.to.label <- df$gene_name[(match(genes.to.label, c(df$gene_name, df$gene_id)) - 1) %% nrow(df) + 1]
     genes.to.label <- unique(genes.to.label[!is.na(genes.to.label)])
     genes.to.rename <- genes.to.rename[genes.to.rename %in% genes.to.label]
     df.label <- dplyr::filter(df, gene_name %in% genes.to.label)

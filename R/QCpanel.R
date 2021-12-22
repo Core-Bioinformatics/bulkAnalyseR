@@ -164,7 +164,7 @@ QCpanelServer <- function(id, expression.matrix, metadata, anno){
       filename = function() { input[['plotMAFileName']] },
       content = function(file) {
         device <- function(..., width, height) grDevices::png(..., width = width, height = height, res = 300, units = "in")
-        ggsave(file, plot = qc.ma.plot(), device = device)
+        ggsave(file, plot = ma.plot(), device = device)
       }
     )
   })

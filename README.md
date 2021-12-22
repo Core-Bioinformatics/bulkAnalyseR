@@ -19,7 +19,7 @@ e83–e83.
 
 <img src="vignettes/figures/workflow.png" alt="drawing" width="500"/>
 
-*Workflow diagram of the **bulkAnalyseR** pipeline. The input comprises a processed (i.e. normalised, noise corrected) expression matrix. Using **bulkAnalyseR** all standard steps related to differential expression analyses are handled seamlesley. The pairwaise comparison of differential expression outputs is also possible (using cross-plots and upset plots). Lastly, localised Gene Regulatory Networks can be created.*
+*Workflow diagram of the **bulkAnalyseR** pipeline. The input comprises a processed (i.e. normalised, noise-corrected) expression matrix. Using **bulkAnalyseR**, all standard steps related to differential expression analyses are handled seamlessley. The pairwaise comparison of differential expression outputs is also possible (using cross plots and upset plots). Finally, localised Gene Regulatory Networks can be created.*
 
 ## Preprocessing step
 
@@ -75,7 +75,7 @@ By default, the app will look like this:
 
 *Screenshot from Yang case study processed with the bulkAnalyseR app*
 
-[comment]: <See [vignette](vignettes/bulkAnalyseR.html) for more details on the individual panels.>
+See [vignette](https://raw.githack.com/Core-Bioinformatics/bulkAnalyseR/main/vignettes/bulkAnalyseR.html) for more details on the individual panels.
 
 You can also add custom extra panels and data using the *panels.extra* and *data.extra* parameters.
 
