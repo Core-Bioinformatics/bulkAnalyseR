@@ -15,8 +15,7 @@ QCpanelUI <- function(id, metadata){
     'Quality checks',
     tags$h1("Jaccard Similarity Index Heatmap"),
     shinyWidgets::dropdownButton(
-      shinyjqui::orderInput(ns('jaccard.annotations'), label = "Show annotations",
-                            items = colnames(metadata)[c(ncol(metadata), seq_len(ncol(metadata) - 1))][-2]),
+      shinyjqui::orderInput(ns('jaccard.annotations'), label = "Show annotations", items = colnames(metadata)),
       sliderInput(ns('jaccard.n.abundant'), label = '# of (most abundant) genes',
                   min = 50, value = 500, max = 5000, step = 50, ticks = FALSE),
       checkboxInput(ns("jaccard.show.values"), label = "Show JSI values", value = FALSE),
@@ -73,6 +72,16 @@ QCpanelServer <- function(id, expression.matrix, metadata, anno){
   })
   
   moduleServer(id, function(input, output, session){
+    observe({
+      items <- colnames(metadata())
+      include.exclude <- apply(metadata(), 2, function(x){
+        l <- length(unique(x))
+        (l > 1) & (l < length(x))
+      })
+      items <- colnames(metadata())[include.exclude]
+      items <- items[c(length(items), seq_len(length(items) - 1))]
+      shinyjqui::updateOrderInput(session, "jaccard.annotations", items = items)
+    })
     jaccard.plot <- reactive({
       meta <- lapply(metadata(), function(x) factor(x, levels = unique(x))) %>% 
         as.data.frame() %>%

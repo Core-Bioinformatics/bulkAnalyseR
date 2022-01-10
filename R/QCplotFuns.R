@@ -71,6 +71,7 @@ jaccard_heatmap <- function(
         vec <- c(vec, col.vector[colind])
         names(vec)[i] <- values[i]
         colind <- colind + 1
+        if(colind > length(col.vector)){colind <- colind %% length(col.vector)}
       }
       top.annotation.colour.list[[colnames(metadata)[top.annotation.ids[annos]]]] <- vec
     }
