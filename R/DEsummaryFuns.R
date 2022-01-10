@@ -20,12 +20,14 @@ expression_heatmap <- function(
   expression.matrix.subset,
   top.annotation.ids = NULL,
   metadata,
-  type = c('Z-score', 'Log2 Expression', 'Expression')
+  type = c('Z-score', 'Log2 Expression', 'Expression'),
+  show.columns.names = TRUE
 ){
   heatmat <- as.matrix(expression.matrix.subset)
   
   type <- type[1]
   heatmat <- rescale_matrix(heatmat, type)
+  if(!show.columns.names){colnames(heatmat <- NULL)}
   
   if(!is.null(top.annotation.ids)){
     qual.col.pals = dplyr::filter(RColorBrewer::brewer.pal.info, .data$category == 'qual')
