@@ -24,6 +24,8 @@ jaccard_index <- function(a, b){
 #' of the metadata should become heatmap annotations
 #' @param n.abundant number of most abundant genes to use for the JSI calculation
 #' @param show.values whether to show the JSI values within the heatmap squares
+#' @param show.row.columns.names whether to show the row and column names below 
+#' the heatmap; default is TRUE
 #' @return The JSI heatmap as detailed in the ComplexHeatmap package.
 #' @export
 #' @examples
@@ -42,7 +44,8 @@ jaccard_heatmap <- function(
   metadata,
   top.annotation.ids = NULL, 
   n.abundant = NULL, 
-  show.values = TRUE
+  show.values = TRUE,
+  show.row.columns.names = TRUE
 ){
   n.abundant <- min(n.abundant, nrow(expression.matrix))
   n.samples <- ncol(expression.matrix)
@@ -54,7 +57,9 @@ jaccard_heatmap <- function(
       heatmat[i, j] <- heatmat[j, i] <- jaccard_index(i.gene.indices, j.gene.indices)
     }
   }
-  rownames(heatmat) <- colnames(heatmat) <- colnames(expression.matrix)
+  if(show.row.columns.names){
+    rownames(heatmat) <- colnames(heatmat) <- colnames(expression.matrix)
+  }
   
   if(!is.null(top.annotation.ids)){
     qual.col.pals = dplyr::filter(RColorBrewer::brewer.pal.info, .data$category == 'qual')
@@ -71,6 +76,7 @@ jaccard_heatmap <- function(
         vec <- c(vec, col.vector[colind])
         names(vec)[i] <- values[i]
         colind <- colind + 1
+        if(colind > length(col.vector)){colind <- colind %% length(col.vector)}
       }
       top.annotation.colour.list[[colnames(metadata)[top.annotation.ids[annos]]]] <- vec
     }
