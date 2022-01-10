@@ -18,14 +18,19 @@
 #' @param app.title title to be displayed within the app
 #' @param organism organism name to be passed on to \code{gprofiler2::gost};
 #' organism names are constructed by concatenating the first letter of the 
-#' name and the family name; default is human - 'hsapiens'
+#' name and the family name; default is NULL - enrichment is not included
+#' to ensure compatibility with datasets that have non-standard gene names
 #' @param org.db database for annotations to transform ENSEMBL IDs to
 #' gene names; a list of bioconductor packaged databases can be found with 
-#' \code{BiocManager::available("^org\\.")}; default is human - 'org.Hs.eg.db'
+#' \code{BiocManager::available("^org\\.")}; default is human - 'org.Hs.eg.db';
+#' default in NULL, in which case the row names of the expression matrix are
+#' used directly - it is recommended to provide ENSEMBL IDs if the database
+#' for your model organism is available
 #' @param theme shiny theme to be used in the app; default is 'flatly'
 #' @param panels.default argument to control which of the default panels
-#' will be included in the app; default is all; not that the 'DE' panel is
-#' required for 'DEplot' and 'Enrichment'
+#' will be included in the app; default is all, but the enrichment panel
+#' will not appear unless organism is also supplied; note that the 'DE' panel 
+#' is required for 'DEplot' and 'Enrichment'
 #' @param panels.extra,data.extra,packages.extra functionality to add new
 #' user-created panels to the app to extend functionality or change the default
 #' behaviour of existing panels; a data frame of the panel UI and server names
@@ -50,7 +55,7 @@
 #' app.dir <- generateShinyApp(
 #'   expression.matrix = expression.matrix.preproc,
 #'   metadata = metadata,
-#'   shiny.dir = paste0(tempdir(), "ssshiny_Yang2019"),
+#'   shiny.dir = paste0(tempdir(), "shiny_Yang2019"),
 #'   app.title = "Shiny app for the Yang 2019 data",
 #'   organism = "mmusculus",
 #'   org.db = "org.Mm.eg.db"
@@ -79,8 +84,8 @@ generateShinyApp <- function(
   metadata,
   shiny.dir = "shiny_bulkAnalyseR",
   app.title = "Visualisation of RNA-Seq data",
-  organism = "hsapiens",
-  org.db = "org.Hs.eg.db",
+  organism = NULL,
+  org.db = NULL,
   theme = "flatly",
   panels.default = c("SampleSelect", "QC", "DE", "DEplot", "DEsummary",
                      "Patterns", "Enrichment", "Cross", "GRN"),
@@ -172,22 +177,32 @@ generateAppFile <- function(
   code.load.packages <- paste0("library(", packages.to.load, ")")
   lines.out <- c(lines.out, code.load.packages, "")
   
-  shiny.dir <- normalizePath(shiny.dir)
   code.source.objects <- c(
     paste0("r.files <- list.files(path = getwd(), pattern = '\\.R$')"),
     "r.files <- setdiff(r.files, 'app.R')",
     "for(fl in r.files) source(fl)",
     "rda.files <- list.files(pattern = '\\.rda$')",
-    "for(fl in rda.files) load(fl)",
-    "anno <- AnnotationDbi::select(",
-    glue::glue("getExportedValue('{org.db}', '{org.db}'),"),
-    "keys = rownames(expression.matrix),",
-    "keytype = 'ENSEMBL',",
-    "columns = 'SYMBOL'",
-    ") %>%",
-    "dplyr::distinct(ENSEMBL, .keep_all = TRUE) %>%",
-    "dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))"
+    "for(fl in rda.files) load(fl)"
   )
+  if(is.null(org.db)){
+    code.source.objects <- c(
+      code.source.objects,
+      "anno <- data.frame(ENSEMBL = rownames(expression.matrix),",
+      "NAME = rownames(expression.matrix))"
+    )
+  }else{
+    code.source.objects <- c(
+      code.source.objects,
+      "anno <- AnnotationDbi::select(",
+      glue::glue("getExportedValue('{org.db}', '{org.db}'),"),
+      "keys = rownames(expression.matrix),",
+      "keytype = 'ENSEMBL',",
+      "columns = 'SYMBOL'",
+      ") %>%",
+      "dplyr::distinct(ENSEMBL, .keep_all = TRUE) %>%",
+      "dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))"
+    )
+  }
   lines.out <- c(lines.out, code.source.objects, "")
   
   code.ui <- c(
@@ -203,7 +218,9 @@ generateAppFile <- function(
     code.ui <- c(code.ui, "DEpanelUI('DE', metadata),")
     if("DEplot" %in% panels.default) code.ui <- c(code.ui, "DEplotPanelUI('DEplot'),")
     if("DEsummary" %in% panels.default) code.ui <- c(code.ui, "DEsummaryPanelUI('DEsummary', metadata),")
-    if("Enrichment" %in% panels.default) code.ui <- c(code.ui, "enrichmentPanelUI('Enrichment'),")
+    if("Enrichment" %in% panels.default & !is.null(organism)){
+      code.ui <- c(code.ui, "enrichmentPanelUI('Enrichment'),")
+    }
   }
   if("Patterns" %in% panels.default) code.ui <- c(code.ui, "patternPanelUI('Patterns', metadata),")
   if("Cross" %in% panels.default) code.ui <- c(code.ui, "crossPanelUI('Cross', metadata),")
@@ -240,7 +257,7 @@ generateAppFile <- function(
     if("DEsummary" %in% panels.default){
       code.server <- c(code.server, "DEsummaryPanelServer('DEsummary', expression.matrix, metadata, DEresults, anno)")
     }
-    if("Enrichment" %in% panels.default){
+    if("Enrichment" %in% panels.default & !is.null(organism)){
       code.server <- c(
         code.server, 
         glue::glue("enrichmentPanelServer('Enrichment', DEresults, organism = '{organism}')")
@@ -267,6 +284,7 @@ generateAppFile <- function(
   
   lines.out <- gsub("\\\\", "\\\\\\\\", lines.out)
   
+  shiny.dir <- normalizePath(shiny.dir)
   write(lines.out, paste0(shiny.dir, "/app.R"))
   
 }
