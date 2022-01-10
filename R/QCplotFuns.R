@@ -24,6 +24,8 @@ jaccard_index <- function(a, b){
 #' of the metadata should become heatmap annotations
 #' @param n.abundant number of most abundant genes to use for the JSI calculation
 #' @param show.values whether to show the JSI values within the heatmap squares
+#' @param show.row.columns.names whether to show the row and column names below 
+#' the heatmap; default is TRUE
 #' @return The JSI heatmap as detailed in the ComplexHeatmap package.
 #' @export
 #' @examples
