@@ -3,6 +3,8 @@
 #' @inheritParams generateShinyApp
 #' @param top.annotation.ids a vector of column indices denoting which columns
 #' of the metadata should become heatmap annotations
+#' @param show.columns.names whether to show the column names below the heatmap;
+#' default is TRUE
 #' @return The heatmap as detailed in the ComplexHeatmap package.
 #' @export
 #' @examples
