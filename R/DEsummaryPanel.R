@@ -46,7 +46,6 @@ DEsummaryPanelUI <- function(id, metadata){
       selectInput(ns("geneName"), "Additional genes to include:", multiple = TRUE, choices = character(0)),
       div("\nIf no genes are selected in the DE panel or here then the top 50 DE genes are chosen.\n"),
       div(style="margin-bottom:10px"),
-      actionButton(ns('goHeatmap'), label = 'Create heatmap'),
       textInput(ns('plotHeatmapFileName'), 'File name for heatmap plot download', value ='HeatmapPlot.png'),
       downloadButton(ns('downloadHeatmapPlot'), 'Download Heatmap Plot'),
       
@@ -128,15 +127,14 @@ DEsummaryPanelServer <- function(id, expression.matrix, metadata, DEresults, ann
           dplyr::arrange(dplyr::across(input[['heatmap.annotations']]))
         
         myplot <- expression_heatmap(
-          expression.matrix = subsetExpression[, meta[, 1]],
+          expression.matrix = subsetExpression[, meta[, 1], drop = FALSE],
           top.annotation.ids = match(input[['heatmap.annotations']], colnames(meta)),
           metadata = meta,
           type = input[["heatmap.processing"]],
           show.column.names = (nrow(meta) <= 20)
         )
         return(myplot)
-      }) %>%
-      bindEvent(DEresults(), input[['goHeatmap']])
+      }) 
     output[['heatmap']] <- renderPlot(heatmap.plot(), height = 800)
     
     output[['downloadHeatmapPlot']] <- downloadHandler(
