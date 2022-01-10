@@ -92,7 +92,8 @@ QCpanelServer <- function(id, expression.matrix, metadata, anno){
         metadata = meta,
         top.annotation.ids = match(input[['jaccard.annotations']], colnames(meta)),
         n.abundant = input[['jaccard.n.abundant']], 
-        show.values = input[["jaccard.show.values"]]
+        show.values = input[["jaccard.show.values"]],
+        show.row.columns.names = (nrow(meta) <= 20)
       )
       myplot 
     })

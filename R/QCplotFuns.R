@@ -42,7 +42,8 @@ jaccard_heatmap <- function(
   metadata,
   top.annotation.ids = NULL, 
   n.abundant = NULL, 
-  show.values = TRUE
+  show.values = TRUE,
+  show.row.columns.names = TRUE
 ){
   n.abundant <- min(n.abundant, nrow(expression.matrix))
   n.samples <- ncol(expression.matrix)
@@ -54,7 +55,9 @@ jaccard_heatmap <- function(
       heatmat[i, j] <- heatmat[j, i] <- jaccard_index(i.gene.indices, j.gene.indices)
     }
   }
-  rownames(heatmat) <- colnames(heatmat) <- colnames(expression.matrix)
+  if(show.row.columns.names){
+    rownames(heatmat) <- colnames(heatmat) <- colnames(expression.matrix)
+  }
   
   if(!is.null(top.annotation.ids)){
     qual.col.pals = dplyr::filter(RColorBrewer::brewer.pal.info, .data$category == 'qual')
