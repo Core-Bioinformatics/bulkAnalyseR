@@ -9,8 +9,8 @@ generateShinyApp(
   metadata,
   shiny.dir = "shiny_bulkAnalyseR",
   app.title = "Visualisation of RNA-Seq data",
-  organism = "hsapiens",
-  org.db = "org.Hs.eg.db",
+  organism = NULL,
+  org.db = NULL,
   theme = "flatly",
   panels.default = c("SampleSelect", "QC", "DE", "DEplot", "DEsummary", "Patterns",
     "Enrichment", "Cross", "GRN"),
@@ -38,17 +38,22 @@ directory with that name already exists an error is generated}
 
 \item{organism}{organism name to be passed on to \code{gprofiler2::gost};
 organism names are constructed by concatenating the first letter of the
-name and the family name; default is human - 'hsapiens'}
+name and the family name; default is NULL - enrichment is not included
+to ensure compatibility with datasets that have non-standard gene names}
 
 \item{org.db}{database for annotations to transform ENSEMBL IDs to
 gene names; a list of bioconductor packaged databases can be found with
-\code{BiocManager::available("^org\\.")}; default is human - 'org.Hs.eg.db'}
+\code{BiocManager::available("^org\\.")}; default is human - 'org.Hs.eg.db';
+default in NULL, in which case the row names of the expression matrix are
+used directly - it is recommended to provide ENSEMBL IDs if the database
+for your model organism is available}
 
 \item{theme}{shiny theme to be used in the app; default is 'flatly'}
 
 \item{panels.default}{argument to control which of the default panels
-will be included in the app; default is all; not that the 'DE' panel is
-required for 'DEplot' and 'Enrichment'}
+will be included in the app; default is all, but the enrichment panel
+will not appear unless organism is also supplied; note that the 'DE' panel
+is required for 'DEplot' and 'Enrichment'}
 
 \item{panels.extra, data.extra, packages.extra}{functionality to add new
 user-created panels to the app to extend functionality or change the default
@@ -81,7 +86,7 @@ metadata <- data.frame(
 app.dir <- generateShinyApp(
   expression.matrix = expression.matrix.preproc,
   metadata = metadata,
-  shiny.dir = paste0(tempdir(), "ssshiny_Yang2019"),
+  shiny.dir = paste0(tempdir(), "shiny_Yang2019"),
   app.title = "Shiny app for the Yang 2019 data",
   organism = "mmusculus",
   org.db = "org.Mm.eg.db"
