@@ -29,11 +29,11 @@ jaccard_index <- function(a, b){
 #' @return The JSI heatmap as detailed in the ComplexHeatmap package.
 #' @export
 #' @examples
-#' expression.matrix <- as.matrix(read.csv(
-#'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+#' expression.matrix.preproc <- as.matrix(read.csv(
+#'   system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
-#' ))
-#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[1:500, ]
+#' ))[1:500,]
+#' 
 #' metadata <- data.frame(
 #'   srr = colnames(expression.matrix.preproc), 
 #'   timepoint = rep(c("0h", "12h", "36h"), each = 2)
@@ -127,11 +127,11 @@ jaccard_heatmap <- function(
 #' @return The PCA plot as a ggplot object.
 #' @export
 #' @examples
-#' expression.matrix <- as.matrix(read.csv(
-#'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+#' expression.matrix.preproc <- as.matrix(read.csv(
+#'   system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
-#' ))
-#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
+#' ))[1:500,]
+#' 
 #' metadata <- data.frame(
 #'   srr = colnames(expression.matrix.preproc), 
 #'   timepoint = rep(c("0h", "12h", "36h"), each = 2)

@@ -11,11 +11,11 @@
 #' in order to avoid sensitivity to small changes.
 #' @export
 #' @examples
-#' expression.matrix <- as.matrix(read.csv(
-#'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+#' expression.matrix.preproc <- as.matrix(read.csv(
+#'   system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
-#' ))
-#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
+#' ))[1:500,]
+#' 
 #' condition <- factor(rep(c("0h", "12h", "36h"), each = 2))
 #' tbl <- calculate_condition_mean_sd_per_gene(expression.matrix.preproc[1:10, ], condition)
 #' tbl
@@ -70,11 +70,11 @@ determine_uds <- function(min1, max1, min2, max2){
 #' column is named pattern and is a concatenation of all other columns.
 #' @export
 #' @examples
-#' expression.matrix <- as.matrix(read.csv(
-#'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+#' expression.matrix.preproc <- as.matrix(read.csv(
+#'   system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
-#' ))
-#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
+#' ))[1:500,]
+#' 
 #' condition <- factor(rep(c("0h", "12h", "36h"), each = 2))
 #' tbl <- calculate_condition_mean_sd_per_gene(expression.matrix.preproc[1:10, ], condition)
 #' patmat <- make_pattern_matrix(tbl)
@@ -116,11 +116,11 @@ make_pattern_matrix <- function(tbl, n_sd = 2){
 #' @return A matrix of averaged expression per gene in each condition.
 #' @export
 #' @examples
-#' expression.matrix <- as.matrix(read.csv(
-#'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+#' expression.matrix.preproc <- as.matrix(read.csv(
+#'   system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
-#' ))
-#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
+#' ))[1:500,]
+#' 
 #' condition <- factor(rep(c("0h", "12h", "36h"), each = 2))
 #' tbl <- calculate_condition_mean_sd_per_gene(expression.matrix.preproc[1:10, ], condition)
 #' heatmat <- make_heatmap_matrix(tbl)
@@ -147,11 +147,11 @@ make_heatmap_matrix <- function(tbl, genes = NULL){
 #' @return A matrix of average gene expression per gene in each condition.
 #' @export
 #' @examples
-#' expression.matrix <- as.matrix(read.csv(
-#'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+#' expression.matrix.preproc <- as.matrix(read.csv(
+#'   system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
-#' ))
-#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
+#' ))[1:500,]
+#' 
 #' condition <- factor(rep(c("0h", "12h", "36h"), each = 2))
 #' tbl <- calculate_condition_mean_sd_per_gene(expression.matrix.preproc[1:10, ], condition)
 #' plot_line_pattern(tbl)

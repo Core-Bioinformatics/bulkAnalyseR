@@ -7,7 +7,7 @@ knitr::opts_chunk$set(
 ## ----workflow, echo = FALSE, out.width = "80%"--------------------------------
 knitr::include_graphics("figures/workflow.png") 
 
-## ----cran_install, eval=FALSE-------------------------------------------------
+## ----cran_install, eval = FALSE-----------------------------------------------
 #  packages.cran <- c("ggplot2",
 #                     "shiny",
 #                     "shinythemes",
@@ -76,9 +76,8 @@ meta <- data.frame(
 ## ----preprocess,fig.width=7, fig.height=5-------------------------------------
 exp.proc <- preprocessExpressionMatrix(exp, output.plot = TRUE)
 
-## ----bioconductor dbs---------------------------------------------------------
-if(requireNamespace("BiocManager", quietly = TRUE))
-  BiocManager::available("^org\\.")
+## ----bioconductor dbs, eval = FALSE-------------------------------------------
+#  BiocManager::available("^org\\.")
 
 ## ----generate app, eval=FALSE-------------------------------------------------
 #  generateShinyApp(

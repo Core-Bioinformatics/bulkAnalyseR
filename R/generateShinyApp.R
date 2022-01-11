@@ -43,11 +43,11 @@
 #' @import ggplot2
 #' @importFrom rlang .data
 #' @examples
-#' expression.matrix <- as.matrix(read.csv(
-#'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+#' expression.matrix.preproc <- as.matrix(read.csv(
+#'   system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
 #' ))
-#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
+#' 
 #' metadata <- data.frame(
 #'   srr = colnames(expression.matrix.preproc), 
 #'   timepoint = rep(c("0h", "12h", "36h"), each = 2)
@@ -55,7 +55,7 @@
 #' app.dir <- generateShinyApp(
 #'   expression.matrix = expression.matrix.preproc,
 #'   metadata = metadata,
-#'   shiny.dir = paste0(tempdir(), "shiny_Yang2019"),
+#'   shiny.dir = paste0(tempdir(), "/shiny_Yang2019"),
 #'   app.title = "Shiny app for the Yang 2019 data",
 #'   organism = "mmusculus",
 #'   org.db = "org.Mm.eg.db"
@@ -67,7 +67,7 @@
 #' app.dir.qc2 <- generateShinyApp(
 #'   expression.matrix = expression.matrix.preproc,
 #'   metadata = metadata,
-#'   shiny.dir = paste0(tempdir(), "shiny_Yang2019_QC2"),
+#'   shiny.dir = paste0(tempdir(), "/shiny_Yang2019_QC2"),
 #'   app.title = "Shiny app for the Yang 2019 data",
 #'   organism = "mmusculus",
 #'   org.db = "org.Mm.eg.db",
@@ -79,6 +79,9 @@
 #'   )
 #' )
 #' # runApp(app.dir.qc2)
+#' 
+#' # clean up tempdir
+#' unlink(paste0(normalizePath(tempdir()), "/", dir(tempdir())), recursive = TRUE)
 generateShinyApp <- function(
   expression.matrix,
   metadata,

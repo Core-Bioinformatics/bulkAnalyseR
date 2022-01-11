@@ -18,11 +18,10 @@
 #' @return The cross plot as a ggplot object.
 #' @export
 #' @examples
-#' expression.matrix <- as.matrix(read.csv(
-#'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+#' expression.matrix.preproc <- as.matrix(read.csv(
+#'   system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
-#' ))
-#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[1:500, 1:4]
+#' ))[1:500, 1:4]
 #' 
 #' anno <- AnnotationDbi::select(
 #'   getExportedValue('org.Mm.eg.db', 'org.Mm.eg.db'),

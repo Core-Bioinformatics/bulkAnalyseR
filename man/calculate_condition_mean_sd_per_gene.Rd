@@ -26,11 +26,11 @@ the expression of each gene in an expression matrix, grouped by the conditions
 supplied.
 }
 \examples{
-expression.matrix <- as.matrix(read.csv(
-  system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+expression.matrix.preproc <- as.matrix(read.csv(
+  system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
   row.names = 1
-))
-expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
+))[1:500,]
+
 condition <- factor(rep(c("0h", "12h", "36h"), each = 2))
 tbl <- calculate_condition_mean_sd_per_gene(expression.matrix.preproc[1:10, ], condition)
 tbl

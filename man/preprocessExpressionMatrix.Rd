@@ -41,6 +41,6 @@ and then normalises it. It is recommended to use this function before using
 expression.matrix <- as.matrix(read.csv(
   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
   row.names = 1
-))
+))[1:500, 1:4]
 expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
 }

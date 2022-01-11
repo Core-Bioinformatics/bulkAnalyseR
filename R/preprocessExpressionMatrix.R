@@ -19,7 +19,7 @@
 #' expression.matrix <- as.matrix(read.csv(
 #'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
-#' ))
+#' ))[1:500, 1:4]
 #' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
 preprocessExpressionMatrix <- function(
   expression.matrix,
@@ -61,8 +61,8 @@ preprocessExpressionMatrix <- function(
 #' expression.matrix <- as.matrix(read.csv(
 #'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
-#' ))
-#' expression.matrix.denoised <- noisyr_counts_with_plot(expression.matrix, output.plot = FALSE)
+#' ))[1:500, 1:4]
+#' expression.matrix.denoised <- noisyr_counts_with_plot(expression.matrix)
 noisyr_counts_with_plot <- function(
   expression.matrix, 
   n.elements.per.window = NULL, 

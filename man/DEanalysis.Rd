@@ -45,15 +45,14 @@ This function performs DE analysis on an expression using
 edgeR or DESeq2, given a vector of sample conditions.
 }
 \examples{
-expression.matrix <- as.matrix(read.csv(
-  system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
+expression.matrix.preproc <- as.matrix(read.csv(
+  system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
   row.names = 1
-))
-expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[1:500, 1:4]
+))[1:100, 1:4]
 
 anno <- AnnotationDbi::select(
   getExportedValue('org.Mm.eg.db', 'org.Mm.eg.db'),
-  keys = rownames(expression.matrix),
+  keys = rownames(expression.matrix.preproc),
   keytype = 'ENSEMBL',
   columns = 'SYMBOL'
 ) \%>\%
@@ -74,9 +73,9 @@ deseq <- DEanalysis_edger(
   var2 = "12h",
   anno = anno
 )
-# DE genes with log2(fold-change) > 2 in both pipelines
+# DE genes with log2(fold-change) > 1 in both pipelines
 intersect(
-  dplyr::filter(edger, abs(log2FC) > 2, pvalAdj < 0.05)$gene_name,
-  dplyr::filter(deseq, abs(log2FC) > 2, pvalAdj < 0.05)$gene_name
+  dplyr::filter(edger, abs(log2FC) > 1, pvalAdj < 0.05)$gene_name,
+  dplyr::filter(deseq, abs(log2FC) > 1, pvalAdj < 0.05)$gene_name
 )
 }
