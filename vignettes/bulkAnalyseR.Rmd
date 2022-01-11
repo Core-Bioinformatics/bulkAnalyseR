@@ -26,7 +26,7 @@ knitr::include_graphics("figures/workflow.png")
 
 To install the package, first install all CRAN dependencies:
 
-```{r cran_install, eval=FALSE}
+```{r cran_install, eval = FALSE}
 packages.cran <- c("ggplot2",
                    "shiny",
                    "shinythemes",
@@ -131,9 +131,8 @@ It is not recommended to use data which has not been denoised and normalised as 
 
 The central function in *bulkAnalyseR* is **generateShinyApp**. This function creates an app.R file and all required objects to run the app in .rda format in the target directory. The key inputs to **generateShinyApp** are *expression.matrix* (after being processed using *preprocessExpressionMatrix*) and *metadata*. You can also specify the title of the app (which will appear in the navigation bar at the top of the app) with *app.title*, the directory where the app should be saved with *shiny.dir* and the shiny theme you wish to use ('flatly' is the default, you can find the other options [here](https://rstudio.github.io/shinythemes/)). It is also recommended that you specify the organism on which your data was generated, firstly using the *organism* parameter using the *gprofiler2* naming convention e.g. 'hsapiens','mmusculus' (see [here](https://biit.cs.ut.ee/gprofiler/page/organism-list) for the full list of organisms and IDs), and secondly specifying the database for annotations to convert ENSEMBL IDs to gene names e.g. org.Hs.eg.db - the full list of bioconductor packaged databases can be seen using this command:
 
-```{r bioconductor dbs}
-if(requireNamespace("BiocManager", quietly = TRUE))
-  BiocManager::available("^org\\.")
+```{r bioconductor dbs, eval = FALSE}
+BiocManager::available("^org\\.")
 ```
 
 The dataset in this example was generated on *M. musculus* so we would generate the app using this function call (note that the org.Mm.eg.db needs to be installed):
