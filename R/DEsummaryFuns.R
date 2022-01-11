@@ -6,7 +6,7 @@
 #' rows correspond to genes and columns correspond to samples
 #' @param top.annotation.ids a vector of column indices denoting which columns
 #' of the metadata should become heatmap annotations
-#' @param show.columns.names whether to show the column names below the heatmap;
+#' @param show.column.names whether to show the column names below the heatmap;
 #' default is TRUE
 #' @return The heatmap as detailed in the ComplexHeatmap package.
 #' @export
@@ -25,12 +25,14 @@ expression_heatmap <- function(
   expression.matrix.subset,
   top.annotation.ids = NULL,
   metadata,
-  type = c('Z-score', 'Log2 Expression', 'Expression')
+  type = c('Z-score', 'Log2 Expression', 'Expression'),
+  show.column.names = TRUE
 ){
   heatmat <- as.matrix(expression.matrix.subset)
   
   type <- type[1]
   heatmat <- rescale_matrix(heatmat, type)
+  if(!show.column.names){colnames(heatmat <- NULL)}
   
   if(!is.null(top.annotation.ids)){
     qual.col.pals = dplyr::filter(RColorBrewer::brewer.pal.info, .data$category == 'qual')

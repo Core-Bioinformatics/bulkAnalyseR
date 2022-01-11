@@ -28,8 +28,8 @@ DEsummaryPanelUI <- function(id, metadata){
         onStatus = FALSE
       ),
       checkboxInput(ns("pca.show.labels"), label = "Show sample labels", value = FALSE),
-      checkboxInput(ns('pca.show.ellipses'),label = "Show ellipses around groups",value=TRUE),
-      textInput(ns('plotPCAFileName'), 'File name for PCA plot download', value ='PCAPlotDE.png'),
+      checkboxInput(ns('pca.show.ellipses'), label = "Show ellipses around groups", value = TRUE),
+      textInput(ns('plotPCAFileName'), 'File name for PCA plot download', value = 'PCAPlotDE.png'),
       downloadButton(ns('downloadPCAPlot'), 'Download PCA Plot'),
       
       status = "info",
@@ -42,8 +42,7 @@ DEsummaryPanelUI <- function(id, metadata){
       radioButtons(ns('heatmap.processing'), label = "Heatmap values",
                    choices = c('Expression','Log2 Expression','Z-score'), 
                    selected = 'Z-score'),
-      shinyjqui::orderInput(ns('heatmap.annotations'), label = "Show annotations",
-                            items = colnames(metadata)[c(ncol(metadata), seq_len(ncol(metadata) - 1))][-2]),
+      shinyjqui::orderInput(ns('heatmap.annotations'), label = "Show annotations", items = colnames(metadata)),
       selectInput(ns("geneName"), "Additional genes to include:", multiple = TRUE, choices = character(0)),
       div("\nIf no genes are selected in the DE panel or here then the top 50 DE genes are chosen.\n"),
       div(style="margin-bottom:10px"),
@@ -55,7 +54,7 @@ DEsummaryPanelUI <- function(id, metadata){
       icon = icon("gear", verify_fa = FALSE), 
       tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
     ),
-    plotOutput(ns('heatmap'),height=400),
+    plotOutput(ns('heatmap'), height = 400),
   )
 }
 
@@ -99,6 +98,16 @@ DEsummaryPanelServer <- function(id, expression.matrix, metadata, DEresults, ann
     })
     output[['pca']] <- renderPlot(pca.plot())
     
+    observe({
+      items <- colnames(metadata())
+      include.exclude <- apply(metadata(), 2, function(x){
+        l <- length(unique(x))
+        (l > 1) & (l < length(x))
+      })
+      items <- colnames(metadata())[include.exclude]
+      items <- items[c(length(items), seq_len(length(items) - 1))]
+      shinyjqui::updateOrderInput(session, "heatmap.annotations", items = items)
+    })
     heatmap.plot <- reactive({
       selectedGenes = DEresults()$selectedGenes()
       if(length(selectedGenes)){
@@ -122,7 +131,8 @@ DEsummaryPanelServer <- function(id, expression.matrix, metadata, DEresults, ann
         expression.matrix.subset = subsetExpression[, meta[, 1]],
         top.annotation.ids = match(input[['heatmap.annotations']], colnames(meta)),
         metadata = meta,
-        type = input[["heatmap.processing"]]
+        type = input[["heatmap.processing"]],
+        show.column.names = (nrow(meta) <= 20)
       )
       return(myplot)
     }) %>%
