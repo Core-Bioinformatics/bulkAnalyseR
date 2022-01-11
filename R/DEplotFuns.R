@@ -29,7 +29,7 @@
 #'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
 #' ))
-#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[, 1:4]
+#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[1:500, 1:4]
 #' 
 #' anno <- AnnotationDbi::select(
 #'   getExportedValue('org.Mm.eg.db', 'org.Mm.eg.db'),
@@ -64,14 +64,14 @@ volcano_plot <- function(
   ...
 ){
   df = genes.de.results %>%
-    dplyr::mutate(gene = gene_name, log10pval = log10(pvalAdj)) %>%
-    dplyr::filter(!is.na(log10pval))
+    dplyr::mutate(gene = .data$gene_name, log10pval = log10(.data$pvalAdj)) %>%
+    dplyr::filter(!is.na(.data$log10pval))
   
   if(all(df$log10pval >= -10)) log10pval.cap <- FALSE
   if(log10pval.cap) df$log10pval[df$log10pval < -10] <- -10
   
   vp <- ggplot(data = df, 
-               mapping = aes(x = log2FC, y = -log10pval)) +
+               mapping = aes(x = .data$log2FC, y = -.data$log10pval)) +
     ggplot2::theme_minimal() +
     xlab("log2(FC)") +
     ylab("-log10(pval)") 
@@ -196,12 +196,12 @@ volcano_enhance <- function(
   
   if(add.expression.colour.gradient){
     df.colour.gradient <- df %>%
-      dplyr::filter(abs(log2FC) > lfc.threshold & log10pval < logp.threshold) %>%
-      dplyr::arrange(log2exp)
+      dplyr::filter(abs(.data$log2FC) > lfc.threshold & .data$log10pval < logp.threshold) %>%
+      dplyr::arrange(.data$log2exp)
     if(identical(colour.gradient.scale$left, colour.gradient.scale$right)){
       vp <- vp +
         geom_point(data = df.colour.gradient,
-                   mapping = aes(x = log2FC, y = -log10pval, colour = log2exp)) +
+                   mapping = aes(x = .data$log2FC, y = -.data$log10pval, colour = .data$log2exp)) +
         scale_color_gradient(low = colour.gradient.scale$left[1], 
                              high = colour.gradient.scale$left[2],
                              breaks = colour.gradient.breaks,
@@ -209,16 +209,16 @@ volcano_enhance <- function(
         labs(colour = "log2(exp)")
     }else{
       vp <- vp +
-        geom_point(data = dplyr::filter(df.colour.gradient, log2FC < 0),
-                   mapping = aes(x = log2FC, y = -log10pval, colour = log2exp)) +
+        geom_point(data = dplyr::filter(df.colour.gradient, .data$log2FC < 0),
+                   mapping = aes(x = .data$log2FC, y = -.data$log10pval, colour = .data$log2exp)) +
         scale_color_gradient(low = colour.gradient.scale$left[1], 
                              high = colour.gradient.scale$left[2],
                              breaks = colour.gradient.breaks,
                              limits = colour.gradient.limits) +
         labs(colour = "log2(exp)") +
         ggnewscale::new_scale_colour() +
-        geom_point(data = dplyr::filter(df.colour.gradient, log2FC > 0),
-                   mapping = aes(x = log2FC, y = -log10pval, colour = log2exp)) +
+        geom_point(data = dplyr::filter(df.colour.gradient, .data$log2FC > 0),
+                   mapping = aes(x = .data$log2FC, y = -.data$log10pval, colour = .data$log2exp)) +
         scale_colour_gradient(low = colour.gradient.scale$right[1], 
                               high = colour.gradient.scale$right[2],
                               breaks = colour.gradient.breaks,
@@ -241,12 +241,12 @@ volcano_enhance <- function(
     if(!is.null(annotation)){
       df <- df %>% 
         dplyr::mutate(
-          symbol = annotation$SYMBOL[match(gene, annotation$ENSEMBL)],
-          name = ifelse(is.na(symbol), gene, symbol)
+          symbol = annotation$SYMBOL[match(.data$gene, annotation$ENSEMBL)],
+          name = ifelse(is.na(.data$symbol), .data$gene, .data$symbol)
         ) %>%
-        dplyr::select(-symbol)
+        dplyr::select(-.data$symbol)
     }else{
-      df <- df %>% dplyr::mutate(name = gene)
+      df <- df %>% dplyr::mutate(name = .data$gene)
     }
     
     df.label <- tibble::tibble()
@@ -255,7 +255,7 @@ volcano_enhance <- function(
       genes.to.label <- df$name[(match(genes.to.label, c(df$name, df$gene)) - 1) %% nrow(df) + 1]
       genes.to.label <- unique(genes.to.label[!is.na(genes.to.label)])
       genes.to.rename <- genes.to.rename[genes.to.rename %in% genes.to.label]
-      df.label <- dplyr::filter(df, name %in% genes.to.label)
+      df.label <- dplyr::filter(df, .data$name %in% genes.to.label)
       df.label$name[match(genes.to.rename, df.label$name)] <- names(genes.to.rename)
       if(nrow(df.label) == 0){
         message(paste0("add.labels.custom was TRUE but no genes specified; ",
@@ -265,12 +265,12 @@ volcano_enhance <- function(
     
     if(add.labels.auto){
       if(length(n.labels.auto) == 1) n.labels.auto <- rep(n.labels.auto, 3)
-      df.significant <- dplyr::filter(df, !(name %in% genes.to.label))
+      df.significant <- dplyr::filter(df, !(.data$name %in% genes.to.label))
       
       df.significant <- df.significant[order(abs(df.significant$log2FC), decreasing=TRUE), ]
       df.highest.lfc <- utils::head(df.significant, n.labels.auto[1])
       df.rest <- utils::tail(df.significant, nrow(df.significant) - n.labels.auto[1]) %>%
-        dplyr::filter(abs(log2FC) > lfc.threshold, log10pval < logp.threshold)
+        dplyr::filter(abs(.data$log2FC) > lfc.threshold, .data$log10pval < logp.threshold)
       
       df.rest <- df.rest[order(abs(df.rest$log10pval), decreasing=TRUE), ]
       df.lowest.p.vals <- utils::head(df.rest, n.labels.auto[2])
@@ -280,16 +280,18 @@ volcano_enhance <- function(
       df.highest.abn <- utils::head(df.rest, n.labels.auto[3])
       
       df.label <- rbind(df.lowest.p.vals, df.highest.lfc, df.highest.abn, df.label) %>%
-        dplyr::distinct(name, .keep_all = TRUE)
+        dplyr::distinct(.data$name, .keep_all = TRUE)
     }
     
     set.seed(seed = seed)
     vp <- vp +
-      ggrepel::geom_label_repel(data = df.label, 
-                                mapping = aes(x = log2FC, y = -log10pval, label = name),
-                                max.overlaps = Inf,
-                                force = label.force,
-                                point.size = NA)
+      ggrepel::geom_label_repel(
+        data = df.label, 
+        mapping = aes(x = .data$log2FC, y = -.data$log10pval, label = .data$name),
+        max.overlaps = Inf,
+        force = label.force,
+        point.size = NA
+      )
   }
   
   return(vp)
@@ -310,7 +312,7 @@ volcano_enhance <- function(
 #'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
 #' ))
-#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[, 1:4]
+#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[1:500, 1:4]
 #' 
 #' anno <- AnnotationDbi::select(
 #'   getExportedValue('org.Mm.eg.db', 'org.Mm.eg.db'),
@@ -344,11 +346,11 @@ ma_plot <- function(
   ...
 ){
   df = genes.de.results %>%
-    dplyr::mutate(gene = gene_name, log10pval = log10(pvalAdj)) %>%
-    dplyr::filter(!is.na(log10pval))
+    dplyr::mutate(gene = .data$gene_name, log10pval = log10(.data$pvalAdj)) %>%
+    dplyr::filter(!is.na(.data$log10pval))
   
   p <- ggplot(data = df, 
-              mapping = aes(x = log2exp, y = log2FC)) +
+              mapping = aes(x = .data$log2exp, y = .data$log2FC)) +
     ggplot2::theme_minimal() +
     xlab("Average log2(exp)") +
     ylab("log2(FC)")
@@ -437,12 +439,12 @@ ma_enhance <- function(
   
   if(add.expression.colour.gradient){
     df.colour.gradient <- df %>%
-      dplyr::filter(abs(log2FC) > lfc.threshold & log10pval < logp.threshold) %>%
-      dplyr::arrange(log2exp)
+      dplyr::filter(abs(.data$log2FC) > lfc.threshold & .data$log10pval < logp.threshold) %>%
+      dplyr::arrange(.data$log2exp)
     if(identical(colour.gradient.scale$left, colour.gradient.scale$right)){
       p <- p +
         geom_point(data = df.colour.gradient,
-                   mapping = aes(x = log2exp, y = log2FC, colour = log2exp)) +
+                   mapping = aes(x = .data$log2exp, y = .data$log2FC, colour = .data$log2exp)) +
         scale_color_gradient(low = colour.gradient.scale$left[1], 
                              high = colour.gradient.scale$left[2],
                              breaks = colour.gradient.breaks,
@@ -450,16 +452,16 @@ ma_enhance <- function(
         labs(colour = "log2(exp)")
     }else{
       p <- p +
-        geom_point(data = dplyr::filter(df.colour.gradient, log2FC < 0),
-                   mapping = aes(x = log2exp, y = log2FC, colour = log2exp)) +
+        geom_point(data = dplyr::filter(df.colour.gradient, .data$log2FC < 0),
+                   mapping = aes(x = .data$log2exp, y = .data$log2FC, colour = .data$log2exp)) +
         scale_color_gradient(low = colour.gradient.scale$left[1], 
                              high = colour.gradient.scale$left[2],
                              breaks = colour.gradient.breaks,
                              limits = colour.gradient.limits) +
         labs(colour = "log2(exp)") +
         ggnewscale::new_scale_colour() +
-        geom_point(data = dplyr::filter(df.colour.gradient, log2FC > 0),
-                   mapping = aes(x = log2exp, y = log2FC, colour = log2exp)) +
+        geom_point(data = dplyr::filter(df.colour.gradient, .data$log2FC > 0),
+                   mapping = aes(x = .data$log2exp, y = .data$log2FC, colour = .data$log2exp)) +
         scale_colour_gradient(low = colour.gradient.scale$right[1], 
                               high = colour.gradient.scale$right[2],
                               breaks = colour.gradient.breaks,
@@ -480,12 +482,12 @@ ma_enhance <- function(
     if(!is.null(annotation)){
       df <- df %>% 
         dplyr::mutate(
-          symbol = annotation$SYMBOL[match(gene, annotation$ENSEMBL)],
-          name = ifelse(is.na(symbol), gene, symbol)
+          symbol = annotation$SYMBOL[match(.data$gene, annotation$ENSEMBL)],
+          name = ifelse(is.na(.data$symbol), .data$gene, .data$symbol)
         ) %>%
-        dplyr::select(-symbol)
+        dplyr::select(-.data$symbol)
     }else{
-      df <- df %>% dplyr::mutate(name = gene)
+      df <- df %>% dplyr::mutate(name = .data$gene)
     }
     
     df.label <- tibble::tibble()
@@ -494,7 +496,7 @@ ma_enhance <- function(
       genes.to.label <- df$name[(match(genes.to.label, c(df$name, df$gene)) - 1) %% nrow(df) + 1]
       genes.to.label <- unique(genes.to.label[!is.na(genes.to.label)])
       genes.to.rename <- genes.to.rename[genes.to.rename %in% genes.to.label]
-      df.label <- dplyr::filter(df, name %in% genes.to.label)
+      df.label <- dplyr::filter(df, .data$name %in% genes.to.label)
       df.label$name[match(genes.to.rename, df.label$name)] <- names(genes.to.rename)
       if(nrow(df.label) == 0){
         message(paste0("add.labels.custom was TRUE but no genes specified; ",
@@ -504,11 +506,11 @@ ma_enhance <- function(
     
     if(add.labels.auto){
       if(length(n.labels.auto) == 1) n.labels.auto <- rep(n.labels.auto, 3)
-      df.significant <- dplyr::filter(df, !(name %in% genes.to.label))
+      df.significant <- dplyr::filter(df, !(.data$name %in% genes.to.label))
       df.significant <- df.significant[order(abs(df.significant$log2FC), decreasing=TRUE), ]
       df.highest.lfc <- utils::head(df.significant, n.labels.auto[1])
       df.rest <- utils::tail(df.significant, nrow(df.significant) - n.labels.auto[1]) %>%
-        dplyr::filter(abs(log2FC) > lfc.threshold, log10pval < logp.threshold)
+        dplyr::filter(abs(.data$log2FC) > lfc.threshold, .data$log10pval < logp.threshold)
       
       df.rest <- df.rest[order(abs(df.rest$log10pval), decreasing=TRUE), ]
       df.lowest.p.vals <- utils::head(df.rest, n.labels.auto[2])
@@ -518,16 +520,18 @@ ma_enhance <- function(
       df.highest.abn <- utils::head(df.rest, n.labels.auto[3])
       
       df.label <- rbind(df.lowest.p.vals, df.highest.lfc, df.highest.abn, df.label) %>%
-        dplyr::distinct(name, .keep_all = TRUE)
+        dplyr::distinct(.data$name, .keep_all = TRUE)
     }
     
     set.seed(seed = seed)
     p <- p +
-      ggrepel::geom_label_repel(data = df.label, 
-                                mapping = aes(x = log2exp, y = log2FC, label = name),
-                                max.overlaps = Inf,
-                                force = label.force,
-                                point.size = NA)
+      ggrepel::geom_label_repel(
+        data = df.label, 
+        mapping = aes(x = .data$log2exp, y = .data$log2FC, label = .data$name),
+        max.overlaps = Inf,
+        force = label.force,
+        point.size = NA
+      )
   }
   return(p)
 }

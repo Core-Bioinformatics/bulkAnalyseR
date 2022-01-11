@@ -62,7 +62,7 @@ preprocessExpressionMatrix <- function(
 #'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
 #' ))
-#' expression.matrix.denoised <- noisyr_counts_with_plot(expression.matrix, output.plot = TRUE)
+#' expression.matrix.denoised <- noisyr_counts_with_plot(expression.matrix, output.plot = FALSE)
 noisyr_counts_with_plot <- function(
   expression.matrix, 
   n.elements.per.window = NULL, 
@@ -89,9 +89,9 @@ noisyr_counts_with_plot <- function(
   }
   p <- ggplot2::ggplot(plotdf.line) +
     ggplot2::theme_minimal() + 
-    ggplot2::geom_line(ggplot2::aes(x = x, y = y, colour = Sample)) +
-    ggplot2::geom_smooth(ggplot2::aes(x = x, y = y, colour = Sample), 
-                         method = "loess", formula = y ~ x, span = 0.1) +
+    ggplot2::geom_line(ggplot2::aes(x = .data$x, y = .data$y, colour = .data$Sample)) +
+    ggplot2::geom_smooth(ggplot2::aes(x = .data$x, y = .data$y, colour = .data$Sample), 
+                         method = "loess", formula = .data$y ~ .data$x, span = 0.1) +
     ggplot2::ylim(0, 1) +
     ggplot2::xlab("log2(expression)") +
     ggplot2::ylab("Similarity") +

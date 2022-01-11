@@ -166,9 +166,9 @@ crossPanelServer <- function(id, expression.matrix, metadata, anno){
       }
       
       DEtable1Subset <- DEtable1 %>%
-        dplyr::filter(abs(log2FC) > input[["lfcThreshold"]] & pvalAdj < input[["pvalThreshold"]])
+        dplyr::filter(abs(.data$log2FC) > input[["lfcThreshold"]] & .data$pvalAdj < input[["pvalThreshold"]])
       DEtable2Subset <- DEtable2 %>%
-        dplyr::filter(abs(log2FC) > input[["lfcThreshold"]] & pvalAdj < input[["pvalThreshold"]])
+        dplyr::filter(abs(.data$log2FC) > input[["lfcThreshold"]] & .data$pvalAdj < input[["pvalThreshold"]])
       
       # the thresholds are returned here so that the plot display 
       # doesn't use new thresholds without the button being used

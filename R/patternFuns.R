@@ -27,13 +27,14 @@ calculate_condition_mean_sd_per_gene <- function(expression.matrix, condition){
   }
   noise.threshold <- min(expression.matrix)
   
+  gene <- sd <- NULL
   tbl <- tibble::tibble(
     gene = rep(rownames(expression.matrix), each = length(levels(condition))),
     condition = rep(levels(condition), times = nrow(expression.matrix)),
     mean = NA,
     sd = NA
   ) %>%
-    dplyr::mutate(condition = factor(condition, levels = unique(condition)))
+    dplyr::mutate(condition = factor(.data$condition, levels = unique(.data$condition)))
   
   pb = utils::txtProgressBar(min = 0, max = nrow(tbl), initial = 0, style = 3) 
   for(i in seq_len(nrow(tbl))){
@@ -42,7 +43,7 @@ calculate_condition_mean_sd_per_gene <- function(expression.matrix, condition){
     tbl$sd[i] <- stats::sd(vec)
     if(i %% 1000 == 0 | i == nrow(tbl)) utils::setTxtProgressBar(pb, i)
   }
-  tbl <- tbl %>% dplyr::mutate(sd = pmax(sd, noise.threshold))
+  tbl <- tbl %>% dplyr::mutate(sd = pmax(.data$sd, noise.threshold))
 }
 
 #' Determine the pattern between two intervals
@@ -79,7 +80,7 @@ determine_uds <- function(min1, max1, min2, max2){
 #' patmat <- make_pattern_matrix(tbl)
 #' patmat
 make_pattern_matrix <- function(tbl, n_sd = 2){
-  tbl <- tbl %>% dplyr::mutate(min = mean - n_sd * sd, max = mean + n_sd * sd)
+  tbl <- tbl %>% dplyr::mutate(min = mean - n_sd * .data$sd, max = mean + n_sd * .data$sd)
   
   genes <- unique(tbl$gene)
   conditions <- unique(tbl$condition)
@@ -127,8 +128,8 @@ make_pattern_matrix <- function(tbl, n_sd = 2){
 make_heatmap_matrix <- function(tbl, genes = NULL){
   if(is.null(genes)) genes <- unique(tbl$gene)
   tbl %>%
-    dplyr::select(-sd) %>%
-    dplyr::filter(gene %in% genes) %>%
+    dplyr::select(-.data$sd) %>%
+    dplyr::filter(.data$gene %in% genes) %>%
     tidyr::pivot_wider(names_from = "condition", values_from = "mean") %>%
     tibble::column_to_rownames("gene") %>%
     as.matrix()
@@ -163,7 +164,7 @@ plot_line_pattern <- function(
   if(is.null(genes)) genes <- unique(tbl$gene)
   
   tbl <- tbl %>%
-    dplyr::filter(gene %in% genes)
+    dplyr::filter(.data$gene %in% genes)
   
   type <- type[1]
   if(type == 'Expression'){
@@ -179,7 +180,7 @@ plot_line_pattern <- function(
   
   p <- ggplot(tbl) +
     theme_minimal() +
-    geom_line(aes(x = condition, y = scale, group = gene, colour = gene))
+    geom_line(aes(x = .data$condition, y = .data$scale, group = .data$gene, colour = .data$gene))
   
   if(!show.legend) p <- p + theme(legend.position = "none")
   

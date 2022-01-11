@@ -127,6 +127,7 @@ patternPanelServer <- function(id, expression.matrix, metadata, anno){
       content = function(file) {
         mat <- make_heatmap_matrix(patterns.list()$tbl) %>%
           rescale_matrix(type = input[["downloadValues"]])
+        gene_id <- NULL
         df <- cbind(
           tibble::tibble(gene_id = names(patterns.list()$patterns),
                          gene_name = anno$NAME[match(gene_id, anno$ENSEMBL)],
@@ -179,22 +180,22 @@ patternPanelServer <- function(id, expression.matrix, metadata, anno){
     output[['downloadHeatmapPlot']] <- downloadHandler(
       filename = function() { input[['plotHeatmapFileName']] },
       content = function(file) {
-        png(file,width = 480, height = 1000,
-            units = "px", pointsize = 12, bg = "white", res = NA)
+        grDevices::png(file,width = 480, height = 1000,
+                       units = "px", pointsize = 12, bg = "white", res = NA)
         print(heatmap.plot())
-        dev.off()
+        grDevices::dev.off()
       }
     )
     
   })
 }
 
-patternsPanelApp <- function(){
-  shinyApp(
-    ui = navbarPage("Expression patterns", 
-                    tabPanel("", tabsetPanel(patternPanelUI('Patterns', metadata)))),
-    server = function(input, output, session){
-      patternPanelServer("Patterns", reactiveVal(expression.matrix), reactiveVal(metadata), NULL) ###
-    }
-  )
-}
+# patternPanelApp <- function(){
+#   shinyApp(
+#     ui = navbarPage("Expression patterns", 
+#                     tabPanel("", tabsetPanel(patternPanelUI('Patterns', metadata)))),
+#     server = function(input, output, session){
+#       patternPanelServer("Patterns", reactiveVal(expression.matrix), reactiveVal(metadata), NULL) ###
+#     }
+#   )
+# }

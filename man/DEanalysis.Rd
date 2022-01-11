@@ -49,7 +49,7 @@ expression.matrix <- as.matrix(read.csv(
   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
   row.names = 1
 ))
-expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[, 1:4]
+expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[1:500, 1:4]
 
 anno <- AnnotationDbi::select(
   getExportedValue('org.Mm.eg.db', 'org.Mm.eg.db'),
@@ -74,9 +74,9 @@ deseq <- DEanalysis_edger(
   var2 = "12h",
   anno = anno
 )
-# DE genes with log2(fold-change) > 5 in both pipelines
+# DE genes with log2(fold-change) > 2 in both pipelines
 intersect(
-  dplyr::filter(edger, abs(log2FC) > 5, pvalAdj < 0.05)$gene_name,
-  dplyr::filter(deseq, abs(log2FC) > 5, pvalAdj < 0.05)$gene_name
+  dplyr::filter(edger, abs(log2FC) > 2, pvalAdj < 0.05)$gene_name,
+  dplyr::filter(deseq, abs(log2FC) > 2, pvalAdj < 0.05)$gene_name
 )
 }

@@ -58,8 +58,8 @@ enrichmentPanelServer <- function(id, DEresults, organism){
                                   sources = input[['gprofilerSources']],
                                   evcodes = TRUE)
       gostres$result <- gostres$result %>%
-        dplyr::mutate(parents = sapply(parents, toString),
-                      intersection_names = sapply(intersection, function(x){
+        dplyr::mutate(parents = sapply(.data$parents, toString),
+                      intersection_names = sapply(.data$intersection, function(x){
                         ensids <- strsplit(x, split = ",")[[1]]
                         names <- inputdata$DEtable$gene_name[match(ensids, inputdata$DEtable$gene_id)]
                         paste(names, collapse = ",")
@@ -88,7 +88,7 @@ enrichmentPanelServer <- function(id, DEresults, organism){
     plotenrichmentPlot <- reactive({
       plotdata <- getenrichmentPlot()
       myplot <- ggplot(plotdata) + 
-        geom_point(aes(x = jitter, y = `-log10(pVal)`, colour = source)) + 
+        geom_point(aes(x = jitter, y = .data$`-log10(pVal)`, colour = source)) + 
         theme_bw()+ 
         scale_x_continuous(breaks = seq(1, length(unique(plotdata$source)), 1), 
                            labels = unique(plotdata$source)) + 

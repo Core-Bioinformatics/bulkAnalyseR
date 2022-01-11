@@ -12,6 +12,9 @@ expression_heatmap(
 )
 }
 \arguments{
+\item{expression.matrix.subset}{a subset of rows from the expression matrix;
+rows correspond to genes and columns correspond to samples}
+
 \item{top.annotation.ids}{a vector of column indices denoting which columns
 of the metadata should become heatmap annotations}
 
@@ -20,6 +23,11 @@ in the expression.matrix; must contain at minimum two columns:
 the first column must contain the column names of the expression.matrix,
 while the last column is assumed to contain the experimental conditions
 that will be tested for differential expression}
+
+\item{type}{type of rescaling; one of "Expression" (defautl, does nothing),
+"Log2 Expression" (returns log2(x + 1) for every value), "Mean Scaled" (each
+row is scaled by its average), "Z-score" (each row is centered and scaled
+to mean = 0 and sd = 1)}
 }
 \value{
 The heatmap as detailed in the ComplexHeatmap package.

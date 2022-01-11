@@ -24,7 +24,7 @@ jaccard_index <- function(a, b){
 #' of the metadata should become heatmap annotations
 #' @param n.abundant number of most abundant genes to use for the JSI calculation
 #' @param show.values whether to show the JSI values within the heatmap squares
-#' @param show.row.columns.names whether to show the row and column names below 
+#' @param show.row.column.names whether to show the row and column names below 
 #' the heatmap; default is TRUE
 #' @return The JSI heatmap as detailed in the ComplexHeatmap package.
 #' @export
@@ -33,19 +33,19 @@ jaccard_index <- function(a, b){
 #'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
 #' ))
-#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
+#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[1:500, ]
 #' metadata <- data.frame(
 #'   srr = colnames(expression.matrix.preproc), 
 #'   timepoint = rep(c("0h", "12h", "36h"), each = 2)
 #' )
-#' print(jaccard_heatmap(expression.matrix.preproc, metadata, n.abundant = 500))
+#' print(jaccard_heatmap(expression.matrix.preproc, metadata, n.abundant = 100))
 jaccard_heatmap <- function(
   expression.matrix,
   metadata,
   top.annotation.ids = NULL, 
   n.abundant = NULL, 
   show.values = TRUE,
-  show.row.columns.names = TRUE
+  show.row.column.names = TRUE
 ){
   n.abundant <- min(n.abundant, nrow(expression.matrix))
   n.samples <- ncol(expression.matrix)
@@ -57,7 +57,7 @@ jaccard_heatmap <- function(
       heatmat[i, j] <- heatmat[j, i] <- jaccard_index(i.gene.indices, j.gene.indices)
     }
   }
-  if(show.row.columns.names){
+  if(show.row.column.names){
     rownames(heatmat) <- colnames(heatmat) <- colnames(expression.matrix)
   }
   
@@ -181,11 +181,13 @@ plot_pca <- function(
   }
   if(show.labels){
     pca.plot <- pca.plot +
-      ggrepel::geom_label_repel(data = expr.PCA,
-                                mapping = aes(x = PC1, y = PC2, colour = condition, label = name),
-                                max.overlaps = nrow(expr.PCA),
-                                force = label.force,
-                                point.size = NA)
+      ggrepel::geom_label_repel(
+        data = expr.PCA,
+        mapping = aes(x = .data$PC1, y = .data$PC2, colour = .data$condition, label = .data$name),
+        max.overlaps = nrow(expr.PCA),
+        force = label.force,
+        point.size = NA
+      )
   }
   
   pca.plot

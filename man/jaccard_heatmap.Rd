@@ -44,10 +44,10 @@ expression.matrix <- as.matrix(read.csv(
   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
   row.names = 1
 ))
-expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
+expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[1:500, ]
 metadata <- data.frame(
   srr = colnames(expression.matrix.preproc), 
   timepoint = rep(c("0h", "12h", "36h"), each = 2)
 )
-print(jaccard_heatmap(expression.matrix.preproc, metadata, n.abundant = 500))
+print(jaccard_heatmap(expression.matrix.preproc, metadata, n.abundant = 100))
 }

@@ -86,11 +86,11 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata){
   })
 }
 
-sampleSelectPanelApp <- function(){
-  shinyApp(
-    ui = fluidPage(sampleSelectPanelUI('SampleSelect')),
-    server = function(input, output, session){
-      sampleSelectPanelServer('SampleSelect', expression.matrix, metadata)
-    }
-  )
-}
+# sampleSelectPanelApp <- function(){
+#   shinyApp(
+#     ui = fluidPage(sampleSelectPanelUI('SampleSelect')),
+#     server = function(input, output, session){
+#       sampleSelectPanelServer('SampleSelect', expression.matrix, metadata)
+#     }
+#   )
+# }

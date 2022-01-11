@@ -1,9 +1,12 @@
 #' Create heatmap of an expression matrix
 #' @description This function creates a heatmap to visualise an expression matrix
 #' @inheritParams generateShinyApp
+#' @inheritParams rescale_matrix
+#' @param expression.matrix.subset a subset of rows from the expression matrix; 
+#' rows correspond to genes and columns correspond to samples
 #' @param top.annotation.ids a vector of column indices denoting which columns
 #' of the metadata should become heatmap annotations
-#' @param show.columns.names whether to show the column names below the heatmap;
+#' @param show.column.names whether to show the column names below the heatmap;
 #' default is TRUE
 #' @return The heatmap as detailed in the ComplexHeatmap package.
 #' @export

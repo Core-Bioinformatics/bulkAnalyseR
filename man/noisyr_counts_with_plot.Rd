@@ -56,5 +56,5 @@ expression.matrix <- as.matrix(read.csv(
   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
   row.names = 1
 ))
-expression.matrix.denoised <- noisyr_counts_with_plot(expression.matrix, output.plot = TRUE)
+expression.matrix.denoised <- noisyr_counts_with_plot(expression.matrix, output.plot = FALSE)
 }

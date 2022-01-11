@@ -129,10 +129,11 @@ It is not recommended to use data which has not been denoised and normalised as 
 
 ## Creating a shiny app
 
-The central function in *bulkAnalyseR* is **generateShinyApp**. This function creates an app.R file and all required objects to run the app in .rda format in the target directory. The key inputs to **generateShinyApp** are *expression.matrix* (after being processed using *preprocessExpressionMatrix*) and *metadata*. You can also specify the title of the app (which will appear in the navigation bar at the top of the app) with *app.title*, the directory where the app should be saved with *shiny.dir* and the shiny theme you wish to use ('flatly' is the default, you can find the other options [here](https://rstudio.github.io/shinythemes/)). You also need to specify the organism on which your data was generated, firstly using the *organism* parameter using the *gprofiler2* naming convention e.g. 'hsapiens','mmusculus' (see [here](https://biit.cs.ut.ee/gprofiler/page/organism-list) for the full list of organisms and IDs), and secondly specifying the database for annotations to convert ENSEMBL IDs to gene names e.g. org.Hs.eg.db - the full list of bioconductor packaged databases can be seen using this command:
+The central function in *bulkAnalyseR* is **generateShinyApp**. This function creates an app.R file and all required objects to run the app in .rda format in the target directory. The key inputs to **generateShinyApp** are *expression.matrix* (after being processed using *preprocessExpressionMatrix*) and *metadata*. You can also specify the title of the app (which will appear in the navigation bar at the top of the app) with *app.title*, the directory where the app should be saved with *shiny.dir* and the shiny theme you wish to use ('flatly' is the default, you can find the other options [here](https://rstudio.github.io/shinythemes/)). It is also recommended that you specify the organism on which your data was generated, firstly using the *organism* parameter using the *gprofiler2* naming convention e.g. 'hsapiens','mmusculus' (see [here](https://biit.cs.ut.ee/gprofiler/page/organism-list) for the full list of organisms and IDs), and secondly specifying the database for annotations to convert ENSEMBL IDs to gene names e.g. org.Hs.eg.db - the full list of bioconductor packaged databases can be seen using this command:
 
 ```{r bioconductor dbs}
-BiocManager::available("^org\\.")
+if(requireNamespace("BiocManager", quietly = TRUE))
+  BiocManager::available("^org\\.")
 ```
 
 The dataset in this example was generated on *M. musculus* so we would generate the app using this function call (note that the org.Mm.eg.db needs to be installed):
@@ -147,6 +148,8 @@ generateShinyApp(
   org.db = "org.Mm.eg.db"
 )
 ```
+
+If no organism is specified for g:profiler then the enrichment tab will be automatically excluded. If no model organism database is specified then the row names of the expression matrix will be used throughout. It is recommended to use ENSEMBL ids as the row names and supply the model organism through the org.db parameter if your organism is among the ones provided, to ensure compatibility.
 
 This will create a folder called *shiny_Yang2019* in which there will be 2 data files *expression_matrix.rda* and *metadata.rda* and *app.R* which defines the app. To see the app, you can call *shiny::runApp('shiny_Yang2019')* and the app will start. The app generated is standalone and can be shared with collaborators or published online through a platform like \href{https://www.shinyapps.io/}{shinyapps.io}. This provides an easy way for anyone to explore the data and verify the conclusions, increasing access and promoting reproducibility of the bioinformatics analysis.
 

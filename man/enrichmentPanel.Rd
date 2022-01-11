@@ -19,7 +19,8 @@ a reactive list with slots 'DEtable' (all genes), 'DEtableSubset' (only DE genes
 
 \item{organism}{organism name to be passed on to \code{gprofiler2::gost};
 organism names are constructed by concatenating the first letter of the
-name and the family name; default is human - 'hsapiens'}
+name and the family name; default is NULL - enrichment is not included
+to ensure compatibility with datasets that have non-standard gene names}
 }
 \description{
 These are the UI and server components of the enrichment panel of the
