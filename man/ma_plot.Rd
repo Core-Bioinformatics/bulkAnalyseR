@@ -150,7 +150,7 @@ expression.matrix.preproc <- as.matrix(read.csv(
 
 anno <- AnnotationDbi::select(
   getExportedValue('org.Mm.eg.db', 'org.Mm.eg.db'),
-  keys = rownames(expression.matrix),
+  keys = rownames(expression.matrix.preproc),
   keytype = 'ENSEMBL',
   columns = 'SYMBOL'
 ) \%>\%
