@@ -107,6 +107,7 @@ QCpanelServer <- function(id, expression.matrix, metadata, anno){
       updateSelectInput(session, 'ma.sample2', choices = metadata()[, 1], selected = metadata()[2, 1])
     })
     ma.plot <- reactive({
+      gene_id <- NULL; exp1 <- NULL; exp2 <- NULL; l1 <- NULL; l2 <- NULL
       df <- tibble::tibble(
         gene_id = rownames(expression.matrix()),
         gene_name = anno$NAME[match(gene_id, anno$ENSEMBL)],
@@ -131,13 +132,6 @@ QCpanelServer <- function(id, expression.matrix, metadata, anno){
         add.labels.auto = FALSE,
         add.labels.custom = FALSE,
       )
-      # myplot <- qc_ma_plot(
-      #   expression.matrix = expression.matrix(),
-      #   metadata = metadata(),
-      #   i = match(input[['ma.sample1']], metadata()[,1]),
-      #   j = match(input[['ma.sample2']], metadata()[,1]),
-      #   include.guidelines = input[['ma.show.guidelines']]
-      # )
       myplot
     })
     output[['ma']] <- renderPlot(ma.plot())
@@ -170,11 +164,11 @@ QCpanelServer <- function(id, expression.matrix, metadata, anno){
   })
 }
 
-QCpanelApp <- function(){
-  shinyApp(
-    ui = fluidPage(QCpanelUI('qc', metadata)),
-    server = function(input, output, session){
-      QCpanelServer('qc', expression.matrix, metadata)
-    }
-  )
-}
+# QCpanelApp <- function(){
+#   shinyApp(
+#     ui = fluidPage(QCpanelUI('qc', metadata)),
+#     server = function(input, output, session){
+#       QCpanelServer('qc', expression.matrix, metadata)
+#     }
+#   )
+# }

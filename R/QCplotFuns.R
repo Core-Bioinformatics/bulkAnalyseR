@@ -31,12 +31,12 @@ jaccard_index <- function(a, b){
 #'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
 #' ))
-#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
+#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[1:500, ]
 #' metadata <- data.frame(
 #'   srr = colnames(expression.matrix.preproc), 
 #'   timepoint = rep(c("0h", "12h", "36h"), each = 2)
 #' )
-#' print(jaccard_heatmap(expression.matrix.preproc, metadata, n.abundant = 500))
+#' print(jaccard_heatmap(expression.matrix.preproc, metadata, n.abundant = 100))
 jaccard_heatmap <- function(
   expression.matrix,
   metadata,
@@ -175,11 +175,13 @@ plot_pca <- function(
   }
   if(show.labels){
     pca.plot <- pca.plot +
-      ggrepel::geom_label_repel(data = expr.PCA,
-                                mapping = aes(x = PC1, y = PC2, colour = condition, label = name),
-                                max.overlaps = nrow(expr.PCA),
-                                force = label.force,
-                                point.size = NA)
+      ggrepel::geom_label_repel(
+        data = expr.PCA,
+        mapping = aes(x = .data$PC1, y = .data$PC2, colour = .data$condition, label = .data$name),
+        max.overlaps = nrow(expr.PCA),
+        force = label.force,
+        point.size = NA
+      )
   }
   
   pca.plot

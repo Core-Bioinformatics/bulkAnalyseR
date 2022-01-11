@@ -139,7 +139,7 @@ DEplotPanelServer <- function(id, DEresults, anno){
       }else{
         data <- results$DEtableSubset
       }
-      data <- data %>% dplyr::mutate(`-log10pval` = -log10(pvalAdj))
+      data <- data %>% dplyr::mutate(`-log10pval` = -log10(.data$pvalAdj))
       nearPoints(df = data, coordinfo = input[['plot_click']], threshold = 20, maxpoints = 10)
     }, digits = 4)
     

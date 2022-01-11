@@ -21,7 +21,7 @@
 #'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
 #' ))
-#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[, 1:4]
+#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[1:500, 1:4]
 #' 
 #' anno <- AnnotationDbi::select(
 #'   getExportedValue('org.Mm.eg.db', 'org.Mm.eg.db'),
@@ -46,10 +46,10 @@
 #'   var2 = "12h",
 #'   anno = anno
 #' )
-#' # DE genes with log2(fold-change) > 5 in both pipelines
+#' # DE genes with log2(fold-change) > 2 in both pipelines
 #' intersect(
-#'   dplyr::filter(edger, abs(log2FC) > 5, pvalAdj < 0.05)$gene_name,
-#'   dplyr::filter(deseq, abs(log2FC) > 5, pvalAdj < 0.05)$gene_name
+#'   dplyr::filter(edger, abs(log2FC) > 2, pvalAdj < 0.05)$gene_name,
+#'   dplyr::filter(deseq, abs(log2FC) > 2, pvalAdj < 0.05)$gene_name
 #' )
 #' @name DEanalysis
 NULL
@@ -85,6 +85,7 @@ DEanalysis_edger <- function(
   edger.lrt <- edgeR::glmLRT(edger.fit, contrast = contrast)
   edger.table <- edger.lrt$table
   
+  gene_id <- NULL; pval <- NULL
   output = tibble::tibble(
     gene_id = rownames(expression.matrix),
     gene_name = anno$NAME[match(gene_id, anno$ENSEMBL)],
@@ -118,6 +119,7 @@ DEanalysis_deseq2 <- function(
   if(var1 < var2) contrast <- c(-1, 1) else contrast <- c(1, -1)
   deseq.res <- DESeq2::results(deseq, contrast = contrast)
   
+  gene_id <- NULL; pval <- NULL
   output <- tibble::tibble(
     gene_id = rownames(expression.matrix),
     gene_name = anno$NAME[match(gene_id, anno$ENSEMBL)],

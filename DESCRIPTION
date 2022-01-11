@@ -1,6 +1,6 @@
 Package: bulkAnalyseR
-Title: Shiny app for bulk sequencing data
-Version: 0.1.0
+Title: An Accessible, Interactive Pipeline for Analysing and Sharing Bulk Sequencing Results
+Version: 0.1.1
 Authors@R: c(
             person("Ilias", "Moutsopoulos", , "im383@cam.ac.uk", c("aut", "cre")),
             person("Eleanor", "Williams", , "ecw63@cam.ac.uk", role = c("aut", "ctb")),
@@ -13,7 +13,7 @@ Description: Given an expression matrix from a bulk RNA-Seq experiment,
         differential expression analysis, volcano and cross plots,
         enrichment analysis and gene regulatory network inference,
         and can be customised to contain more panels by the user.
-License: GPL2
+License: GPL-2
 Encoding: UTF-8
 URL: https://github.com/Core-Bioinformatics/bulkAnalyseR
 BugReports: https://github.com/Core-Bioinformatics/bulkAnalyseR/issues
@@ -44,7 +44,6 @@ Imports:
     rlang,
     glue,
     preprocessCore,
-    AnnotationDbi,
     matrixStats,
     noisyr,
     tibble,
@@ -54,10 +53,13 @@ Imports:
     visNetwork,
     DT,
     scales,
-    shinyjs
+    shinyjs,
+    tidyr
 Suggests:
     rmarkdown,
     knitr,
+    BiocManager,
+    AnnotationDbi,
     org.Hs.eg.db,
     org.Mm.eg.db
 VignetteBuilder: knitr

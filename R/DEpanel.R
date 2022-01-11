@@ -115,8 +115,9 @@ DEpanelServer <- function(id, expression.matrix, metadata, anno){
       }
       
       DEtableSubset <- DEtable %>%
-        dplyr::filter(abs(log2FC) > input[["lfcThreshold"]] & pvalAdj < input[["pvalThreshold"]]) %>%
-        dplyr::arrange(desc(abs(log2FC)))
+        dplyr::filter(abs(.data$log2FC) > input[["lfcThreshold"]] & 
+                        .data$pvalAdj < input[["pvalThreshold"]]) %>%
+        dplyr::arrange(dplyr::desc(abs(.data$log2FC)))
       
       #the thresholds are returned here so that MA/volcano and table display 
       #don't use new thresholds without the button being used

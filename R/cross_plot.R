@@ -22,7 +22,7 @@
 #'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
 #' ))
-#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[, 1:4]
+#' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)[1:500, 1:4]
 #' 
 #' anno <- AnnotationDbi::select(
 #'   getExportedValue('org.Mm.eg.db', 'org.Mm.eg.db'),
@@ -134,7 +134,7 @@ cross_plot = function(
 #    genes.to.label <- df$gene_name[(match(genes.to.label, c(df$gene_name, df$gene_id)) - 1) %% nrow(df) + 1]
     genes.to.label <- unique(genes.to.label[!is.na(genes.to.label)])
     genes.to.rename <- genes.to.rename[genes.to.rename %in% genes.to.label]
-    df.label <- dplyr::filter(df, gene_name %in% genes.to.label)
+    df.label <- dplyr::filter(df, .data$gene_name %in% genes.to.label)
     df.label$name[match(genes.to.rename, df.label$gene_name)] <- names(genes.to.rename)
     if(nrow(df.label) == 0){
       message(paste0("add.labels.custom was TRUE but no genes specified; ",
@@ -142,7 +142,7 @@ cross_plot = function(
     }
     cp <- cp +
       ggrepel::geom_label_repel(data = df.label,
-                                mapping = aes(x = lfc1, y = lfc2, label = gene_name),
+                                mapping = aes(x = lfc1, y = lfc2, label = .data$gene_name),
                                 max.overlaps = Inf,
                                 force = label.force,
                                 point.size = NA)
@@ -152,7 +152,7 @@ cross_plot = function(
     df.lab <- df %>%
       dplyr::mutate(
         dist = sqrt(lfc1 ^ 2 + lfc2 ^ 2),
-        quad=ifelse(colours == labnames[2],
+        quad = ifelse(colours == labnames[2],
                     ifelse(lfc1 * lfc2 > 0,
                            ifelse(lfc1 > 0, 1, 5),
                            ifelse(lfc1 > 0, 7, 3)),
@@ -161,15 +161,15 @@ cross_plot = function(
                            ifelse(lfc2 > 0, 2, 6))))
     df.top.distances <- data.frame()
     for(region in 1:8){
-      df.lab.sub <- dplyr::filter(df.lab, quad == region) %>%
-        dplyr::arrange(desc(dist))
+      df.lab.sub <- dplyr::filter(df.lab, .data$quad == region) %>%
+        dplyr::arrange(dplyr::desc(.data$dist))
       df.top.dist <- utils::head(df.lab.sub, labels.per.region)
       df.top.distances <- rbind(df.top.distances, df.top.dist)
     }
     set.seed(seed = seed)
     cp <- cp +
       ggrepel::geom_label_repel(data = df.top.distances,
-                                mapping = aes(x = lfc1, y = lfc2, label = gene_name),
+                                mapping = aes(x = lfc1, y = lfc2, label = .data$gene_name),
                                 max.overlaps = Inf,
                                 force = label.force,
                                 point.size = NA)

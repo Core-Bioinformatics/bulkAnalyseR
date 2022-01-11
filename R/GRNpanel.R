@@ -54,8 +54,8 @@ GRNpanelServer <- function(id, expression.matrix, anno){
     GRNplot <- reactive({
       weightMat <- GRNresults()
       edges <- GENIE3::getLinkList(weightMat, input[["plotConnections"]]) %>%
-        dplyr::rename(from = regulatoryGene, to = targetGene, value = weight) %>%
-        dplyr::mutate(from = as.character(from), to = as.character(to))
+        dplyr::rename(from = .data$regulatoryGene, to = .data$targetGene, value = .data$weight) %>%
+        dplyr::mutate(from = as.character(.data$from), to = as.character(.data$to))
       nodes <- tibble::tibble(
         id = c(colnames(weightMat), edges$from),
         label = anno$NAME[match(id, anno$ENSEMBL)],

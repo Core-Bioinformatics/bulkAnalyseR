@@ -84,7 +84,7 @@ DEsummaryPanelServer <- function(id, expression.matrix, metadata, DEresults, ann
       }else if (length(selectedGenes) != 0){
         geneSet = selectedGenes
       }else{
-        geneSet <- head(results$DEtableSubset$gene_id, 50)
+        geneSet <- utils::head(results$DEtableSubset$gene_id, 50)
       }
       subsetExpression <- expression.matrix()[geneSet, , drop = FALSE]
       myplot <- plot_pca(
@@ -100,42 +100,42 @@ DEsummaryPanelServer <- function(id, expression.matrix, metadata, DEresults, ann
     output[['pca']] <- renderPlot(pca.plot())
     
     heatmap.plot <- reactive({
-        selectedGenes = DEresults()$selectedGenes()
-        if(length(selectedGenes)){
-          selectedGeneNames <- anno$NAME[match(selectedGenes, anno$ENSEMBL)]
-          geneSet <- c(selectedGeneNames, input[["geneName"]])
-        }else{
-          geneSet <- input[["geneName"]]
-        }
-        if (length(geneSet) == 0){
-          geneSet <- anno$NAME[match(head(DEresults()$DE()$DEtableSubset$gene_id, 50), anno$ENSEMBL)]
-        }
-        geneIDs <- anno$ENSEMBL[match(geneSet, anno$NAME)]
-        subsetExpression <- expression.matrix()[geneIDs, , drop = FALSE]
-        rownames(subsetExpression) <- geneSet
-        
-        meta <- lapply(metadata(), function(x) factor(x, levels = unique(x))) %>% 
-          as.data.frame() %>%
-          dplyr::arrange(dplyr::across(input[['heatmap.annotations']]))
-        
-        myplot <- expression_heatmap(
-          expression.matrix = subsetExpression[, meta[, 1]],
-          top.annotation.ids = match(input[['heatmap.annotations']], colnames(meta)),
-          metadata = meta,
-          type = input[["heatmap.processing"]]
-        )
-        return(myplot)
-      }) %>%
+      selectedGenes = DEresults()$selectedGenes()
+      if(length(selectedGenes)){
+        selectedGeneNames <- anno$NAME[match(selectedGenes, anno$ENSEMBL)]
+        geneSet <- c(selectedGeneNames, input[["geneName"]])
+      }else{
+        geneSet <- input[["geneName"]]
+      }
+      if (length(geneSet) == 0){
+        geneSet <- anno$NAME[match(utils::head(DEresults()$DE()$DEtableSubset$gene_id, 50), anno$ENSEMBL)]
+      }
+      geneIDs <- anno$ENSEMBL[match(geneSet, anno$NAME)]
+      subsetExpression <- expression.matrix()[geneIDs, , drop = FALSE]
+      rownames(subsetExpression) <- geneSet
+      
+      meta <- lapply(metadata(), function(x) factor(x, levels = unique(x))) %>% 
+        as.data.frame() %>%
+        dplyr::arrange(dplyr::across(input[['heatmap.annotations']]))
+      
+      myplot <- expression_heatmap(
+        expression.matrix.subset = subsetExpression[, meta[, 1]],
+        top.annotation.ids = match(input[['heatmap.annotations']], colnames(meta)),
+        metadata = meta,
+        type = input[["heatmap.processing"]]
+      )
+      return(myplot)
+    }) %>%
       bindEvent(DEresults(), input[['goHeatmap']])
     output[['heatmap']] <- renderPlot(heatmap.plot(), height = 800)
     
     output[['downloadHeatmapPlot']] <- downloadHandler(
       filename = function() { input[['plotHeatmapFileName']] },
       content = function(file) {
-        png(file,width = 480, height = 1000,
-            units = "px", pointsize = 12, bg = "white", res = NA)
+        grDevices::png(file,width = 480, height = 1000, units = "px", 
+                       pointsize = 12, bg = "white", res = NA)
         print(heatmap.plot())
-        dev.off()
+        grDevices::dev.off()
       }
     )
     

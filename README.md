@@ -1,4 +1,4 @@
-# *bulkAnalyseR*: An easy way to analyse and share bulk mRNA-Seq data
+# *bulkAnalyseR*: An accessible, interactive pipeline for analysing and sharing bulk sequencing results
 
 [comment]: <[![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/bulkanalyser)](https://github.com/r-hub/cranlogs.app)>
 [comment]: <[![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/grand-total/bulkanalyser)](https://github.com/r-hub/cranlogs.app)>
