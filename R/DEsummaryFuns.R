@@ -60,16 +60,13 @@ expression_heatmap <- function(
     top.annotation <- NULL
   }
   if (type != 'Z-score'){
-    breaks <- seq(min(heatmat), 
-                  max(heatmat),
-                  (max(heatmat) - min(heatmat))/9)
-    colours = c("#FFFFFF",RColorBrewer::brewer.pal(n = 9, name = "YlOrRd"))
-  }
-  else {
-    breaks <- seq(-3,3,6/9)
+    breaks <- seq(min(heatmat), max(heatmat), (max(heatmat) - min(heatmat)) / 9)
+    colours = c("#FFFFFF", RColorBrewer::brewer.pal(n = 9, name = "YlOrRd"))
+  }else{
+    breaks <- seq(-3, 3, 6 / 9)
     colours = rev(RColorBrewer::brewer.pal(n = 10, name = "RdBu"))
-    heatmat[heatmat>3]<-3
-    heatmat[heatmat<(-3)]<- (-3)
+    heatmat[heatmat > 3] <- 3
+    heatmat[heatmat < (-3)] <- (-3)
   }
   ComplexHeatmap::Heatmap(
     matrix = heatmat,
