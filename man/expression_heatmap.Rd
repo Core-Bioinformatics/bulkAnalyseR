@@ -8,7 +8,8 @@ expression_heatmap(
   expression.matrix.subset,
   top.annotation.ids = NULL,
   metadata,
-  type = c("Z-score", "Log2 Expression", "Expression")
+  type = c("Z-score", "Log2 Expression", "Expression"),
+  show.column.names = TRUE
 )
 }
 \arguments{
@@ -28,6 +29,9 @@ that will be tested for differential expression}
 "Log2 Expression" (returns log2(x + 1) for every value), "Mean Scaled" (each
 row is scaled by its average), "Z-score" (each row is centered and scaled
 to mean = 0 and sd = 1)}
+
+\item{show.column.names}{whether to show the column names below the heatmap;
+default is TRUE}
 }
 \value{
 The heatmap as detailed in the ComplexHeatmap package.

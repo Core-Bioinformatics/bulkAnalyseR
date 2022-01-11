@@ -10,7 +10,8 @@ jaccard_heatmap(
   metadata,
   top.annotation.ids = NULL,
   n.abundant = NULL,
-  show.values = TRUE
+  show.values = TRUE,
+  show.row.column.names = TRUE
 )
 }
 \arguments{
@@ -30,6 +31,9 @@ of the metadata should become heatmap annotations}
 \item{n.abundant}{number of most abundant genes to use for the JSI calculation}
 
 \item{show.values}{whether to show the JSI values within the heatmap squares}
+
+\item{show.row.column.names}{whether to show the row and column names below
+the heatmap; default is TRUE}
 }
 \value{
 The JSI heatmap as detailed in the ComplexHeatmap package.
