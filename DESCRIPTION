@@ -1,5 +1,5 @@
 Package: bulkAnalyseR
-Title: An Accessible, Interactive Pipeline for Analysing and Sharing Bulk Sequencing Results
+Title: Interactive Shiny App for Bulk Sequencing Data
 Version: 0.1.1
 Authors@R: c(
             person("Ilias", "Moutsopoulos", , "im383@cam.ac.uk", c("aut", "cre")),
@@ -13,6 +13,7 @@ Description: Given an expression matrix from a bulk RNA-Seq experiment,
         differential expression analysis, volcano and cross plots,
         enrichment analysis and gene regulatory network inference,
         and can be customised to contain more panels by the user.
+        Moutsopoulos I, Williams EC, Mohorianu II (2021) <doi: https://doi.org/10.1101/2021.12.23.473982>
 License: GPL-2
 Encoding: UTF-8
 URL: https://github.com/Core-Bioinformatics/bulkAnalyseR

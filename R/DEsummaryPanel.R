@@ -4,6 +4,8 @@
 #' of \code{\link{generateShinyApp}}.
 #' @inheritParams DEpanel
 #' @inheritParams DEplotPanel
+#' @return The UI and Server components of the shiny module, that can be used
+#' within the UI and Server definitions of a shiny app.
 #' @name DEsummaryPanel
 NULL
 

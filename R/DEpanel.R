@@ -8,6 +8,8 @@
 #' should be rendered within the app and in output files; this object is
 #' created by \code{\link{generateShinyApp}} using the org.db specified
 #' @inheritParams generateShinyApp
+#' @return The UI and Server components of the shiny module, that can be used
+#' within the UI and Server definitions of a shiny app.
 #' @name DEpanel
 NULL
 

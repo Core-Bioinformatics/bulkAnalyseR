@@ -6,6 +6,8 @@
 #' a reactive list with slots 'DEtable' (all genes), 'DEtableSubset' (only DE genes), 
 #' 'lfcThreshold' and 'pvalThreshold'
 #' @inheritParams DEpanel
+#' @return The UI and Server components of the shiny module, that can be used
+#' within the UI and Server definitions of a shiny app.
 #' @name DEplotPanel
 NULL
 
