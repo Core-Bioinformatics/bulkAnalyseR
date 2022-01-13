@@ -4,6 +4,8 @@
 #' of \code{\link{generateShinyApp}}.
 #' @inheritParams generateShinyApp
 #' @inheritParams DEplotPanel
+#' @param seed the random seed to be set for the jitter plot, to avoid
+#' seemingly different plots for the same inputs
 #' @return The UI and Server components of the shiny module, that can be used
 #' within the UI and Server definitions of a shiny app.
 #' @name enrichmentPanel
@@ -40,7 +42,7 @@ enrichmentPanelUI <- function(id){
 
 #' @rdname enrichmentPanel
 #' @export
-enrichmentPanelServer <- function(id, DEresults, organism){
+enrichmentPanelServer <- function(id, DEresults, organism, seed = 13){
   # check whether inputs (other than id) are reactive or not
   stopifnot({
     is.reactive(DEresults)
@@ -74,8 +76,8 @@ enrichmentPanelServer <- function(id, DEresults, organism){
     
     #Jitter plot and save coordinates
     getenrichmentPlot <- reactive({
-      set.seed(13)
-      jitter.plot = ggplot(getenrichmentData(), ) + 
+      set.seed(seed)
+      jitter.plot = ggplot(getenrichmentData()) + 
         geom_jitter(aes(x = source, y = p_value, colour = source))
       jitter.build <- ggplot_build(jitter.plot)
       x = jitter.build$data[[1]]$x
