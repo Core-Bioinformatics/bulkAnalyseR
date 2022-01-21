@@ -7,7 +7,7 @@
 
 Bulk sequencing experiments (e.g. mRNAseq, sRNAseq etc) are essential for exploring a wide range of biological questions. To bring the data analysis closer to its interpretation and facilitate both interactive, exploratory tasks and the sharing of (easily accessible) information, we present *bulkAnalyseR*, an R package that offers a seamless, customisable solution for most bulk sequencing datasets. By integrating state-of-the-art approaches without relying on extensive computational support, and replacing static images with interactive panels, our aim is to further support and strengthen the reusability of data. *bulkAnalyseR* enables standard analyses of bulk data, using an expression matrix as starting point. It presents the outputs of various steps in an interactive web-based interface, making it easy to generate, explore and verify hypotheses. Moreover, the app can be easily shared and published, incentivising research reproducibility and allowing others to explore the same processed data.
 
-<Preprint: https://www.biorxiv.org/content/10.1101/2021.12.23.473982v1>
+Preprint: https://www.biorxiv.org/content/10.1101/2021.12.23.473982v1
 
 If you are using components of this package in published research please cite the following papers along with the *bulkAnalyseR* manuscript:
 
