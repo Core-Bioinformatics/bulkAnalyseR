@@ -8,7 +8,7 @@
 \usage{
 enrichmentPanelUI(id)
 
-enrichmentPanelServer(id, DEresults, organism)
+enrichmentPanelServer(id, DEresults, organism, seed = 13)
 }
 \arguments{
 \item{id}{the input slot that will be used to access the value}
@@ -21,6 +21,9 @@ a reactive list with slots 'DEtable' (all genes), 'DEtableSubset' (only DE genes
 organism names are constructed by concatenating the first letter of the
 name and the family name; default is NULL - enrichment is not included
 to ensure compatibility with datasets that have non-standard gene names}
+
+\item{seed}{the random seed to be set for the jitter plot, to avoid
+seemingly different plots for the same inputs}
 }
 \value{
 The UI and Server components of the shiny module, that can be used
