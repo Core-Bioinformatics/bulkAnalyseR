@@ -1,7 +1,7 @@
 # *bulkAnalyseR*: An accessible, interactive pipeline for analysing and sharing bulk sequencing results
 
-<[![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/bulkanalyser)](https://github.com/r-hub/cranlogs.app)>
-<[![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/grand-total/bulkanalyser)](https://github.com/r-hub/cranlogs.app)>
+<[![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/bulkAnalyseR)](https://github.com/r-hub/cranlogs.app)>
+<[![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/grand-total/bulkAnalyseR)](https://github.com/r-hub/cranlogs.app)>
 
 <div style="text-align: justify"> 
 
