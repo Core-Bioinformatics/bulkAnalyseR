@@ -17,7 +17,7 @@ e83–e83.
 * **Enrichment analysis:** Raudvere, U. et al. (2019). g:Profiler: a web server for functional enrichment analysis and conversions of gene lists (2019 update). Nucleic Acids Research, 47(W1), W191–W198.
 * **Gene regulatory network inference:** Huynh-Thu, V. A. et al. (2010). Inferring regulatory networks from expression data using tree-based methods. PloS one, 5(9), e12776.
 
-<img src="vignettes/figures/workflow.png" alt="drawing" width="500"/>
+<img src="https://github.com/Core-Bioinformatics/bulkAnalyseR/blob/main/vignettes/figures/workflow.png?raw=true" alt="drawing" width="500"/>
 
 *Workflow diagram of the **bulkAnalyseR** pipeline. The input comprises a processed (i.e. normalised, noise-corrected) expression matrix. Using **bulkAnalyseR**, all standard steps related to differential expression analyses are handled seamlessley. The pairwaise comparison of differential expression outputs is also possible (using cross plots and upset plots). Finally, localised Gene Regulatory Networks can be created.*
 
@@ -71,7 +71,7 @@ By default, the app will have 9 panels: Sample select, Quality checks, Different
 
 By default, the app will look like this:
 
-<img src="vignettes/figures/ScreenShot.png" alt="drawing" width="800"/>
+<img src="https://github.com/Core-Bioinformatics/bulkAnalyseR/blob/main/vignettes/figures/ScreenShot.png?raw=true" alt="drawing" width="800"/>
 
 *Screenshot from Yang case study processed with the bulkAnalyseR app*
 
