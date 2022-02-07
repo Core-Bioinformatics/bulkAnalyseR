@@ -107,6 +107,7 @@
 
 
 <p>Bulk mRNA-seq experiments are essential for exploring a wide range of biological questions. To bring the data analysis closer to its interpretation and facilitate both interactive, exploratory tasks and the sharing of (easily accessible) information, we present <em>bulkAnalyseR</em> an R package that offers a seamless, customisable solution for most bulk RNAseq datasets. By integrating state-of-the-art approaches without relying on extensive computational support, and replacing static images with interactive panels, our aim is to further support and strengthen the reusability of data. bulkAnalyseR enables standard analyses of bulk data, using an expression matrix as starting point. It presents the outputs of various steps in an interactive web-based interface, making it easy to generate, explore and verify hypotheses. Moreover, the app can be easily shared and published, incentivising research reproducibility and allowing others to explore the same processed data and enhance the biological conclusions.</p>
+<p>The example app described in this vignette can be found <a href="http://bioinf.stemcells.cam.ac.uk:3838/bulkAnalyseR/Yang2019/" class="external-link">here</a></p>
 <p><img src="figures/workflow.png" width="80%"></p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -134,7 +135,8 @@
                    <span class="st">"tibble"</span>,
                    <span class="st">"ggnewscale"</span>,
                    <span class="st">"ggrastr"</span>,
-                   <span class="st">"visNetwork"</span><span class="op">)</span>
+                   <span class="st">"visNetwork"</span>,
+                   <span class="st">"shinyLP"</span><span class="op">)</span>
 <span class="va">new.packages.cran</span> <span class="op">&lt;-</span> <span class="va">packages.cran</span><span class="op">[</span><span class="op">!</span><span class="op">(</span><span class="va">packages.cran</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html" class="external-link">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span>, <span class="st">"Package"</span><span class="op">]</span><span class="op">)</span><span class="op">]</span>
 <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">new.packages.cran</span><span class="op">)</span><span class="op">)</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="va">new.packages.cran</span><span class="op">)</span></code></pre></div>
@@ -236,6 +238,7 @@
 <div class="section level2">
 <h2 id="creating-a-shiny-app">Creating a shiny app<a class="anchor" aria-label="anchor" href="#creating-a-shiny-app"></a>
 </h2>
+<p>The example app for the Yang 2019 data can be found <a href="http://bioinf.stemcells.cam.ac.uk:3838/bulkAnalyseR/Yang2019/" class="external-link">here</a>. Readers are encouraged to try out the different features described below in the live version of the app to familiarise themselves with the different features.</p>
 <p>The central function in <em>bulkAnalyseR</em> is <strong>generateShinyApp</strong>. This function creates an app.R file and all required objects to run the app in .rda format in the target directory. The key inputs to <strong>generateShinyApp</strong> are <em>expression.matrix</em> (after being processed using <em>preprocessExpressionMatrix</em>) and <em>metadata</em>. You can also specify the title of the app (which will appear in the navigation bar at the top of the app) with <em>app.title</em>, the directory where the app should be saved with <em>shiny.dir</em> and the shiny theme you wish to use (‘flatly’ is the default, you can find the other options <a href="https://rstudio.github.io/shinythemes/" class="external-link">here</a>). It is also recommended that you specify the organism on which your data was generated, firstly using the <em>organism</em> parameter using the <em>gprofiler2</em> naming convention e.g. ‘hsapiens’,‘mmusculus’ (see <a href="https://biit.cs.ut.ee/gprofiler/page/organism-list" class="external-link">here</a> for the full list of organisms and IDs), and secondly specifying the database for annotations to convert ENSEMBL IDs to gene names e.g. org.Hs.eg.db - the full list of bioconductor packaged databases can be seen using this command:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/available.html" class="external-link">available</a></span><span class="op">(</span><span class="st">"^org\\."</span><span class="op">)</span></code></pre></div>

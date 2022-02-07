@@ -29,7 +29,8 @@ knitr::include_graphics("figures/workflow.png")
 #                     "tibble",
 #                     "ggnewscale",
 #                     "ggrastr",
-#                     "visNetwork")
+#                     "visNetwork",
+#                     "shinyLP")
 #  new.packages.cran <- packages.cran[!(packages.cran %in% installed.packages()[, "Package"])]
 #  if(length(new.packages.cran))
 #    install.packages(new.packages.cran)
