@@ -90,7 +90,7 @@ generateShinyApp <- function(
   organism = NULL,
   org.db = NULL,
   theme = "flatly",
-  panels.default = c("SampleSelect", "QC", "DE", "DEplot", "DEsummary",
+  panels.default = c("Landing", "SampleSelect", "QC", "DE", "DEplot", "DEsummary",
                      "Patterns", "Enrichment", "Cross", "GRN"),
   panels.extra = tibble::tibble(
     UIfun = NULL, 
@@ -215,6 +215,7 @@ generateAppFile <- function(
     "tabPanel('RNAseq',",
     "tabsetPanel("
   )
+  if("Landing" %in% panels.default) code.ui <- c(code.ui, "landingPanelUI('Landing'),")
   if("SampleSelect" %in% panels.default) code.ui <- c(code.ui, "sampleSelectPanelUI('SampleSelect'),")
   if("QC" %in% panels.default) code.ui <- c(code.ui, "QCpanelUI('QC', metadata),")
   if("DE" %in% panels.default){
