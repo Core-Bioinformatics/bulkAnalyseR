@@ -10,6 +10,9 @@ landingPanelUI(id)
 
 landingPanelServer(id)
 }
+\arguments{
+\item{id}{the input slot that will be used to access the value}
+}
 \value{
 The UI and Server components of the shiny module, that can be used
 within the UI and Server definitions of a shiny app.

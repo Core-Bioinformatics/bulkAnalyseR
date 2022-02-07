@@ -9,6 +9,8 @@ Bulk sequencing experiments (e.g. mRNAseq, sRNAseq etc) are essential for explor
 
 Preprint: https://www.biorxiv.org/content/10.1101/2021.12.23.473982v1
 
+Live app example: http://bioinf.stemcells.cam.ac.uk:3838/bulkAnalyseR/Yang2019/
+
 If you are using components of this package in published research please cite the following papers along with the *bulkAnalyseR* manuscript:
 
 * **Noise removal:** Moutsopoulos, I. et al. (2021). noisyR: enhancing biological signal in sequencing datasets by characterizing random technical noise. Nucleic Acids Research, 49(14),
@@ -152,6 +154,7 @@ To install the latest stable development version from GitHub, first install the 
 * visNetwork
 * gprofiler2
 * circlize
+* shinyLP
 
 ### Required Bioconductor packages (use *BiocManager::install()*) ###
 * preprocessCore

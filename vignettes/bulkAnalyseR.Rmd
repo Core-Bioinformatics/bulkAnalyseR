@@ -18,6 +18,8 @@ knitr::opts_chunk$set(
 
 Bulk mRNA-seq experiments are essential for exploring a wide range of biological questions. To bring the data analysis closer to its interpretation and facilitate both interactive, exploratory tasks and the sharing of (easily accessible) information, we present *bulkAnalyseR* an R package that offers a seamless, customisable solution for most bulk RNAseq datasets. By integrating state-of-the-art approaches without relying on extensive computational support, and replacing static images with interactive panels, our aim is to further support and strengthen the reusability of data. bulkAnalyseR enables standard analyses of bulk data, using an expression matrix as starting point. It presents the outputs of various steps in an interactive web-based interface, making it easy to generate, explore and verify hypotheses. Moreover, the app can be easily shared and published, incentivising research reproducibility and allowing others to explore the same processed data and enhance the biological conclusions.
 
+The example app described in this vignette can be found [here](http://bioinf.stemcells.cam.ac.uk:3838/bulkAnalyseR/Yang2019/)
+
 ```{r workflow, echo = FALSE, out.width = "80%"}
 knitr::include_graphics("figures/workflow.png") 
 ```
@@ -48,7 +50,8 @@ packages.cran <- c("ggplot2",
                    "tibble",
                    "ggnewscale",
                    "ggrastr",
-                   "visNetwork")
+                   "visNetwork",
+                   "shinyLP")
 new.packages.cran <- packages.cran[!(packages.cran %in% installed.packages()[, "Package"])]
 if(length(new.packages.cran))
   install.packages(new.packages.cran)
@@ -128,6 +131,8 @@ exp.proc <- preprocessExpressionMatrix(exp, output.plot = TRUE)
 It is not recommended to use data which has not been denoised and normalised as input to *generateShinyApp*. You can also perform your own preprocessing outside *preprocessExpressionMatrix*.
 
 ## Creating a shiny app
+
+The example app for the Yang 2019 data can be found [here](http://bioinf.stemcells.cam.ac.uk:3838/bulkAnalyseR/Yang2019/). Readers are encouraged to try out the different features described below in the live version of the app to familiarise themselves with the different features.
 
 The central function in *bulkAnalyseR* is **generateShinyApp**. This function creates an app.R file and all required objects to run the app in .rda format in the target directory. The key inputs to **generateShinyApp** are *expression.matrix* (after being processed using *preprocessExpressionMatrix*) and *metadata*. You can also specify the title of the app (which will appear in the navigation bar at the top of the app) with *app.title*, the directory where the app should be saved with *shiny.dir* and the shiny theme you wish to use ('flatly' is the default, you can find the other options [here](https://rstudio.github.io/shinythemes/)). It is also recommended that you specify the organism on which your data was generated, firstly using the *organism* parameter using the *gprofiler2* naming convention e.g. 'hsapiens','mmusculus' (see [here](https://biit.cs.ut.ee/gprofiler/page/organism-list) for the full list of organisms and IDs), and secondly specifying the database for annotations to convert ENSEMBL IDs to gene names e.g. org.Hs.eg.db - the full list of bioconductor packaged databases can be seen using this command:
 
