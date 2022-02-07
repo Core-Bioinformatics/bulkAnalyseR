@@ -54,7 +54,8 @@ Imports:
     DT,
     scales,
     shinyjs,
-    tidyr
+    tidyr,
+    shinyLP
 Suggests:
     rmarkdown,
     knitr,
