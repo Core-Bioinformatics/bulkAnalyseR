@@ -69,9 +69,9 @@ volcano_plot <- function(
   if(all(df$log10pval >= -10)) log10pval.cap <- FALSE
   if(log10pval.cap) df$log10pval[df$log10pval < -10] <- -10
   
-  vp <- ggplot(data = df, 
-               mapping = aes(x = .data$log2FC, y = -.data$log10pval)) +
-    ggplot2::theme_minimal() +
+  log2FC <- NULL; log10pval <- NULL
+  vp <- ggplot(data = df, mapping = aes(x = log2FC, y = -log10pval)) +
+    theme_minimal() +
     xlab("log2(FC)") +
     ylab("-log10(pval)") 
   
@@ -347,8 +347,8 @@ ma_plot <- function(
     dplyr::mutate(gene = .data$gene_name, log10pval = log10(.data$pvalAdj)) %>%
     dplyr::filter(!is.na(.data$log10pval))
   
-  p <- ggplot(data = df, 
-              mapping = aes(x = .data$log2exp, y = .data$log2FC)) +
+  log2exp <- NULL; log2FC <- NULL
+  p <- ggplot(data = df, mapping = aes(x = log2exp, y = log2FC)) +
     ggplot2::theme_minimal() +
     xlab("Average log2(exp)") +
     ylab("log2(FC)")

@@ -100,7 +100,6 @@ DEplotPanelServer <- function(id, DEresults, anno){
       else{
         highlightGenes <- input[["geneName"]]
       }
-      
 
       if(input[['plotType']] == 'Volcano'){
         myplot <- volcano_plot(
@@ -125,7 +124,6 @@ DEplotPanelServer <- function(id, DEresults, anno){
           genes.to.label = highlightGenes
         )
       }
-      
       myplot
     })
     

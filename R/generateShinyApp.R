@@ -212,6 +212,7 @@ generateAppFile <- function(
     "ui <- navbarPage(",
     glue::glue("'{app.title}',"), 
     glue::glue("theme = shinythemes::shinytheme('{theme}'),"),
+    "header = tags$head(tags$style('body {overflow-y: scroll;}')),",
     "tabPanel('RNAseq',",
     "tabsetPanel("
   )
