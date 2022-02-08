@@ -173,8 +173,7 @@ patternPanelServer <- function(id, expression.matrix, metadata, anno){
     output[['downloadLinePlot']] <- downloadHandler(
       filename = function() { input[['plotLineFileName']] },
       content = function(file) {
-        device <- function(..., width, height) grDevices::png(..., width = width, height = height, res = 300, units = "in")
-        ggsave(file, plot = line.plot(), device = device)
+        ggsave(file, plot = line.plot(), dpi = 300)
       }
     )
     
@@ -182,10 +181,20 @@ patternPanelServer <- function(id, expression.matrix, metadata, anno){
     output[['downloadHeatmapPlot']] <- downloadHandler(
       filename = function() { input[['plotHeatmapFileName']] },
       content = function(file) {
-        grDevices::png(file,width = 480, height = 1000,
-                       units = "px", pointsize = 12, bg = "white", res = NA)
-        print(heatmap.plot())
-        grDevices::dev.off()
+        if (base::strsplit(input[['plotHeatmapFileName']], split="\\.")[[1]][-1] == 'pdf'){
+          grDevices::pdf(file, width = 10, height = 20, pointsize = 12)
+          print(heatmap.plot())
+          grDevices::dev.off()
+        } else if (base::strsplit(input[['plotHeatmapFileName']], split="\\.")[[1]][-1] == 'svg'){
+          grDevices::svg(file, width = 10, height = 20, pointsize = 12)
+          print(heatmap.plot())
+          grDevices::dev.off()
+        } else {
+          grDevices::png(file, width = 480, height = 1000,
+                       units = "px", pointsize = 12)
+          print(heatmap.plot())
+          grDevices::dev.off()
+        }
       }
     )
     

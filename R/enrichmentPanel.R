@@ -121,8 +121,7 @@ enrichmentPanelServer <- function(id, DEresults, organism, seed = 13){
     output[['downloadPlot']] <- downloadHandler(
       filename = function() { input[['plotFileName']] },
       content = function(file) {
-        device <- function(..., width, height) grDevices::png(..., width = width, height = height, res = 300, units = "in")
-        ggsave(file, plot = plotenrichmentPlot(), device = device)
+        ggsave(file, plot = plotenrichmentPlot(), dpi = 300)
       }
     )
   })

@@ -151,26 +151,33 @@ QCpanelServer <- function(id, expression.matrix, metadata, anno){
     output[['downloadJSIPlot']] <- downloadHandler(
       filename = function() { input[['plotJSIFileName']] },
       content = function(file) {
-        grDevices::png(file)
-        print(jaccard.plot())
-        grDevices::dev.off()
-        
+        if (base::strsplit(input[['plotJSIFileName']], split="\\.")[[1]][-1] == 'pdf'){
+          grDevices::pdf(file)
+          print(jaccard.plot())
+          grDevices::dev.off()
+        } else if (base::strsplit(input[['plotJSIFileName']], split="\\.")[[1]][-1] == 'svg'){
+          grDevices::svg(file)
+          print(jaccard.plot())
+          grDevices::dev.off()
+        } else {
+          grDevices::png(file)
+          print(jaccard.plot())
+          grDevices::dev.off()
+        }
       }
     )
     
     output[['downloadPCAPlot']] <- downloadHandler(
       filename = function() { input[['plotPCAFileName']] },
       content = function(file) {
-        device <- function(..., width, height) grDevices::png(..., width = width, height = height, res = 300, units = "in")
-        ggsave(file, plot = pca.plot(), device = device)
+          ggsave(file, plot = pca.plot(), dpi = 300)
       }
     )
     
     output[['downloadMAPlot']] <- downloadHandler(
       filename = function() { input[['plotMAFileName']] },
       content = function(file) {
-        device <- function(..., width, height) grDevices::png(..., width = width, height = height, res = 300, units = "in")
-        ggsave(file, plot = ma.plot(), device = device)
+        ggsave(file, plot = ma.plot(), dpi = 300)
       }
     )
   })

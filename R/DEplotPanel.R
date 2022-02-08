@@ -146,8 +146,7 @@ DEplotPanelServer <- function(id, DEresults, anno){
     output[['download']] <- downloadHandler(
       filename = function() { input[['plotFileName']] },
       content = function(file) {
-        device <- function(..., width, height) grDevices::png(..., width = width, height = height, res = 300, units = "in")
-        ggsave(file, plot = DEplot(), device = device)
+        ggsave(file, plot = DEplot(), dpi = 300)
       }
     )
     

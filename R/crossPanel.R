@@ -226,10 +226,7 @@ crossPanelServer <- function(id, expression.matrix, metadata, anno){
     output[['download']] <- downloadHandler(
       filename = function() input[['plotFileName']],
       content = function(file) {
-        device <- function(..., width, height){
-          grDevices::png(..., width = width, height = height, res = 300, units = "in")
-        }
-        ggsave(file, plot = cp(), device = device)
+        ggsave(file, plot = cp(), dpi = 300)
       }
     )
   })
