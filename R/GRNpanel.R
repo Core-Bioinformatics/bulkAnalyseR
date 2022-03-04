@@ -12,7 +12,7 @@ NULL
 
 #' @rdname GRNpanel
 #' @export
-GRNpanelUI <- function(id){
+GRNpanelUI <- function(id, metadata){
   ns <- NS(id)
   
   tabPanel(
@@ -20,16 +20,63 @@ GRNpanelUI <- function(id){
     sidebarLayout(
       
       sidebarPanel(
+        selectInput(ns('n_networks'), 'Number of networks:', 1:4),
+        
+        selectInput(ns('condition'), 'Metadata column to use:', colnames(metadata)[-1], 
+                    selected = colnames(metadata)[ncol(metadata)]),
+        selectInput(ns('samples1'), 'Samples for GRN #1:', unique(metadata[[ncol(metadata)]]),
+                    selected = unique(metadata[[ncol(metadata)]]), multiple = TRUE),
+        conditionalPanel(
+          id = ns('samples2'),
+          ns=ns,
+          condition = "input.n_networks >= 2",
+          selectInput(ns('samples2'), 'Samples for GRN #2:', unique(metadata[[ncol(metadata)]]),
+                      selected = unique(metadata[[ncol(metadata)]]), multiple = TRUE)
+        ),
+        conditionalPanel(
+          id = ns('samples3'),
+          ns=ns,
+          condition = "input.n_networks >= 3",
+          selectInput(ns('samples3'), 'Samples for GRN #3:', unique(metadata[[ncol(metadata)]]),
+                      selected = unique(metadata[[ncol(metadata)]]), multiple = TRUE)
+        ),
+        conditionalPanel(
+          id = ns('samples4'),
+          ns=ns,
+          condition = "input.n_networks >= 4",
+          selectInput(ns('samples4'), 'Samples for GRN #4:', unique(metadata[[ncol(metadata)]]),
+                      selected = unique(metadata[[ncol(metadata)]]), multiple = TRUE)
+        ),
+        
         selectInput(ns("targetGenes"), "Target genes:", multiple = TRUE, choices = character(0)),
         actionButton(ns('goGRN'), label = 'Start GRN inference'),
         
         numericInput(ns("plotConnections"), "Connections to plot:", 5, 0, 100),
         textInput(ns('plotFileName'), 'File name for plot download', value ='GRNplot.html'),
+        selectInput(ns('plotId'), 'Select plot to download:', 1:4),
         downloadButton(ns('download'), 'Download Plot'),
       ),
       
       mainPanel(
-        visNetwork::visNetworkOutput(ns('plot')),
+        fluidRow(
+          column(6, visNetwork::visNetworkOutput(ns('plot1'))),
+          column(6, visNetwork::visNetworkOutput(ns('plot2')))
+        ),
+        conditionalPanel(
+          id = ns('plotrow'),
+          ns = ns,
+          condition = "input.n_networks >= 3",
+          fluidRow(
+            column(6, visNetwork::visNetworkOutput(ns('plot3'))),
+            column(6, visNetwork::visNetworkOutput(ns('plot4')))
+          )
+        ),
+        conditionalPanel(
+          id = ns('includeUpset'),
+          ns = ns,
+          condition = "input.n_networks > 1",
+          plotOutput(ns('plotUpset'))
+        )
       )
     )
   )
@@ -37,45 +84,134 @@ GRNpanelUI <- function(id){
 
 #' @rdname GRNpanel
 #' @export
-GRNpanelServer <- function(id, expression.matrix, anno, seed = 13){
+GRNpanelServer <- function(id, expression.matrix, metadata, anno, seed = 13){
   
   stopifnot({
     is.reactive(expression.matrix)
+    is.reactive(metadata)
     !is.reactive(anno)
+    !is.reactive(seed)
   })
   
   moduleServer(id, function(input, output, session){
     
     updateSelectizeInput(session, "targetGenes", choices = anno$NAME, server = TRUE)
+    observe(updateSelectInput(session, "plotId", choices = seq_len(input[["n_networks"]])))
     
-    GRNresults <- reactive({
-      target.genes <- anno$ENSEMBL[match(input[["targetGenes"]], anno$NAME)]
-      set.seed(seed)
-      GENIE3::GENIE3(expression.matrix(), targets = target.genes)
-    }) %>%
+    GRNresults1 <- reactive(infer_GRN(
+      expression.matrix = expression.matrix(), 
+      metadata = metadata(), 
+      anno = anno, 
+      seed = seed, 
+      targetGenes = input[["targetGenes"]], 
+      condition = input[["condition"]], 
+      samples = input[["samples1"]], 
+      inference_method = "GENIE3"
+    )) %>%
+      bindCache(metadata(), input[["targetGenes"]], input[["condition"]], input[["samples1"]]) %>%
+      bindEvent(input[["goGRN"]])
+    GRNresults2 <- reactive(infer_GRN(
+      expression.matrix = expression.matrix(), 
+      metadata = metadata(), 
+      anno = anno, 
+      seed = seed, 
+      targetGenes = input[["targetGenes"]], 
+      condition = input[["condition"]], 
+      samples = input[["samples2"]], 
+      inference_method = "GENIE3"
+    )) %>%
+      bindCache(metadata(), input[["targetGenes"]], input[["condition"]], input[["samples2"]]) %>%
+      bindEvent(input[["goGRN"]])
+    GRNresults3 <- reactive(infer_GRN(
+      expression.matrix = expression.matrix(), 
+      metadata = metadata(), 
+      anno = anno, 
+      seed = seed, 
+      targetGenes = input[["targetGenes"]], 
+      condition = input[["condition"]], 
+      samples = input[["samples3"]], 
+      inference_method = "GENIE3"
+    )) %>%
+      bindCache(metadata(), input[["targetGenes"]], input[["condition"]], input[["samples3"]]) %>%
+      bindEvent(input[["goGRN"]])
+    GRNresults4 <- reactive(infer_GRN(
+      expression.matrix = expression.matrix(), 
+      metadata = metadata(), 
+      anno = anno, 
+      seed = seed, 
+      targetGenes = input[["targetGenes"]], 
+      condition = input[["condition"]], 
+      samples = input[["samples4"]], 
+      inference_method = "GENIE3"
+    )) %>%
+      bindCache(metadata(), input[["targetGenes"]], input[["condition"]], input[["samples4"]]) %>%
       bindEvent(input[["goGRN"]])
     
-    GRNplot <- reactive({
-      weightMat <- GRNresults()
-      edges <- GENIE3::getLinkList(weightMat, input[["plotConnections"]]) %>%
-        dplyr::rename(from = .data$regulatoryGene, to = .data$targetGene, value = .data$weight) %>%
-        dplyr::mutate(from = as.character(.data$from), to = as.character(.data$to))
-      nodes <- tibble::tibble(
-        id = c(colnames(weightMat), edges$from),
-        label = anno$NAME[match(id, anno$ENSEMBL)],
-        group = c(rep("target", ncol(weightMat)), rep("regulator", nrow(edges)))
-      ) %>%
-        dplyr::distinct(id, .keep_all = TRUE)
-      
-      visNetwork::visNetwork(nodes, edges)
+    weightMatList <- reactive({
+      n_networks <- input[["n_networks"]]
+      weightMatList <- list(GRNresults1())
+      if(n_networks >= 2) {
+        weightMatList[[2]] <- GRNresults2()
+        if(n_networks >= 3) {
+          weightMatList[[3]] <- GRNresults3()
+        }
+        if(n_networks >= 4) {
+          weightMatList[[4]] <- GRNresults4()
+        }
+      }
+      weightMatList
     })
     
-    output[['plot']] <- visNetwork::renderVisNetwork(GRNplot())
+    recurring_regulators <- reactive({
+      find_regulators_with_recurring_edges(weightMatList(), input[["plotConnections"]])
+    })
+    
+    GRNplot1 <- reactive(plot_GRN(
+      weightMat = GRNresults1(), 
+      anno = anno, 
+      plotConnections = input[["plotConnections"]], 
+      plot_position_grid = 1, 
+      n_networks = input[["n_networks"]],
+      recurring_regulators = recurring_regulators()
+    ))
+    GRNplot2 <- reactive(plot_GRN(
+      weightMat = GRNresults2(), 
+      anno = anno, 
+      plotConnections = input[["plotConnections"]], 
+      plot_position_grid = 2, 
+      n_networks = input[["n_networks"]],
+      recurring_regulators = recurring_regulators()
+    ))
+    GRNplot3 <- reactive(plot_GRN(
+      weightMat = GRNresults3(), 
+      anno = anno, 
+      plotConnections = input[["plotConnections"]], 
+      plot_position_grid = 3, 
+      n_networks = input[["n_networks"]],
+      recurring_regulators = recurring_regulators()
+    ))
+    GRNplot4 <- reactive(plot_GRN(
+      weightMat = GRNresults4(), 
+      anno = anno, 
+      plotConnections = input[["plotConnections"]], 
+      plot_position_grid = 4, 
+      n_networks = input[["n_networks"]],
+      recurring_regulators = recurring_regulators()
+    ))
+    
+    upsetPlot <- reactive(plot_upset(weightMatList(), input[["plotConnections"]]))
+    
+    output[['plot1']] <- visNetwork::renderVisNetwork(GRNplot1())
+    output[['plot2']] <- visNetwork::renderVisNetwork(GRNplot2())
+    output[['plot3']] <- visNetwork::renderVisNetwork(GRNplot3())
+    output[['plot4']] <- visNetwork::renderVisNetwork(GRNplot4())
+    output[['plotUpset']] <- renderPlot(upsetPlot())
     
     output[['download']] <- downloadHandler(
       filename = function() {input[['plotFileName']]},
       content = function(file) {
-        GRNplot() %>% visNetwork::visSave(file)
+        GRNplot <- get(paste0("GRNplot", input[["plotId"]]))()
+        GRNplot %>% visNetwork::visSave(file)
       }
     )
     

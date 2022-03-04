@@ -6,12 +6,18 @@
 \alias{GRNpanelServer}
 \title{Generate the GRN panel of the shiny app}
 \usage{
-GRNpanelUI(id)
+GRNpanelUI(id, metadata)
 
-GRNpanelServer(id, expression.matrix, anno, seed = 13)
+GRNpanelServer(id, expression.matrix, metadata, anno, seed = 13)
 }
 \arguments{
 \item{id}{the input slot that will be used to access the value}
+
+\item{metadata}{a data frame containing metadata for the samples contained
+in the expression.matrix; must contain at minimum two columns:
+the first column must contain the column names of the expression.matrix,
+while the last column is assumed to contain the experimental conditions
+that will be tested for differential expression}
 
 \item{expression.matrix}{the expression matrix; rows correspond to genes and
 columns correspond to samples; usually preprocessed by
