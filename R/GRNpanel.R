@@ -48,7 +48,7 @@ GRNpanelUI <- function(id, metadata){
                       selected = unique(metadata[[ncol(metadata)]]), multiple = TRUE)
         ),
         
-        selectInput(ns("targetGenes"), "Target genes:", multiple = TRUE, choices = character(0)),
+        selectInput(ns("regulators"), "Target genes:", multiple = TRUE, choices = character(0)),
         actionButton(ns('goGRN'), label = 'Start GRN inference'),
         
         numericInput(ns("plotConnections"), "Connections to plot:", 5, 0, 100),
@@ -95,56 +95,68 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno, seed = 13){
   
   moduleServer(id, function(input, output, session){
     
-    updateSelectizeInput(session, "targetGenes", choices = anno$NAME, server = TRUE)
+    updateSelectizeInput(session, "regulators", choices = anno$NAME, server = TRUE)
     observe(updateSelectInput(session, "plotId", choices = seq_len(input[["n_networks"]])))
-    
-    GRNresults1 <- reactive(infer_GRN(
-      expression.matrix = expression.matrix(), 
-      metadata = metadata(), 
-      anno = anno, 
-      seed = seed, 
-      targetGenes = input[["targetGenes"]], 
-      condition = input[["condition"]], 
-      samples = input[["samples1"]], 
-      inference_method = "GENIE3"
-    )) %>%
-      bindCache(metadata(), input[["targetGenes"]], input[["condition"]], input[["samples1"]]) %>%
+    # fix crash when no samples are selected
+    GRNresults1 <- reactive({
+      shinyjs::disable("goGRN")
+      infer_GRN(
+        expression.matrix = expression.matrix(), 
+        metadata = metadata(), 
+        anno = anno, 
+        seed = seed, 
+        regulators = input[["regulators"]], 
+        condition = input[["condition"]], 
+        samples = input[["samples1"]], 
+        inference_method = "GENIE3"
+      )
+    }) %>%
+      bindCache(metadata(), input[["regulators"]], input[["condition"]], input[["samples1"]]) %>%
       bindEvent(input[["goGRN"]])
-    GRNresults2 <- reactive(infer_GRN(
-      expression.matrix = expression.matrix(), 
-      metadata = metadata(), 
-      anno = anno, 
-      seed = seed, 
-      targetGenes = input[["targetGenes"]], 
-      condition = input[["condition"]], 
-      samples = input[["samples2"]], 
-      inference_method = "GENIE3"
-    )) %>%
-      bindCache(metadata(), input[["targetGenes"]], input[["condition"]], input[["samples2"]]) %>%
+    GRNresults2 <- reactive({
+      shinyjs::disable("goGRN")
+      infer_GRN(
+        expression.matrix = expression.matrix(), 
+        metadata = metadata(), 
+        anno = anno, 
+        seed = seed, 
+        regulators = input[["regulators"]], 
+        condition = input[["condition"]], 
+        samples = input[["samples2"]], 
+        inference_method = "GENIE3"
+      )
+    }) %>%
+      bindCache(metadata(), input[["regulators"]], input[["condition"]], input[["samples2"]]) %>%
       bindEvent(input[["goGRN"]])
-    GRNresults3 <- reactive(infer_GRN(
-      expression.matrix = expression.matrix(), 
-      metadata = metadata(), 
-      anno = anno, 
-      seed = seed, 
-      targetGenes = input[["targetGenes"]], 
-      condition = input[["condition"]], 
-      samples = input[["samples3"]], 
-      inference_method = "GENIE3"
-    )) %>%
-      bindCache(metadata(), input[["targetGenes"]], input[["condition"]], input[["samples3"]]) %>%
+    GRNresults3 <- reactive({
+      shinyjs::disable("goGRN")
+      infer_GRN(
+        expression.matrix = expression.matrix(), 
+        metadata = metadata(), 
+        anno = anno, 
+        seed = seed, 
+        regulators = input[["regulators"]], 
+        condition = input[["condition"]], 
+        samples = input[["samples3"]], 
+        inference_method = "GENIE3"
+      )
+    }) %>%
+      bindCache(metadata(), input[["regulators"]], input[["condition"]], input[["samples3"]]) %>%
       bindEvent(input[["goGRN"]])
-    GRNresults4 <- reactive(infer_GRN(
-      expression.matrix = expression.matrix(), 
-      metadata = metadata(), 
-      anno = anno, 
-      seed = seed, 
-      targetGenes = input[["targetGenes"]], 
-      condition = input[["condition"]], 
-      samples = input[["samples4"]], 
-      inference_method = "GENIE3"
-    )) %>%
-      bindCache(metadata(), input[["targetGenes"]], input[["condition"]], input[["samples4"]]) %>%
+    GRNresults4 <- reactive({
+      shinyjs::disable("goGRN")
+      infer_GRN(
+        expression.matrix = expression.matrix(), 
+        metadata = metadata(), 
+        anno = anno, 
+        seed = seed, 
+        regulators = input[["regulators"]], 
+        condition = input[["condition"]], 
+        samples = input[["samples4"]], 
+        inference_method = "GENIE3"
+      )
+    }) %>%
+      bindCache(metadata(), input[["regulators"]], input[["condition"]], input[["samples4"]]) %>%
       bindEvent(input[["goGRN"]])
     
     weightMatList <- reactive({
@@ -162,8 +174,9 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno, seed = 13){
       weightMatList
     })
     
-    recurring_regulators <- reactive({
-      find_regulators_with_recurring_edges(weightMatList(), input[["plotConnections"]])
+    recurring_targets <- reactive({
+      shinyjs::enable("goGRN")
+      find_targets_with_recurring_edges(weightMatList(), input[["plotConnections"]])
     })
     
     GRNplot1 <- reactive(plot_GRN(
@@ -172,32 +185,36 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno, seed = 13){
       plotConnections = input[["plotConnections"]], 
       plot_position_grid = 1, 
       n_networks = input[["n_networks"]],
-      recurring_regulators = recurring_regulators()
-    ))
+      recurring_targets = recurring_targets()
+    )) %>%
+      bindEvent(input[["goGRN"]], input[["plotConnections"]])
     GRNplot2 <- reactive(plot_GRN(
       weightMat = GRNresults2(), 
       anno = anno, 
       plotConnections = input[["plotConnections"]], 
       plot_position_grid = 2, 
       n_networks = input[["n_networks"]],
-      recurring_regulators = recurring_regulators()
-    ))
+      recurring_targets = recurring_targets()
+    )) %>%
+      bindEvent(input[["goGRN"]], input[["plotConnections"]])
     GRNplot3 <- reactive(plot_GRN(
       weightMat = GRNresults3(), 
       anno = anno, 
       plotConnections = input[["plotConnections"]], 
       plot_position_grid = 3, 
       n_networks = input[["n_networks"]],
-      recurring_regulators = recurring_regulators()
-    ))
+      recurring_targets = recurring_targets()
+    )) %>%
+      bindEvent(input[["goGRN"]], input[["plotConnections"]])
     GRNplot4 <- reactive(plot_GRN(
       weightMat = GRNresults4(), 
       anno = anno, 
       plotConnections = input[["plotConnections"]], 
       plot_position_grid = 4, 
       n_networks = input[["n_networks"]],
-      recurring_regulators = recurring_regulators()
-    ))
+      recurring_targets = recurring_targets()
+    )) %>%
+      bindEvent(input[["goGRN"]], input[["plotConnections"]])
     
     upsetPlot <- reactive(plot_upset(weightMatList(), input[["plotConnections"]]))
     

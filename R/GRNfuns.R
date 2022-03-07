@@ -1,10 +1,10 @@
 infer_GRN <- function(expression.matrix, metadata, anno, seed, 
-                      targetGenes, condition, samples, inference_method){
+                      regulators, condition, samples, inference_method){
   set.seed(seed)
-  target.genes <- anno$ENSEMBL[match(targetGenes, anno$NAME)]
+  regulator.ids <- anno$ENSEMBL[match(regulators, anno$NAME)]
   samples <- metadata[[condition]] %in% samples
   if(inference_method == "GENIE3"){
-    GENIE3::GENIE3(expression.matrix[, samples], targets = target.genes)
+    GENIE3::GENIE3(expression.matrix[, samples], regulators = regulator.ids)
   }
 }
 
@@ -18,43 +18,44 @@ get_link_list_rename <- function(weightMat, plotConnections){
                   weight = NULL)
 }
 
-find_regulators_with_recurring_edges <- function(weightMatList, plotConnections){
-  lapply(weightMatList, function(wm){
-    get_link_list_rename(wm, plotConnections)[, 1:2]
+find_targets_with_recurring_edges <- function(weightMatList, plotConnections){
+  edges <- lapply(weightMatList, function(wm){
+    get_link_list_rename(wm, plotConnections)
   }) %>%
-    dplyr::bind_rows() %>%
+    dplyr::bind_rows() 
+  edges %>%
     dplyr::group_by(.data$from, .data$to) %>%
     dplyr::summarise(n = dplyr::n(), .groups = "keep") %>%
     dplyr::filter(.data$n > 1) %>%
-    dplyr::pull(.data$from)
+    dplyr::pull(.data$to) %>%
+    dplyr::setdiff(edges$from)
 }
 
 plot_GRN <- function(weightMat, anno, plotConnections, 
-                     plot_position_grid, n_networks, recurring_regulators){
+                     plot_position_grid, n_networks, recurring_targets){
   
   if(n_networks >= plot_position_grid){
     edges <- get_link_list_rename(weightMat, plotConnections)
     nodes <- tibble::tibble(
-      id = c(colnames(weightMat), edges$from),
+      id = c(edges$from, edges$to),
       label = anno$NAME[match(.data$id, anno$ENSEMBL)],
-      group = c(rep("target", ncol(weightMat)), 
-                rep("regulator", nrow(edges))),
+      group = rep(c("regulator", "target"), each = nrow(edges)),
       color = NA
     ) %>%
       dplyr::distinct(.data$id, .keep_all = TRUE)
-    nodes$group[nodes$id %in% recurring_regulators] <- "recurring_regulator"
+    nodes$group[nodes$id %in% recurring_targets] <- "recurring_target"
     
-    color_target <- list("background" = '#D2E5FF')
-    color_regulator <- list("background" = '#E0E0E0')
-    color_recurring_regulator <- list("background" = '#ACE9B4')
-    colors.list <- list(color_target, color_regulator, color_recurring_regulator)
+    color_regulator <- list("background" = '#D2E5FF')
+    color_target <- list("background" = '#E0E0E0')
+    color_recurring_target <- list("background" = '#ACE9B4')
+    colors.list <- list(color_regulator, color_target, color_recurring_target)
     
     for(i in seq_len(nrow(nodes))){
       nodes$color[i] <- colors.list[[match(
-        nodes$group[i], c("target", "regulator", "recurring_regulator")
+        nodes$group[i], c("regulator", "target", "recurring_target")
       )]]
     }
-    # fix colours
+    
     visNetwork::visNetwork(nodes, edges)
   }else{
     NULL

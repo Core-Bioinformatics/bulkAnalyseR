@@ -20,22 +20,25 @@ suppressMessages(
 )
 
 weightMat1 <- infer_GRN(expression.matrix, metadata, anno, 13,
-                        "Sox17", "timepoint", c("0h", "12h", "36h"), "GENIE3")
+                        c("Sox17", "Gm6123"), "timepoint", c("0h", "12h", "36h"), "GENIE3")
 weightMat2 <- infer_GRN(expression.matrix, metadata, anno, 13,
-                        "Sox17", "timepoint", c("0h", "12h"), "GENIE3")
+                        c("Sox17", "Gm6123"), "timepoint", c("0h", "12h"), "GENIE3")
 weightMat3 <- infer_GRN(expression.matrix, metadata, anno, 13,
-                        "Sox17", "timepoint", c("0h", "36h"), "GENIE3")
+                        c("Sox17", "Gm6123"), "timepoint", c("0h", "36h"), "GENIE3")
 weightMat4 <- infer_GRN(expression.matrix, metadata, anno, 13,
-                        "Sox17", "timepoint", c("12h", "36h"), "GENIE3")
+                        c("Sox17", "Gm6123"), "timepoint", c("12h", "36h"), "GENIE3")
 
 plotConnections <- 5
 
-recurring_regulators_1 <- find_regulators_with_recurring_edges(list(weightMat1), plotConnections)
-recurring_regulators <- find_regulators_with_recurring_edges(
+recurring_targets_1 <- find_targets_with_recurring_edges(list(weightMat1), plotConnections)
+recurring_targets <- find_targets_with_recurring_edges(
   list(weightMat1, weightMat2, weightMat3, weightMat4), plotConnections
 )
 
-# plot_GRN(weightMat1, anno, plotConnections, 1, 4, recurring_regulators)
+# plot_GRN(weightMat1, anno, plotConnections, 1, 4, recurring_targets)
+# plot_GRN(weightMat2, anno, plotConnections, 1, 4, recurring_targets)
+# plot_GRN(weightMat3, anno, plotConnections, 1, 4, recurring_targets)
+# plot_GRN(weightMat4, anno, plotConnections, 1, 4, recurring_targets)
 
 test_that("recurring regulators calculation works", {
   expect_equal(recurring_regulators_1, character(0))
