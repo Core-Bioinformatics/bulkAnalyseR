@@ -1,11 +1,18 @@
+#' @param seed the random seed to be set when running GRN inference, to ensure
+#' reproducibility of outputs
 infer_GRN <- function(expression.matrix, metadata, anno, seed, 
                       regulators, condition, samples, inference_method){
-  set.seed(seed)
+  inference_method <- inference_method[1]
   regulator.ids <- anno$ENSEMBL[match(regulators, anno$NAME)]
   samples <- metadata[[condition]] %in% samples
+  set.seed(seed)
   if(inference_method == "GENIE3"){
-    GENIE3::GENIE3(expression.matrix[, samples], regulators = regulator.ids)
+    res <- GENIE3::GENIE3(expression.matrix[, samples], regulators = regulator.ids)
+  }else if(inference_method == "GNET2"){
+    gnet_out <- GNET2::gnet(expression.matrix[, samples], reg_names = regulator.ids)
+    res <- GNET2::extract_edges(gnet_out)
   }
+  res
 }
 
 get_link_list_rename <- function(weightMat, plotConnections){

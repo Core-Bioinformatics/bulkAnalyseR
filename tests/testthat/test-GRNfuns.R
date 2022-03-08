@@ -46,3 +46,5 @@ test_that("recurring regulators calculation works", {
 })
 
 
+weightMatGNET <- infer_GRN(expression.matrix, metadata, anno, 13,
+                        c("Sox17", "Gm6123"), "timepoint", c("0h", "12h", "36h"), "GNET2")
