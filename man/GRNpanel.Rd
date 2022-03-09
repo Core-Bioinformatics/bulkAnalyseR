@@ -8,7 +8,7 @@
 \usage{
 GRNpanelUI(id, metadata)
 
-GRNpanelServer(id, expression.matrix, metadata, anno, seed = 13)
+GRNpanelServer(id, expression.matrix, metadata, anno)
 }
 \arguments{
 \item{id}{the input slot that will be used to access the value}
@@ -27,9 +27,6 @@ columns correspond to samples; usually preprocessed by
 of the expression.matrix (usually ENSEMBL IDs) and the gene names that
 should be rendered within the app and in output files; this object is
 created by \code{\link{generateShinyApp}} using the org.db specified}
-
-\item{seed}{the random seed to be set when running GRN inference, to ensure
-reproducibility of GENIE3 outputs}
 }
 \value{
 The UI and Server components of the shiny module, that can be used

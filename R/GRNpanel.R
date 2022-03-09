@@ -92,7 +92,6 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
     is.reactive(expression.matrix)
     is.reactive(metadata)
     !is.reactive(anno)
-    !is.reactive(seed)
   })
   
   moduleServer(id, function(input, output, session){
@@ -121,7 +120,6 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
         expression.matrix = expression.matrix(), 
         metadata = metadata(), 
         anno = anno, 
-        seed = seed, 
         regulators = input[["regulators"]], 
         condition = input[["condition"]], 
         samples = input[["samples2"]], 
@@ -137,7 +135,6 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
         expression.matrix = expression.matrix(), 
         metadata = metadata(), 
         anno = anno, 
-        seed = seed, 
         regulators = input[["regulators"]], 
         condition = input[["condition"]], 
         samples = input[["samples3"]], 
@@ -153,7 +150,6 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
         expression.matrix = expression.matrix(), 
         metadata = metadata(), 
         anno = anno, 
-        seed = seed, 
         regulators = input[["regulators"]], 
         condition = input[["condition"]], 
         samples = input[["samples4"]], 
