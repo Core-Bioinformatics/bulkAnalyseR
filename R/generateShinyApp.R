@@ -229,7 +229,7 @@ generateAppFile <- function(
   }
   if("Patterns" %in% panels.default) code.ui <- c(code.ui, "patternPanelUI('Patterns', metadata),")
   if("Cross" %in% panels.default) code.ui <- c(code.ui, "crossPanelUI('Cross', metadata),")
-  if("GRN" %in% panels.default) code.ui <- c(code.ui, "GRNpanelUI('GRN'),")
+  if("GRN" %in% panels.default) code.ui <- c(code.ui, "GRNpanelUI('GRN', metadata),")
   for(i in seq_len(nrow(panels.extra))){
     code.ui <- c(code.ui, glue::glue("{panels.extra$UIfun[i]}({panels.extra$UIvars[i]}),"))
   }
@@ -275,7 +275,7 @@ generateAppFile <- function(
       code.server <- c(code.server, "patternPanelServer('Patterns', expression.matrix, metadata, anno)")
     }
     if("GRN" %in% panels.default){
-      code.server <- c(code.server, "GRNpanelServer('GRN', expression.matrix, anno)")
+      code.server <- c(code.server, "GRNpanelServer('GRN', expression.matrix, metadata, anno)")
     }
     
   }

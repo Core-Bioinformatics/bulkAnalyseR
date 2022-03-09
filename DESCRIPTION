@@ -55,12 +55,16 @@ Imports:
     scales,
     shinyjs,
     tidyr,
-    shinyLP
+    shinyLP,
+    UpSetR,
+    GNET2
 Suggests:
     rmarkdown,
     knitr,
     BiocManager,
     AnnotationDbi,
     org.Hs.eg.db,
-    org.Mm.eg.db
+    org.Mm.eg.db,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
+Config/testthat/edition: 3
