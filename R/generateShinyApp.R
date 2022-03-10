@@ -18,12 +18,12 @@
 #' @param app.title title to be displayed within the app
 #' @param organism organism name to be passed on to \code{gprofiler2::gost};
 #' organism names are constructed by concatenating the first letter of the 
-#' name and the family name; default is NULL - enrichment is not included
+#' name and the family name; default is NA - enrichment is not included
 #' to ensure compatibility with datasets that have non-standard gene names
 #' @param org.db database for annotations to transform ENSEMBL IDs to
 #' gene names; a list of bioconductor packaged databases can be found with 
-#' \code{BiocManager::available("^org\\.")}; default is human - 'org.Hs.eg.db';
-#' default in NULL, in which case the row names of the expression matrix are
+#' \code{BiocManager::available("^org\\.")};
+#' default in NA, in which case the row names of the expression matrix are
 #' used directly - it is recommended to provide ENSEMBL IDs if the database
 #' for your model organism is available
 #' @param theme shiny theme to be used in the app; default is 'flatly'
@@ -89,8 +89,8 @@ generateShinyApp <- function(
   modality = "RNA",
   expression.matrix,
   metadata,
-  organism = NULL,
-  org.db = NULL,
+  organism = NA,
+  org.db = NA,
   panels.default = c("Landing", "SampleSelect", "QC", "DE", "DEplot", "DEsummary",
                      "Patterns", "Enrichment", "Cross", "GRN"),
   panels.extra = tibble::tibble(
@@ -105,21 +105,47 @@ generateShinyApp <- function(
 ){
   validateAppInputs(
     shiny.dir = shiny.dir,
+    modality = modality,
     expression.matrix = expression.matrix,
-    metadata = metadata
+    metadata = metadata,
+    organism = organism,
+    org.db = org.db,
+    panels.default = panels.default,
+    data.extra = data.extra
   )
+  
+  n_modalities <- length(modality)
+  if(!is.list(expression.matrix)){
+    expression.matrix <- rep(list(expression.matrix), n_modalities)
+  }
+  if(is.data.frame(metadata)){
+    metadata <- rep(list(metadata), n_modalities)
+  }
+  if(length(organism) == 1){
+    organism <- rep(organism, n_modalities)
+  }
+  if(length(org.db) == 1){
+    org.db <- rep(org.db, n_modalities)
+  }
+  if(!is.list(panels.default)){
+    panels.default <- rep(list(panels.default), n_modalities)
+  }
+  
   generateAppFile(
     shiny.dir = shiny.dir,
     app.title = app.title,
+    theme = theme,
+    modality = modality,
     organism = organism,
     org.db = org.db,
-    theme = theme,
     panels.default = panels.default,
     panels.extra = panels.extra,
     packages.extra = packages.extra
   )
+  
   generateDataFiles(
     shiny.dir = shiny.dir,
+    modality = modality,
     expression.matrix = expression.matrix,
     metadata = metadata,
     data.extra = data.extra
@@ -129,14 +155,21 @@ generateShinyApp <- function(
 }
 
 validateAppInputs <- function(
-  shiny.dir = shiny.dir,
-  expression.matrix = expression.matrix,
-  metadata = metadata
+  shiny.dir,
+  modality,
+  expression.matrix,
+  metadata,
+  organism,
+  org.db,
+  panels.default,
+  data.extra
 ){
   if(!dir.exists(shiny.dir)) dir.create(shiny.dir)
   if(length(dir(shiny.dir,  all.files = TRUE, include.dirs = TRUE, no.. = TRUE)) > 0){
     stop("Please specify a new or empty directory")
   }
+  
+  n_modalities <- length(modality)
   
   validate_matrix_metadata <- function(expression.matrix, metadata){
     if(!is.matrix(expression.matrix)){
@@ -151,36 +184,59 @@ validateAppInputs <- function(
     }
   }
   if(is.list(expression.matrix) & !is.data.frame(metadata)){
-    if(length(expression.matrix) != length(metadata)){
-      stop("expression.matrix and metadata lists must be the same length")
+    if(length(expression.matrix) != n_modalities){
+      stop("expression.matrix list must have the same length as modality vector")
+    }
+    if(length(metadata) != n_modalities){
+      stop("metadata list must have the same length as modality vector")
     }
     invisible(lapply(X = seq_len(length(expression.matrix)), FUN = function(i){
       validate_matrix_metadata(expression.matrix[[i]], metadata[[i]])
     }))
   }else if(is.list(expression.matrix)){
+    if(length(expression.matrix) != n_modalities){
+      stop("expression.matrix list must have the same length as modality vector")
+    }
     invisible(lapply(X = expression.matrix, FUN = function(exp){
       validate_matrix_metadata(exp, metadata)
     }))
   }else if(!is.data.frame(metadata)){
+    if(length(metadata) != n_modalities){
+      stop("metadata list must have the same length as modality vector")
+    }
     invisible(lapply(X = metadata, FUN = function(meta){
       validate_matrix_metadata(expression.matrix, meta)
     }))
   }else{
     validate_matrix_metadata(expression.matrix, metadata)
   }
+  
+  if(length(organism) != 1 & length(organism) != n_modalities){
+    stop("organism must be length 1 or have the same length as modality vector")
+  }
+  if(length(org.db) != 1 & length(org.db) != n_modalities){
+    stop("org.db must be length 1 or have the same length as modality vector")
+  }
+  if(is.list(panels.default)){
+    if(length(panels.default) != n_modalities){
+      stop("panels.default list must have the same length as modality vector")
+    }
+  }
+  
+  if(any(c("expression_matrix", "metadata") %in% data.extra)){
+    stop("expression_matrix and metadata are reserved names, please rename your extra objects")
+  }
 }
 
 generateDataFiles <- function(
   shiny.dir,
+  modality,
   expression.matrix,
   metadata,
   data.extra
 ){
-  if(any(c("expression_matrix", "metadata") %in% data.extra)){
-    stop("expression_matrix and metadata are reserved names, please rename your extra objects")
-  }
-  save(expression.matrix, file = paste0(shiny.dir, "/expression_matrix.rda"))
-  save(metadata, file = paste0(shiny.dir, "/metadata.rda"))
+  save(expression.matrix[[i]], file = paste0(shiny.dir, "/expression_matrix.rda"))
+  save(metadata[[i]], file = paste0(shiny.dir, "/metadata.rda"))
   lapply(data.extra, function(name){
     object<-get(name)
     save(object, file = paste0(shiny.dir, "/", name, ".rda"))
@@ -210,7 +266,7 @@ generateAppFile <- function(
     "rda.files <- list.files(pattern = '\\.rda$')",
     "for(fl in rda.files) load(fl)"
   )
-  if(is.null(org.db)){
+  if(is.na(org.db)){
     code.source.objects <- c(
       code.source.objects,
       "anno <- data.frame(ENSEMBL = rownames(expression.matrix),",
@@ -246,7 +302,7 @@ generateAppFile <- function(
     code.ui <- c(code.ui, "DEpanelUI('DE', metadata),")
     if("DEplot" %in% panels.default) code.ui <- c(code.ui, "DEplotPanelUI('DEplot'),")
     if("DEsummary" %in% panels.default) code.ui <- c(code.ui, "DEsummaryPanelUI('DEsummary', metadata),")
-    if("Enrichment" %in% panels.default & !is.null(organism)){
+    if("Enrichment" %in% panels.default & !is.na(organism)){
       code.ui <- c(code.ui, "enrichmentPanelUI('Enrichment'),")
     }
   }
@@ -285,7 +341,7 @@ generateAppFile <- function(
     if("DEsummary" %in% panels.default){
       code.server <- c(code.server, "DEsummaryPanelServer('DEsummary', expression.matrix, metadata, DEresults, anno)")
     }
-    if("Enrichment" %in% panels.default & !is.null(organism)){
+    if("Enrichment" %in% panels.default & !is.na(organism)){
       code.server <- c(
         code.server, 
         glue::glue("enrichmentPanelServer('Enrichment', DEresults, organism = '{organism}')")
