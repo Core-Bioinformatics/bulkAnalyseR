@@ -10,78 +10,82 @@ NULL
 
 #' @rdname GRNpanel
 #' @export
-GRNpanelUI <- function(id, metadata){
+GRNpanelUI <- function(id, metadata, show = TRUE){
   ns <- NS(id)
   
-  tabPanel(
-    'GRN inference',
-    sidebarLayout(
-      
-      sidebarPanel(
-        selectInput(ns('n_networks'), 'Number of networks:', 1:4),
+  if(show){
+    tabPanel(
+      'GRN inference',
+      sidebarLayout(
         
-        selectInput(ns('condition'), 'Metadata column to use:', colnames(metadata)[-1], 
-                    selected = colnames(metadata)[ncol(metadata)]),
-        selectInput(ns('samples1'), 'Samples for GRN #1:', unique(metadata[[ncol(metadata)]]),
-                    selected = unique(metadata[[ncol(metadata)]]), multiple = TRUE),
-        selectInput(ns('method1'), 'Inference method for GRN #1', c("GENIE3", "GNET2")),
-        conditionalPanel(
-          id = ns('samples2'),
-          ns=ns,
-          condition = "input.n_networks >= 2",
-          selectInput(ns('samples2'), 'Samples for GRN #2:', unique(metadata[[ncol(metadata)]]),
+        sidebarPanel(
+          selectInput(ns('n_networks'), 'Number of networks:', 1:4),
+          
+          selectInput(ns('condition'), 'Metadata column to use:', colnames(metadata)[-1], 
+                      selected = colnames(metadata)[ncol(metadata)]),
+          selectInput(ns('samples1'), 'Samples for GRN #1:', unique(metadata[[ncol(metadata)]]),
                       selected = unique(metadata[[ncol(metadata)]]), multiple = TRUE),
-          selectInput(ns('method2'), 'Inference method for GRN #2', c("GENIE3", "GNET2"))
-        ),
-        conditionalPanel(
-          id = ns('samples3'),
-          ns=ns,
-          condition = "input.n_networks >= 3",
-          selectInput(ns('samples3'), 'Samples for GRN #3:', unique(metadata[[ncol(metadata)]]),
-                      selected = unique(metadata[[ncol(metadata)]]), multiple = TRUE),
-          selectInput(ns('method3'), 'Inference method for GRN #3', c("GENIE3", "GNET2"))
-        ),
-        conditionalPanel(
-          id = ns('samples4'),
-          ns=ns,
-          condition = "input.n_networks >= 4",
-          selectInput(ns('samples4'), 'Samples for GRN #4:', unique(metadata[[ncol(metadata)]]),
-                      selected = unique(metadata[[ncol(metadata)]]), multiple = TRUE),
-          selectInput(ns('method4'), 'Inference method for GRN #4', c("GENIE3", "GNET2"))
+          selectInput(ns('method1'), 'Inference method for GRN #1', c("GENIE3", "GNET2")),
+          conditionalPanel(
+            id = ns('samples2'),
+            ns=ns,
+            condition = "input.n_networks >= 2",
+            selectInput(ns('samples2'), 'Samples for GRN #2:', unique(metadata[[ncol(metadata)]]),
+                        selected = unique(metadata[[ncol(metadata)]]), multiple = TRUE),
+            selectInput(ns('method2'), 'Inference method for GRN #2', c("GENIE3", "GNET2"))
+          ),
+          conditionalPanel(
+            id = ns('samples3'),
+            ns=ns,
+            condition = "input.n_networks >= 3",
+            selectInput(ns('samples3'), 'Samples for GRN #3:', unique(metadata[[ncol(metadata)]]),
+                        selected = unique(metadata[[ncol(metadata)]]), multiple = TRUE),
+            selectInput(ns('method3'), 'Inference method for GRN #3', c("GENIE3", "GNET2"))
+          ),
+          conditionalPanel(
+            id = ns('samples4'),
+            ns=ns,
+            condition = "input.n_networks >= 4",
+            selectInput(ns('samples4'), 'Samples for GRN #4:', unique(metadata[[ncol(metadata)]]),
+                        selected = unique(metadata[[ncol(metadata)]]), multiple = TRUE),
+            selectInput(ns('method4'), 'Inference method for GRN #4', c("GENIE3", "GNET2"))
+          ),
+          
+          selectInput(ns("regulators"), "Target genes:", multiple = TRUE, choices = character(0)),
+          actionButton(ns('goGRN'), label = 'Start GRN inference'),
+          
+          numericInput(ns("plotConnections"), "Connections to plot:", 5, 0, 100),
+          textInput(ns('plotFileName'), 'File name for plot download', value ='GRNplot.html'),
+          selectInput(ns('plotId'), 'Select plot to download:', 1:4),
+          downloadButton(ns('download'), 'Download Plot'),
         ),
         
-        selectInput(ns("regulators"), "Target genes:", multiple = TRUE, choices = character(0)),
-        actionButton(ns('goGRN'), label = 'Start GRN inference'),
-        
-        numericInput(ns("plotConnections"), "Connections to plot:", 5, 0, 100),
-        textInput(ns('plotFileName'), 'File name for plot download', value ='GRNplot.html'),
-        selectInput(ns('plotId'), 'Select plot to download:', 1:4),
-        downloadButton(ns('download'), 'Download Plot'),
-      ),
-      
-      mainPanel(
-        fluidRow(
-          column(6, visNetwork::visNetworkOutput(ns('plot1'))),
-          column(6, visNetwork::visNetworkOutput(ns('plot2')))
-        ),
-        conditionalPanel(
-          id = ns('plotrow'),
-          ns = ns,
-          condition = "input.n_networks >= 3",
+        mainPanel(
           fluidRow(
-            column(6, visNetwork::visNetworkOutput(ns('plot3'))),
-            column(6, visNetwork::visNetworkOutput(ns('plot4')))
+            column(6, visNetwork::visNetworkOutput(ns('plot1'))),
+            column(6, visNetwork::visNetworkOutput(ns('plot2')))
+          ),
+          conditionalPanel(
+            id = ns('plotrow'),
+            ns = ns,
+            condition = "input.n_networks >= 3",
+            fluidRow(
+              column(6, visNetwork::visNetworkOutput(ns('plot3'))),
+              column(6, visNetwork::visNetworkOutput(ns('plot4')))
+            )
+          ),
+          conditionalPanel(
+            id = ns('includeUpset'),
+            ns = ns,
+            condition = "input.n_networks > 1",
+            plotOutput(ns('plotUpset'))
           )
-        ),
-        conditionalPanel(
-          id = ns('includeUpset'),
-          ns = ns,
-          condition = "input.n_networks > 1",
-          plotOutput(ns('plotUpset'))
         )
       )
     )
-  )
+  }else{
+    NULL
+  }
 }
 
 #' @rdname GRNpanel

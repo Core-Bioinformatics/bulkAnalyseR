@@ -13,65 +13,69 @@ NULL
 
 #' @rdname DEplotPanel
 #' @export
-DEplotPanelUI <- function(id){
+DEplotPanelUI <- function(id, show = TRUE){
   ns <- NS(id)
   
-  tabPanel(
-    'Volcano and MA plots',
-    shinyWidgets::dropdownButton(
-      selectInput(ns('plotType'), 'Type of plot:', c('Volcano', 'MA')),
-      shinyWidgets::switchInput(
-        inputId = ns('autoLabel'),
-        label = "Auto labels", 
-        labelWidth = "80px",
-        onLabel = 'On',
-        offLabel = 'Off',
-        value = FALSE,
-        onStatus = FALSE
-      ),
-      shinyWidgets::switchInput(
-        inputId = ns("highlightSelected"),
-        label = "Highlight selected DE genes?",
-        labelWidth = "80px",
-        onLabel = 'No',
-        offLabel = 'Yes',
-        value = FALSE,
-        onStatus = FALSE
-      ),
-      shinyWidgets::switchInput(
-        inputId = ns('allGenes'),
-        label = "Showing on click:", 
-        labelWidth = "80px",
-        onLabel = 'All genes',
-        offLabel = 'Only DE genes',
-        value = FALSE,
-        onStatus = FALSE
-      ),
-      conditionalPanel(
-        id = ns('conditionalVolcanoOption'),
-        ns=ns,
-        condition = "input[['plotType']] == 'Volcano'",
+  if(show){
+    tabPanel(
+      'Volcano and MA plots',
+      shinyWidgets::dropdownButton(
+        selectInput(ns('plotType'), 'Type of plot:', c('Volcano', 'MA')),
         shinyWidgets::switchInput(
-          inputId = ns("capPVal"),
-          label = "Cap log10(pval)?", 
+          inputId = ns('autoLabel'),
+          label = "Auto labels", 
+          labelWidth = "80px",
+          onLabel = 'On',
+          offLabel = 'Off',
+          value = FALSE,
+          onStatus = FALSE
+        ),
+        shinyWidgets::switchInput(
+          inputId = ns("highlightSelected"),
+          label = "Highlight selected DE genes?",
           labelWidth = "80px",
           onLabel = 'No',
           offLabel = 'Yes',
           value = FALSE,
           onStatus = FALSE
         ),
+        shinyWidgets::switchInput(
+          inputId = ns('allGenes'),
+          label = "Showing on click:", 
+          labelWidth = "80px",
+          onLabel = 'All genes',
+          offLabel = 'Only DE genes',
+          value = FALSE,
+          onStatus = FALSE
+        ),
+        conditionalPanel(
+          id = ns('conditionalVolcanoOption'),
+          ns=ns,
+          condition = "input[['plotType']] == 'Volcano'",
+          shinyWidgets::switchInput(
+            inputId = ns("capPVal"),
+            label = "Cap log10(pval)?", 
+            labelWidth = "80px",
+            onLabel = 'No',
+            offLabel = 'Yes',
+            value = FALSE,
+            onStatus = FALSE
+          ),
+        ),
+        selectInput(ns("geneName"), "Other genes to highlight:", multiple = TRUE, choices = character(0)),
+        textInput(ns('plotFileName'), 'File name for plot download', value ='DEPlot.png'),
+        downloadButton(ns('download'), 'Download Plot'),
+        
+        status = "info",
+        icon = icon("gear", verify_fa = FALSE), 
+        tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
       ),
-      selectInput(ns("geneName"), "Other genes to highlight:", multiple = TRUE, choices = character(0)),
-      textInput(ns('plotFileName'), 'File name for plot download', value ='DEPlot.png'),
-      downloadButton(ns('download'), 'Download Plot'),
-      
-      status = "info",
-      icon = icon("gear", verify_fa = FALSE), 
-      tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
-    ),
-    plotOutput(ns('plot'), click = ns('plot_click')),
-    tableOutput(ns('data')) 
-  )
+      plotOutput(ns('plot'), click = ns('plot_click')),
+      tableOutput(ns('data')) 
+    )
+  }else{
+    NULL
+  }
 }
 
 #' @rdname DEplotPanel
@@ -100,7 +104,7 @@ DEplotPanelServer <- function(id, DEresults, anno){
       else{
         highlightGenes <- input[["geneName"]]
       }
-
+      
       if(input[['plotType']] == 'Volcano'){
         myplot <- volcano_plot(
           genes.de.results = results$DEtable,

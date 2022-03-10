@@ -11,52 +11,56 @@ NULL
 
 #' @rdname DEsummaryPanel
 #' @export
-DEsummaryPanelUI <- function(id, metadata){
+DEsummaryPanelUI <- function(id, metadata, show = TRUE){
   ns <- NS(id)
   
-  tabPanel(
-    'DE Summary',
-    tags$h1("Principal Component Analysis on DE genes"),
-    shinyWidgets::dropdownButton(
-      radioButtons(ns('pca.annotation'), label = "Group by",
-                   choices = colnames(metadata), selected = colnames(metadata)[ncol(metadata)]),
-      shinyWidgets::switchInput(
-        inputId = ns("pca.useAllDE"),
-        label = "Use all DE?",
-        labelWidth = "80px",
-        onLabel = 'All DE',
-        offLabel = 'Only selected DE',
-        value = TRUE,
-        onStatus = FALSE
+  if(show){
+    tabPanel(
+      'DE Summary',
+      tags$h1("Principal Component Analysis on DE genes"),
+      shinyWidgets::dropdownButton(
+        radioButtons(ns('pca.annotation'), label = "Group by",
+                     choices = colnames(metadata), selected = colnames(metadata)[ncol(metadata)]),
+        shinyWidgets::switchInput(
+          inputId = ns("pca.useAllDE"),
+          label = "Use all DE?",
+          labelWidth = "80px",
+          onLabel = 'All DE',
+          offLabel = 'Only selected DE',
+          value = TRUE,
+          onStatus = FALSE
+        ),
+        checkboxInput(ns("pca.show.labels"), label = "Show sample labels", value = FALSE),
+        checkboxInput(ns('pca.show.ellipses'), label = "Show ellipses around groups", value = TRUE),
+        textInput(ns('plotPCAFileName'), 'File name for PCA plot download', value = 'PCAPlotDE.png'),
+        downloadButton(ns('downloadPCAPlot'), 'Download PCA Plot'),
+        
+        status = "info",
+        icon = icon("gear", verify_fa = FALSE), 
+        tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
       ),
-      checkboxInput(ns("pca.show.labels"), label = "Show sample labels", value = FALSE),
-      checkboxInput(ns('pca.show.ellipses'), label = "Show ellipses around groups", value = TRUE),
-      textInput(ns('plotPCAFileName'), 'File name for PCA plot download', value = 'PCAPlotDE.png'),
-      downloadButton(ns('downloadPCAPlot'), 'Download PCA Plot'),
-      
-      status = "info",
-      icon = icon("gear", verify_fa = FALSE), 
-      tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
-    ),
-    plotOutput(ns('pca')),
-    tags$h1("Gene heatmap"),
-    shinyWidgets::dropdownButton(
-      radioButtons(ns('heatmap.processing'), label = "Heatmap values",
-                   choices = c('Expression','Log2 Expression','Z-score'), 
-                   selected = 'Z-score'),
-      shinyjqui::orderInput(ns('heatmap.annotations'), label = "Show annotations", items = colnames(metadata)),
-      selectInput(ns("geneName"), "Additional genes to include:", multiple = TRUE, choices = character(0)),
-      div("\nIf no genes are selected in the DE panel or here then the top 50 DE genes are chosen.\n"),
-      div(style="margin-bottom:10px"),
-      textInput(ns('plotHeatmapFileName'), 'File name for heatmap plot download', value ='HeatmapPlot.png'),
-      downloadButton(ns('downloadHeatmapPlot'), 'Download Heatmap Plot'),
-      
-      status = "info",
-      icon = icon("gear", verify_fa = FALSE), 
-      tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
-    ),
-    plotOutput(ns('heatmap'), height = 400),
-  )
+      plotOutput(ns('pca')),
+      tags$h1("Gene heatmap"),
+      shinyWidgets::dropdownButton(
+        radioButtons(ns('heatmap.processing'), label = "Heatmap values",
+                     choices = c('Expression','Log2 Expression','Z-score'), 
+                     selected = 'Z-score'),
+        shinyjqui::orderInput(ns('heatmap.annotations'), label = "Show annotations", items = colnames(metadata)),
+        selectInput(ns("geneName"), "Additional genes to include:", multiple = TRUE, choices = character(0)),
+        div("\nIf no genes are selected in the DE panel or here then the top 50 DE genes are chosen.\n"),
+        div(style="margin-bottom:10px"),
+        textInput(ns('plotHeatmapFileName'), 'File name for heatmap plot download', value ='HeatmapPlot.png'),
+        downloadButton(ns('downloadHeatmapPlot'), 'Download Heatmap Plot'),
+        
+        status = "info",
+        icon = icon("gear", verify_fa = FALSE), 
+        tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
+      ),
+      plotOutput(ns('heatmap'), height = 400),
+    )
+  }else{
+    NULL
+  }
 }
 
 #' @rdname DEsummaryPanel
@@ -152,7 +156,7 @@ DEsummaryPanelServer <- function(id, expression.matrix, metadata, DEresults, ann
           grDevices::dev.off()
         } else {
           grDevices::png(file, width = 480, height = 1000, units = "px", 
-                       pointsize = 12, bg = "white", res = NA)
+                         pointsize = 12, bg = "white", res = NA)
           print(heatmap.plot())
           grDevices::dev.off()
         }

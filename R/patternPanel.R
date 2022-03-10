@@ -10,66 +10,70 @@ NULL
 
 #' @rdname patternPanel
 #' @export
-patternPanelUI <- function(id, metadata){
+patternPanelUI <- function(id, metadata, show = TRUE){
   ns <- NS(id)
   
-  tabPanel(
-    'Expression patterns',
-    shinyjs::useShinyjs(),
-    sidebarLayout(
-      sidebarPanel(
-        selectInput(ns('condition'), 'Metadata column to use:', colnames(metadata)[-1], 
-                    selected = colnames(metadata)[ncol(metadata)]),
-        shinyjqui::orderInput(ns('series'), label = "Series of states to use",
-                              items = NULL, placeholder = "Drag states here...",
-                              connect = ns("states")),
-        shinyjqui::orderInput(ns('states'), label = "Unused states",
-                              items = unique(metadata[[ncol(metadata)]]), 
-                              connect = ns("series")),
-        
-        selectInput(ns("nSD"), "Number of standard deviations from the mean to use for interval overlap:",
-                    c(1:10), selected = 2),
-        div(style="margin-bottom:20px"),
-        shinyjs::disabled(actionButton(ns('goPatterns'), label = 'Calculate expression patterns')),
-        div(style="margin-bottom:20px"),
-        
-        selectInput(ns('pattern'), 'Pattern to plot', choices = NULL),
-        
-        textInput(ns('tableFileName'), 'File name for download', 
-                  value ='patternExpression.csv', placeholder = 'patternExpression.csv'),
-        downloadButton(ns('downloadTable'), 'Download grouped expression table'),
-        radioButtons(ns('downloadValues'), label = "Download values",
-                     choices = c('Expression', 'Log2 Expression', 'Mean Scaled', 'Z-score'), 
-                     selected = 'Expression'),
-      ),
-      mainPanel(
-        shinyWidgets::dropdownButton(
-          radioButtons(ns('line.processing'), label = "Heatmap values",
-                       choices = c('Expression', 'Log2 Expression', 'Mean Scaled'), 
-                       selected = 'Mean Scaled'),
-          textInput(ns('plotLineFileName'), 'File name for line plot download', value ='LinePlot.png'),
-          downloadButton(ns('downloadLinePlot'), 'Download Line Plot'),
+  if(show){
+    tabPanel(
+      'Expression patterns',
+      shinyjs::useShinyjs(),
+      sidebarLayout(
+        sidebarPanel(
+          selectInput(ns('condition'), 'Metadata column to use:', colnames(metadata)[-1], 
+                      selected = colnames(metadata)[ncol(metadata)]),
+          shinyjqui::orderInput(ns('series'), label = "Series of states to use",
+                                items = NULL, placeholder = "Drag states here...",
+                                connect = ns("states")),
+          shinyjqui::orderInput(ns('states'), label = "Unused states",
+                                items = unique(metadata[[ncol(metadata)]]), 
+                                connect = ns("series")),
           
-          status = "info",
-          icon = icon("gear", verify_fa = FALSE), 
-          tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
-        ),
-        plotOutput(ns('plot_line')),
-        shinyWidgets::dropdownButton(
-          radioButtons(ns('heatmap.processing'), label = "Heatmap values",
-                       choices = c('Expression', 'Log2 Expression', 'Z-score'), 
-                       selected = 'Z-score'),
-          textInput(ns('plotHeatmapFileName'), 'File name for heatmap plot download', value ='HeatmapPlot.png'),
-          downloadButton(ns('downloadHeatmapPlot'), 'Download Heatmap Plot'),
+          selectInput(ns("nSD"), "Number of standard deviations from the mean to use for interval overlap:",
+                      c(1:10), selected = 2),
+          div(style="margin-bottom:20px"),
+          shinyjs::disabled(actionButton(ns('goPatterns'), label = 'Calculate expression patterns')),
+          div(style="margin-bottom:20px"),
           
-          status = "info",
-          icon = icon("gear", verify_fa = FALSE), 
-          tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
+          selectInput(ns('pattern'), 'Pattern to plot', choices = NULL),
+          
+          textInput(ns('tableFileName'), 'File name for download', 
+                    value ='patternExpression.csv', placeholder = 'patternExpression.csv'),
+          downloadButton(ns('downloadTable'), 'Download grouped expression table'),
+          radioButtons(ns('downloadValues'), label = "Download values",
+                       choices = c('Expression', 'Log2 Expression', 'Mean Scaled', 'Z-score'), 
+                       selected = 'Expression'),
         ),
-        plotOutput(ns('plot_heatmap')),
+        mainPanel(
+          shinyWidgets::dropdownButton(
+            radioButtons(ns('line.processing'), label = "Heatmap values",
+                         choices = c('Expression', 'Log2 Expression', 'Mean Scaled'), 
+                         selected = 'Mean Scaled'),
+            textInput(ns('plotLineFileName'), 'File name for line plot download', value ='LinePlot.png'),
+            downloadButton(ns('downloadLinePlot'), 'Download Line Plot'),
+            
+            status = "info",
+            icon = icon("gear", verify_fa = FALSE), 
+            tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
+          ),
+          plotOutput(ns('plot_line')),
+          shinyWidgets::dropdownButton(
+            radioButtons(ns('heatmap.processing'), label = "Heatmap values",
+                         choices = c('Expression', 'Log2 Expression', 'Z-score'), 
+                         selected = 'Z-score'),
+            textInput(ns('plotHeatmapFileName'), 'File name for heatmap plot download', value ='HeatmapPlot.png'),
+            downloadButton(ns('downloadHeatmapPlot'), 'Download Heatmap Plot'),
+            
+            status = "info",
+            icon = icon("gear", verify_fa = FALSE), 
+            tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
+          ),
+          plotOutput(ns('plot_heatmap')),
+        )
       )
     )
-  )
+  }else{
+    NULL
+  }
 }
 
 #' @rdname patternPanel
@@ -191,7 +195,7 @@ patternPanelServer <- function(id, expression.matrix, metadata, anno){
           grDevices::dev.off()
         } else {
           grDevices::png(file, width = 480, height = 1000,
-                       units = "px", pointsize = 12)
+                         units = "px", pointsize = 12)
           print(heatmap.plot())
           grDevices::dev.off()
         }

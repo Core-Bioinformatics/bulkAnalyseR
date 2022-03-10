@@ -10,74 +10,78 @@ NULL
 
 #' @rdname landingPanel
 #' @export
-landingPanelUI <- function(id){
+landingPanelUI <- function(id, show = TRUE){
   ns <- NS(id)
   
-  tabPanel(
-    'Home',
-    icon = icon("home"),
-    shinyLP::jumbotron(
-      "Welcome to bulkAnalyseR!", 
-      "An accessible, interactive pipeline for analysing and sharing bulk sequencing results",
-      button = FALSE
-    ),
-    fluidRow(
-      column(6, shinyLP::panel_div(
-        class_type = "danger", 
-        panel_title = "Tutorial",
-        content = HTML(
-          "Vignette describing the different panels in this app and how to use them:
+  if(show){
+    tabPanel(
+      'Home',
+      icon = icon("home"),
+      shinyLP::jumbotron(
+        "Welcome to bulkAnalyseR!", 
+        "An accessible, interactive pipeline for analysing and sharing bulk sequencing results",
+        button = FALSE
+      ),
+      fluidRow(
+        column(6, shinyLP::panel_div(
+          class_type = "danger", 
+          panel_title = "Tutorial",
+          content = HTML(
+            "Vignette describing the different panels in this app and how to use them:
           <br>
           <a href='https://core-bioinformatics.github.io/bulkAnalyseR/articles/bulkAnalyseR.html'>
               https://core-bioinformatics.github.io/bulkAnalyseR/articles/bulkAnalyseR.html
           </a>"
-        )
-      )),
-      column(6, shinyLP::panel_div(
-        class_type = "primary", 
-        panel_title = "GitHub",
-        content = HTML(
-          "Latest stable version, bug reports and feature requests:
+          )
+        )),
+        column(6, shinyLP::panel_div(
+          class_type = "primary", 
+          panel_title = "GitHub",
+          content = HTML(
+            "Latest stable version, bug reports and feature requests:
           <br>
           <a href='https://github.com/Core-Bioinformatics/bulkAnalyseR'>
               https://github.com/Core-Bioinformatics/bulkAnalyseR
           </a>")
-      ))
-    ),
-    fluidRow(
-      column(6, shinyLP::panel_div(
-        class_type = "success", 
-        panel_title = "Manuscript",
-        content = HTML(
-          "For a more detailed overview of the app functionality:
+        ))
+      ),
+      fluidRow(
+        column(6, shinyLP::panel_div(
+          class_type = "success", 
+          panel_title = "Manuscript",
+          content = HTML(
+            "For a more detailed overview of the app functionality:
           <br>
           <a href='https://www.biorxiv.org/content/10.1101/2021.12.23.473982v1'>
               https://www.biorxiv.org/content/10.1101/2021.12.23.473982v1
           </a>"
-        )
-      )),
-      column(6, shinyLP::panel_div(
-        class_type = "info", 
-        panel_title = "Our website",
-        content = HTML(
-          "Wellcome MRC - Cambridge Stem Cell Institute Core Bioinformatics Group:
+          )
+        )),
+        column(6, shinyLP::panel_div(
+          class_type = "info", 
+          panel_title = "Our website",
+          content = HTML(
+            "Wellcome MRC - Cambridge Stem Cell Institute Core Bioinformatics Group:
           <br>
           <a href='https://www.corebioinf.stemcells.cam.ac.uk/bulkAnalyseR'>
               https://www.corebioinf.stemcells.cam.ac.uk/bulkAnalyseR
           </a>")
-      ))
-    ),
-    fluidRow(
-      column(6, shinyLP::panel_div(
-        class_type = "warning", 
-        panel_title = "Created by",
-        content = HTML(
-          "Ilias Moutsopoulos, Eleanor Williams, and Irina Mohorianu"
-        )
-      ))
-    )
-    
-  ) 
+        ))
+      ),
+      fluidRow(
+        column(6, shinyLP::panel_div(
+          class_type = "warning", 
+          panel_title = "Created by",
+          content = HTML(
+            "Ilias Moutsopoulos, Eleanor Williams, and Irina Mohorianu"
+          )
+        ))
+      )
+      
+    ) 
+  }else{
+    NULL
+  }
 }
 
 #' @rdname landingPanel

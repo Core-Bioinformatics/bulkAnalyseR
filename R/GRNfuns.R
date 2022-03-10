@@ -43,7 +43,7 @@
 #'   samples = "0h",
 #'   inference_method = "GENIE3"
 #' )
-infer_GRN <- function(expression.matrix, metadata, anno, seed, 
+infer_GRN <- function(expression.matrix, metadata, anno, seed = 13, 
                       regulators, condition, samples, inference_method){
   inference_method <- inference_method[1]
   regulator.ids <- anno$ENSEMBL[match(regulators, anno$NAME)]

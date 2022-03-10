@@ -83,16 +83,18 @@
 #' # clean up tempdir
 #' unlink(paste0(normalizePath(tempdir()), "/", dir(tempdir())), recursive = TRUE)
 generateShinyApp <- function(
-  expression.matrix,
-  metadata,
   shiny.dir = "shiny_bulkAnalyseR",
   app.title = "Visualisation of RNA-Seq data",
+  theme = "flatly",
+  modality = "RNA",
+  expression.matrix,
+  metadata,
   organism = NULL,
   org.db = NULL,
-  theme = "flatly",
   panels.default = c("Landing", "SampleSelect", "QC", "DE", "DEplot", "DEsummary",
                      "Patterns", "Enrichment", "Cross", "GRN"),
   panels.extra = tibble::tibble(
+    modality = NULL,
     UIfun = NULL, 
     UIvars = NULL, 
     serverFun = NULL, 
@@ -131,19 +133,40 @@ validateAppInputs <- function(
   expression.matrix = expression.matrix,
   metadata = metadata
 ){
-  if(!is.matrix(expression.matrix)){
-    stop("The expression matrix must be a matrix")
-  }
-  if(ncol(expression.matrix) != nrow(metadata)){
-    stop("Detected different number of columns in expression.matrix to rows in metadata")
-  }else if(!identical(colnames(expression.matrix), metadata[[1]])){
-    stop("The first column on metadata must correspond to the column names of expression.matrix")
-  }else if(ncol(metadata) < 2){
-    stop("metadata must be a data frame with at least 2 columns")
-  }
   if(!dir.exists(shiny.dir)) dir.create(shiny.dir)
   if(length(dir(shiny.dir,  all.files = TRUE, include.dirs = TRUE, no.. = TRUE)) > 0){
     stop("Please specify a new or empty directory")
+  }
+  
+  validate_matrix_metadata <- function(expression.matrix, metadata){
+    if(!is.matrix(expression.matrix)){
+      stop("The expression matrix must be a matrix")
+    }
+    if(ncol(expression.matrix) != nrow(metadata)){
+      stop("Detected different number of columns in expression.matrix to rows in metadata")
+    }else if(!identical(colnames(expression.matrix), metadata[[1]])){
+      stop("The first column on metadata must correspond to the column names of expression.matrix")
+    }else if(ncol(metadata) < 2){
+      stop("metadata must be a data frame with at least 2 columns")
+    }
+  }
+  if(is.list(expression.matrix) & !is.data.frame(metadata)){
+    if(length(expression.matrix) != length(metadata)){
+      stop("expression.matrix and metadata lists must be the same length")
+    }
+    invisible(lapply(X = seq_len(length(expression.matrix)), FUN = function(i){
+      validate_matrix_metadata(expression.matrix[[i]], metadata[[i]])
+    }))
+  }else if(is.list(expression.matrix)){
+    invisible(lapply(X = expression.matrix, FUN = function(exp){
+      validate_matrix_metadata(exp, metadata)
+    }))
+  }else if(!is.data.frame(metadata)){
+    invisible(lapply(X = metadata, FUN = function(meta){
+      validate_matrix_metadata(expression.matrix, meta)
+    }))
+  }else{
+    validate_matrix_metadata(expression.matrix, metadata)
   }
 }
 
