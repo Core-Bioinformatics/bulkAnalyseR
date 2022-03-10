@@ -246,9 +246,10 @@ generateDataFiles <- function(
 generateAppFile <- function(
   shiny.dir,
   app.title,
+  theme,
+  modality,
   organism,
   org.db,
-  theme,
   panels.default,
   panels.extra,
   packages.extra
@@ -266,24 +267,28 @@ generateAppFile <- function(
     "rda.files <- list.files(pattern = '\\.rda$')",
     "for(fl in rda.files) load(fl)"
   )
-  if(is.na(org.db)){
-    code.source.objects <- c(
-      code.source.objects,
-      "anno <- data.frame(ENSEMBL = rownames(expression.matrix),",
-      "NAME = rownames(expression.matrix))"
-    )
-  }else{
-    code.source.objects <- c(
-      code.source.objects,
-      "anno <- AnnotationDbi::select(",
-      glue::glue("getExportedValue('{org.db}', '{org.db}'),"),
-      "keys = rownames(expression.matrix),",
-      "keytype = 'ENSEMBL',",
-      "columns = 'SYMBOL'",
-      ") %>%",
-      "dplyr::distinct(ENSEMBL, .keep_all = TRUE) %>%",
-      "dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))"
-    )
+  
+  code.source.objects <- c(code.source.objects, "anno <- list()")
+  for(i in seq_len(length(org.db))){
+    if(is.na(org.db[i])){
+      code.source.objects <- c(
+        code.source.objects,
+        glue::glue("anno[[{i}]] <- data.frame(ENSEMBL = rownames(expression.matrix),"),
+        "NAME = rownames(expression.matrix))"
+      )
+    }else{
+      code.source.objects <- c(
+        code.source.objects,
+        glue::glue("anno[[{i}]] <- AnnotationDbi::select("),
+        glue::glue("getExportedValue('{org.db}', '{org.db}'),"),
+        "keys = rownames(expression.matrix),",
+        "keytype = 'ENSEMBL',",
+        "columns = 'SYMBOL'",
+        ") %>%",
+        "dplyr::distinct(ENSEMBL, .keep_all = TRUE) %>%",
+        "dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))"
+      )
+    }
   }
   lines.out <- c(lines.out, code.source.objects, "")
   
@@ -291,76 +296,52 @@ generateAppFile <- function(
     "ui <- navbarPage(",
     glue::glue("'{app.title}',"), 
     glue::glue("theme = shinythemes::shinytheme('{theme}'),"),
-    "header = tags$head(tags$style('body {overflow-y: scroll;}')),",
-    "tabPanel('RNAseq',",
-    "tabsetPanel("
+    "header = tags$head(tags$style('body {overflow-y: scroll;}')),"
   )
-  if("Landing" %in% panels.default) code.ui <- c(code.ui, "landingPanelUI('Landing'),")
-  if("SampleSelect" %in% panels.default) code.ui <- c(code.ui, "sampleSelectPanelUI('SampleSelect'),")
-  if("QC" %in% panels.default) code.ui <- c(code.ui, "QCpanelUI('QC', metadata),")
-  if("DE" %in% panels.default){
-    code.ui <- c(code.ui, "DEpanelUI('DE', metadata),")
-    if("DEplot" %in% panels.default) code.ui <- c(code.ui, "DEplotPanelUI('DEplot'),")
-    if("DEsummary" %in% panels.default) code.ui <- c(code.ui, "DEsummaryPanelUI('DEsummary', metadata),")
-    if("Enrichment" %in% panels.default & !is.na(organism)){
-      code.ui <- c(code.ui, "enrichmentPanelUI('Enrichment'),")
+  for(i in seq_len(length(modality))){
+    code.ui <- c(
+      code.ui, 
+      "tabPanel(",
+      glue::glue("'{modality[i]}',"),
+      glue::glue("modalityPanelUI('{modality[i]}', metadata[[i]], {organism[i]}, {panels.default[[i]]})"),
+      
+    )
+    panels.extra.subset <- dplyr::filter(panels.extra, modality == modality[i])
+    for(j in seq_len(nrow(panels.extra.subset))){
+      code.ui <- c(
+        code.ui,
+        "tabsetPanel(",
+        glue::glue("{panels.extra.subset$UIfun[i]}({panels.extra.subset$UIvars[i]}),"),
+        ")"
+      )
     }
+    code.ui <- c(code.ui, "),")
   }
-  if("Patterns" %in% panels.default) code.ui <- c(code.ui, "patternPanelUI('Patterns', metadata),")
-  if("Cross" %in% panels.default) code.ui <- c(code.ui, "crossPanelUI('Cross', metadata),")
-  if("GRN" %in% panels.default) code.ui <- c(code.ui, "GRNpanelUI('GRN', metadata),")
-  for(i in seq_len(nrow(panels.extra))){
-    code.ui <- c(code.ui, glue::glue("{panels.extra$UIfun[i]}({panels.extra$UIvars[i]}),"))
-  }
-  code.ui <- c(code.ui, ")),", ")")
+  code.ui <- c(code.ui, ")")
   lines.out <- c(lines.out, code.ui, "")
   
   code.server <- c("server <- function(input, output, session){")
-  if("SampleSelect" %in% panels.default){
+  
+  for(i in seq_len(length(modality))){
     code.server <- c(
       code.server,
-      "filteredInputs <- sampleSelectPanelServer('SampleSelect', expression.matrix, metadata)",
-      "expression.matrix <- reactive(filteredInputs()[['expression.matrix']])",
-      "metadata <- reactive(filteredInputs()[['metadata']])"
-    )
-  }else{
-    code.server <- c(
-      code.server,
-      "expression.matrix <- reactiveVal(expression.matrix)",
-      "metadata <- reactiveVal(metadata)"
-    )
-  }
-  if("QC" %in% panels.default){
-    code.server <- c(code.server, "QCpanelServer('QC', expression.matrix, metadata, anno)")
-  }
-  if("DE" %in% panels.default){
-    code.server <- c(code.server, "DEresults <- DEpanelServer('DE', expression.matrix, metadata, anno)")
-    if("DEplot" %in% panels.default){
-      code.server <- c(code.server, "DEplotPanelServer('DEplot', DEresults, anno)")
-    }
-    if("DEsummary" %in% panels.default){
-      code.server <- c(code.server, "DEsummaryPanelServer('DEsummary', expression.matrix, metadata, DEresults, anno)")
-    }
-    if("Enrichment" %in% panels.default & !is.na(organism)){
+      "modalityPanelServer(",
+      glue::glue("id = '{modality[i]}',"), 
+      "expression.matrix = expression.matrix[[i]],",
+      "metadata = metadata[[i]],",
+      "anno = anno[[i]],",
+      glue::glue("organism = {organism[i]},"), 
+      glue::glue("panels.default = {panels.default[[i]]}"),
+      ")")
+    panels.extra.subset <- dplyr::filter(panels.extra, modality == modality[i])
+    for(j in seq_len(nrow(panels.extra.subset))){
       code.server <- c(
         code.server, 
-        glue::glue("enrichmentPanelServer('Enrichment', DEresults, organism = '{organism}')")
+        glue::glue("{panels.extra.subset$serverFun[i]}({panels.extra.subset$serverVars[i]})")
       )
     }
-    if("Cross" %in% panels.default){
-      code.server <- c(code.server, "crossPanelServer('Cross', expression.matrix, metadata, anno)")
-    }
-    if("Patterns" %in% panels.default){
-      code.server <- c(code.server, "patternPanelServer('Patterns', expression.matrix, metadata, anno)")
-    }
-    if("GRN" %in% panels.default){
-      code.server <- c(code.server, "GRNpanelServer('GRN', expression.matrix, metadata, anno)")
-    }
-    
   }
-  for(i in seq_len(nrow(panels.extra))){
-    code.server <- c(code.server, glue::glue("{panels.extra$serverFun[i]}({panels.extra$serverVars[i]})"))
-  }
+  
   code.server <- c(code.server, "}")
   lines.out <- c(lines.out, code.server, "")
   
