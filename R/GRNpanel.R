@@ -106,17 +106,23 @@ GRNpanelUI <- function(id, metadata, show = TRUE){
 
 #' @rdname GRNpanel
 #' @export
-GRNpanelServer <- function(id, expression.matrix, metadata, anno){
+GRNpanelServer <- function(id, expression.matrix, metadata, DEresults, anno){
   
   stopifnot({
     is.reactive(expression.matrix)
     is.reactive(metadata)
+    is.reactive(DEresults)
     !is.reactive(anno)
   })
   
   moduleServer(id, function(input, output, session){
     
-    updateSelectizeInput(session, "regulators", choices = anno$NAME, server = TRUE)
+    observe(updateSelectizeInput(
+      session, 
+      "regulators", 
+      choices = DEresults()$DE()$DEtableSubset$gene_name, 
+      server = TRUE
+    ))
     observe(updateSelectInput(session, "plotId", choices = seq_len(input[["n_networks"]])))
     
     observe({
@@ -128,10 +134,15 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
     }) %>%
       bindEvent(input[["regulators"]])
     
+    expression.matrix.subset <- reactive({
+      genes <- DEresults()$DE()$DEtableSubset$gene_id
+      expression.matrix()[genes, ]
+    })
+    
     GRNresults1 <- reactive({
       shinyjs::disable("goGRN")
       weightMat <- infer_GRN(
-        expression.matrix = expression.matrix(), 
+        expression.matrix = expression.matrix.subset(), 
         metadata = metadata(), 
         anno = anno, 
         regulators = input[["regulators"]], 
@@ -148,7 +159,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
     GRNresults2 <- reactive({
       shinyjs::disable("goGRN")
       weightMat <- infer_GRN(
-        expression.matrix = expression.matrix(), 
+        expression.matrix = expression.matrix.subset(), 
         metadata = metadata(), 
         anno = anno, 
         regulators = input[["regulators"]], 
@@ -165,7 +176,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
     GRNresults3 <- reactive({
       shinyjs::disable("goGRN")
       weightMat <- infer_GRN(
-        expression.matrix = expression.matrix(), 
+        expression.matrix = expression.matrix.subset(), 
         metadata = metadata(), 
         anno = anno, 
         regulators = input[["regulators"]], 
@@ -182,7 +193,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
     GRNresults4 <- reactive({
       shinyjs::disable("goGRN")
       weightMat <- infer_GRN(
-        expression.matrix = expression.matrix(), 
+        expression.matrix = expression.matrix.subset(), 
         metadata = metadata(), 
         anno = anno, 
         regulators = input[["regulators"]], 
