@@ -235,8 +235,8 @@ generateDataFiles <- function(
   metadata,
   data.extra
 ){
-  save(expression.matrix[[i]], file = paste0(shiny.dir, "/expression_matrix.rda"))
-  save(metadata[[i]], file = paste0(shiny.dir, "/metadata.rda"))
+  save(expression.matrix, file = paste0(shiny.dir, "/expression_matrix.rda"))
+  save(metadata, file = paste0(shiny.dir, "/metadata.rda"))
   lapply(data.extra, function(name){
     object<-get(name)
     save(object, file = paste0(shiny.dir, "/", name, ".rda"))
@@ -273,15 +273,17 @@ generateAppFile <- function(
     if(is.na(org.db[i])){
       code.source.objects <- c(
         code.source.objects,
-        glue::glue("anno[[{i}]] <- data.frame(ENSEMBL = rownames(expression.matrix),"),
-        "NAME = rownames(expression.matrix))"
+        glue::glue("anno[[{i}]] <- data.frame("),
+        "ENSEMBL = rownames(expression.matrix),",
+        "NAME = rownames(expression.matrix)",
+        ")"
       )
     }else{
       code.source.objects <- c(
         code.source.objects,
         glue::glue("anno[[{i}]] <- AnnotationDbi::select("),
         glue::glue("getExportedValue('{org.db}', '{org.db}'),"),
-        "keys = rownames(expression.matrix),",
+        glue::glue("keys = rownames(expression.matrix[[{i}]]),"),
         "keytype = 'ENSEMBL',",
         "columns = 'SYMBOL'",
         ") %>%",
@@ -299,19 +301,24 @@ generateAppFile <- function(
     "header = tags$head(tags$style('body {overflow-y: scroll;}')),"
   )
   for(i in seq_len(length(modality))){
+    panels.default.string <- paste0("c('", paste(panels.default[[i]], collapse = "', '"), "')")
     code.ui <- c(
       code.ui, 
       "tabPanel(",
-      glue::glue("'{modality[i]}',"),
-      glue::glue("modalityPanelUI('{modality[i]}', metadata[[i]], {organism[i]}, {panels.default[[i]]})"),
-      
+      glue::glue("title = '{modality[i]}',"),
+      "modalityPanelUI(",
+      glue::glue("id = '{modality[i]}',"),
+      glue::glue("metadata = metadata[[{i}]],"),
+      glue::glue("organism = '{organism[i]}',"),
+      glue::glue("panels.default = {panels.default.string}"),
+      ")"
     )
     panels.extra.subset <- dplyr::filter(panels.extra, modality == modality[i])
     for(j in seq_len(nrow(panels.extra.subset))){
       code.ui <- c(
         code.ui,
         "tabsetPanel(",
-        glue::glue("{panels.extra.subset$UIfun[i]}({panels.extra.subset$UIvars[i]}),"),
+        glue::glue("{panels.extra.subset$UIfun[j]}({panels.extra.subset$UIvars[j]}),"),
         ")"
       )
     }
@@ -323,21 +330,23 @@ generateAppFile <- function(
   code.server <- c("server <- function(input, output, session){")
   
   for(i in seq_len(length(modality))){
+    panels.default.string <- paste0("c('", paste(panels.default[[i]], collapse = "', '"), "')")
     code.server <- c(
       code.server,
       "modalityPanelServer(",
       glue::glue("id = '{modality[i]}',"), 
-      "expression.matrix = expression.matrix[[i]],",
-      "metadata = metadata[[i]],",
-      "anno = anno[[i]],",
-      glue::glue("organism = {organism[i]},"), 
-      glue::glue("panels.default = {panels.default[[i]]}"),
-      ")")
+      glue::glue("expression.matrix = expression.matrix[[{i}]],"),
+      glue::glue("metadata = metadata[[{i}]],"),
+      glue::glue("anno = anno[[{i}]],"),
+      glue::glue("organism = '{organism[i]}',"), 
+      glue::glue("panels.default = {panels.default.string}"),
+      ")"
+    )
     panels.extra.subset <- dplyr::filter(panels.extra, modality == modality[i])
     for(j in seq_len(nrow(panels.extra.subset))){
       code.server <- c(
         code.server, 
-        glue::glue("{panels.extra.subset$serverFun[i]}({panels.extra.subset$serverVars[i]})")
+        glue::glue("{panels.extra.subset$serverFun[j]}({panels.extra.subset$serverVars[j]})")
       )
     }
   }
