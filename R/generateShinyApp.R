@@ -5,38 +5,47 @@
 #' is standalone and can be used on another platform, as long as bulkAnalyseR
 #' is installed there. It is recommended to run 
 #' \code{\link{preprocessExpressionMatrix}} before this function.
+#' @param shiny.dir directory to store the shiny app; if a non-empty
+#' directory with that name already exists an error is generated
+#' @param app.title title to be displayed within the app
+#' @param theme shiny theme to be used in the app; default is 'flatly'
+#' @param modality name of the modality, or a vector of modalities to be
+#' included in the app
 #' @param expression.matrix the expression matrix; rows correspond to genes and
 #' columns correspond to samples; usually preprocessed by 
-#' \code{\link{preprocessExpressionMatrix}}
+#' \code{\link{preprocessExpressionMatrix}}; a list  (of the same length as 
+#' modality) can be provided if #' \code{length(modality) > 1}
 #' @param metadata a data frame containing metadata for the samples contained
 #' in the expression.matrix; must contain at minimum two columns:
 #' the first column must contain the column names of the expression.matrix,
 #' while the last column is assumed to contain the experimental conditions
-#' that will be tested for differential expression
-#' @param shiny.dir directory to store the shiny app; if a non-empty
-#' directory with that name already exists an error is generated
-#' @param app.title title to be displayed within the app
+#' that will be tested for differential expression; a list  (of the same 
+#' length as modality) can be provided if #' \code{length(modality) > 1}
 #' @param organism organism name to be passed on to \code{gprofiler2::gost};
 #' organism names are constructed by concatenating the first letter of the 
 #' name and the family name; default is NA - enrichment is not included
-#' to ensure compatibility with datasets that have non-standard gene names
+#' to ensure compatibility with datasets that have non-standard gene names; 
+#' a vector (of the same length as modality) can be provided if 
+#' \code{length(modality) > 1}
 #' @param org.db database for annotations to transform ENSEMBL IDs to
 #' gene names; a list of bioconductor packaged databases can be found with 
 #' \code{BiocManager::available("^org\\.")};
 #' default in NA, in which case the row names of the expression matrix are
 #' used directly - it is recommended to provide ENSEMBL IDs if the database
-#' for your model organism is available
-#' @param theme shiny theme to be used in the app; default is 'flatly'
+#' for your model organism is available; 
+#' a vector (of the same length as modality) can be provided if 
+#' \code{length(modality) > 1}
 #' @param panels.default argument to control which of the default panels
 #' will be included in the app; default is all, but the enrichment panel
 #' will not appear unless organism is also supplied; note that the 'DE' panel 
-#' is required for 'DEplot' and 'Enrichment'
+#' is required for 'DEplot', 'Enrichment', and GRN; a list  (of the same 
+#' length as modality) can be provided if \code{length(modality) > 1}
 #' @param panels.extra,data.extra,packages.extra functionality to add new
 #' user-created panels to the app to extend functionality or change the default
-#' behaviour of existing panels; a data frame of the panel UI and server names
-#' and default parameters should be passed to panels.extra (see example);
-#' the names of any extra data and/or packages required should be passed to
-#' the data.extra and packages.extra arguments
+#' behaviour of existing panels; a data frame of the modality, panel UI and 
+#' server names and default parameters should be passed to panels.extra 
+#' (see example); the names of any extra data and/or packages required 
+#' should be passed to the data.extra and packages.extra arguments
 #' @return The path to shiny.dir (invisibly).
 #' @export
 #' @import shiny
@@ -47,16 +56,16 @@
 #'   system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
 #' ))
-#' 
 #' metadata <- data.frame(
 #'   srr = colnames(expression.matrix.preproc), 
 #'   timepoint = rep(c("0h", "12h", "36h"), each = 2)
 #' )
 #' app.dir <- generateShinyApp(
-#'   expression.matrix = expression.matrix.preproc,
-#'   metadata = metadata,
 #'   shiny.dir = paste0(tempdir(), "/shiny_Yang2019"),
 #'   app.title = "Shiny app for the Yang 2019 data",
+#'   modality = "RNA",
+#'   expression.matrix = expression.matrix.preproc,
+#'   metadata = metadata,
 #'   organism = "mmusculus",
 #'   org.db = "org.Mm.eg.db"
 #' )
@@ -65,17 +74,18 @@
 #' # Example of an app with a second copy of the QC panel
 #' 
 #' app.dir.qc2 <- generateShinyApp(
-#'   expression.matrix = expression.matrix.preproc,
-#'   metadata = metadata,
 #'   shiny.dir = paste0(tempdir(), "/shiny_Yang2019_QC2"),
 #'   app.title = "Shiny app for the Yang 2019 data",
+#'   expression.matrix = expression.matrix.preproc,
+#'   metadata = metadata,
 #'   organism = "mmusculus",
 #'   org.db = "org.Mm.eg.db",
 #'   panels.extra = tibble::tibble(
-#'     UIfun = "QCpanelUI", 
-#'     UIvars = "'QC2', metadata", 
-#'     serverFun = "QCpanelServer", 
-#'     serverVars = "'QC2', expression.matrix, metadata"
+#'     modality = "RNA",
+#'     UIfun = "sampleSelectPanelUI", 
+#'     UIvars = "'SampleSelect2'", 
+#'     serverFun = "sampleSelectPanelServer", 
+#'     serverVars = "'SampleSelect2', expression.matrix[[1]], metadata[[1]]"
 #'   )
 #' )
 #' # runApp(app.dir.qc2)
@@ -311,7 +321,7 @@ generateAppFile <- function(
       glue::glue("metadata = metadata[[{i}]],"),
       glue::glue("organism = '{organism[i]}',"),
       glue::glue("panels.default = {panels.default.string}"),
-      ")"
+      "),"
     )
     panels.extra.subset <- dplyr::filter(panels.extra, modality == modality[i])
     for(j in seq_len(nrow(panels.extra.subset))){
@@ -319,7 +329,7 @@ generateAppFile <- function(
         code.ui,
         "tabsetPanel(",
         glue::glue("{panels.extra.subset$UIfun[j]}({panels.extra.subset$UIvars[j]}),"),
-        ")"
+        "),"
       )
     }
     code.ui <- c(code.ui, "),")
