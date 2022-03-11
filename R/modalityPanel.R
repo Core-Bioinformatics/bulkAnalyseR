@@ -93,14 +93,33 @@ modalityPanelServer <- function(id, expression.matrix, metadata, anno, organism,
 modalityPanelApp <- function(){
   panels.default <- c("Landing", "SampleSelect", "QC", "DE", "DEplot", "DEsummary",
                       "Enrichment", "GRN", "Patterns", "Cross")
+  expression.matrix.preproc <- as.matrix(read.csv(
+    system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
+    row.names = 1
+  ))
+  
+  metadata <- data.frame(
+    srr = colnames(expression.matrix.preproc), 
+    timepoint = rep(c("0h", "12h", "36h"), each = 2)
+  )
+  anno <- AnnotationDbi::select(
+    getExportedValue('org.Mm.eg.db', 'org.Mm.eg.db'),
+    keys = rownames(expression.matrix.preproc),
+    keytype = 'ENSEMBL',
+    columns = 'SYMBOL'
+  ) %>%
+    dplyr::distinct(ENSEMBL, .keep_all = TRUE) %>%
+    dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))
   shinyApp(
     ui = navbarPage(
       'Shiny app for the Yang 2019 data',
       theme = shinythemes::shinytheme('flatly'),
-      tabPanel('RNA', modalityPanelUI('RNA', metadata, "mmusculus", panels.default))
+      tabPanel('RNA', modalityPanelUI('RNA', metadata, "mmusculus", panels.default)),
+      tabPanel('RNA2', modalityPanelUI('RNA', metadata, "mmusculus", c("Landing", "SampleSelect", "QC")))
     ),
     server = function(input, output, session){
       modalityPanelServer('RNA', expression.matrix.preproc, metadata, anno, "mmusculus", panels.default)
+      modalityPanelServer('RNA2', expression.matrix.preproc, metadata, anno, "mmusculus", c("Landing", "SampleSelect", "QC"))
     }
   )
 }
