@@ -52,7 +52,7 @@ GRNpanelUI <- function(id, metadata, show = TRUE){
           ),
           
           selectInput(ns("regulators"), "Target genes:", multiple = TRUE, choices = character(0)),
-          actionButton(ns('goGRN'), label = 'Start GRN inference'),
+          shinyjs::disabled(actionButton(ns('goGRN'), label = 'Start GRN inference')),
           
           numericInput(ns("plotConnections"), "Connections to plot:", 5, 0, 100),
           textInput(ns('plotFileName'), 'File name for plot download', value ='GRNplot.html'),
@@ -63,22 +63,38 @@ GRNpanelUI <- function(id, metadata, show = TRUE){
         mainPanel(
           fluidRow(
             column(6, visNetwork::visNetworkOutput(ns('plot1'))),
-            column(6, visNetwork::visNetworkOutput(ns('plot2')))
-          ),
-          conditionalPanel(
-            id = ns('plotrow'),
-            ns = ns,
-            condition = "input.n_networks >= 3",
-            fluidRow(
-              column(6, visNetwork::visNetworkOutput(ns('plot3'))),
-              column(6, visNetwork::visNetworkOutput(ns('plot4')))
+            column(
+              6, 
+              conditionalPanel(
+                id = ns('plot2col'),
+                ns = ns,
+                condition = "input.n_networks >= 2",
+                visNetwork::visNetworkOutput(ns('plot2'))
+              )
+            ),
+            conditionalPanel(
+              id = ns('plotrow'),
+              ns = ns,
+              condition = "input.n_networks >= 3",
+              fluidRow(
+                column(6, visNetwork::visNetworkOutput(ns('plot3'))),
+                column(
+                  6, 
+                  conditionalPanel(
+                    id = ns('plot2col'),
+                    ns = ns,
+                    condition = "input.n_networks >= 4",
+                    visNetwork::visNetworkOutput(ns('plot4'))
+                  )
+                )
+              )
+            ),
+            conditionalPanel(
+              id = ns('includeUpset'),
+              ns = ns,
+              condition = "input.n_networks > 1",
+              plotOutput(ns('plotUpset'))
             )
-          ),
-          conditionalPanel(
-            id = ns('includeUpset'),
-            ns = ns,
-            condition = "input.n_networks > 1",
-            plotOutput(ns('plotUpset'))
           )
         )
       )
@@ -102,10 +118,19 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
     
     updateSelectizeInput(session, "regulators", choices = anno$NAME, server = TRUE)
     observe(updateSelectInput(session, "plotId", choices = seq_len(input[["n_networks"]])))
-    # fix crash when no samples are selected
+    
+    observe({
+      if(length(input[["regulators"]]) >= 2){
+        shinyjs::enable("goGRN")
+      }else{
+        shinyjs::disable("goGRN")
+      }
+    }) %>%
+      bindEvent(input[["regulators"]])
+    
     GRNresults1 <- reactive({
       shinyjs::disable("goGRN")
-      infer_GRN(
+      weightMat <- infer_GRN(
         expression.matrix = expression.matrix(), 
         metadata = metadata(), 
         anno = anno, 
@@ -114,13 +139,15 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
         samples = input[["samples1"]], 
         inference_method = input[["method1"]]
       )
+      shinyjs::enable("goGRN")
+      weightMat
     }) %>%
       bindCache(metadata(), input[["regulators"]], input[["condition"]], 
                 input[["samples1"]], input[["method1"]]) %>%
       bindEvent(input[["goGRN"]])
     GRNresults2 <- reactive({
       shinyjs::disable("goGRN")
-      infer_GRN(
+      weightMat <- infer_GRN(
         expression.matrix = expression.matrix(), 
         metadata = metadata(), 
         anno = anno, 
@@ -129,13 +156,15 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
         samples = input[["samples2"]], 
         inference_method = input[["method2"]]
       )
+      shinyjs::enable("goGRN")
+      weightMat
     }) %>%
       bindCache(metadata(), input[["regulators"]], input[["condition"]], 
                 input[["samples2"]], input[["method2"]]) %>%
       bindEvent(input[["goGRN"]])
     GRNresults3 <- reactive({
       shinyjs::disable("goGRN")
-      infer_GRN(
+      weightMat <- infer_GRN(
         expression.matrix = expression.matrix(), 
         metadata = metadata(), 
         anno = anno, 
@@ -144,13 +173,15 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
         samples = input[["samples3"]], 
         inference_method = input[["method3"]]
       )
+      shinyjs::enable("goGRN")
+      weightMat
     }) %>%
       bindCache(metadata(), input[["regulators"]], input[["condition"]], 
                 input[["samples3"]], input[["method3"]]) %>%
       bindEvent(input[["goGRN"]])
     GRNresults4 <- reactive({
       shinyjs::disable("goGRN")
-      infer_GRN(
+      weightMat <- infer_GRN(
         expression.matrix = expression.matrix(), 
         metadata = metadata(), 
         anno = anno, 
@@ -159,6 +190,8 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
         samples = input[["samples4"]], 
         inference_method = input[["method4"]]
       )
+      shinyjs::enable("goGRN")
+      weightMat
     }) %>%
       bindCache(metadata(), input[["regulators"]], input[["condition"]], 
                 input[["samples4"]], input[["method4"]]) %>%
@@ -171,18 +204,19 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
         weightMatList[[2]] <- GRNresults2()
         if(n_networks >= 3) {
           weightMatList[[3]] <- GRNresults3()
-        }
-        if(n_networks >= 4) {
-          weightMatList[[4]] <- GRNresults4()
+          if(n_networks >= 4) {
+            weightMatList[[4]] <- GRNresults4()
+          }
         }
       }
       weightMatList
-    })
+    }) %>%
+      bindEvent(input[["goGRN"]])
     
     recurring_targets <- reactive({
-      shinyjs::enable("goGRN")
       find_targets_with_recurring_edges(weightMatList(), input[["plotConnections"]])
-    })
+    }) %>%
+      bindEvent(input[["goGRN"]])
     
     GRNplot1 <- reactive(plot_GRN(
       weightMat = GRNresults1(), 
@@ -221,7 +255,8 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
     )) %>%
       bindEvent(input[["goGRN"]], input[["plotConnections"]])
     
-    upsetPlot <- reactive(plot_upset(weightMatList(), input[["plotConnections"]]))
+    upsetPlot <- reactive(plot_upset(weightMatList(), input[["plotConnections"]])) %>%
+      bindEvent(input[["goGRN"]], input[["plotConnections"]])
     
     output[['plot1']] <- visNetwork::renderVisNetwork(GRNplot1())
     output[['plot2']] <- visNetwork::renderVisNetwork(GRNplot2())
