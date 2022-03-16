@@ -104,7 +104,7 @@ generateShinyApp <- function(
   panels.default = c("Landing", "SampleSelect", "QC", "DE", "DEplot", "DEsummary",
                      "Patterns", "Enrichment", "Cross", "GRN"),
   panels.extra = tibble::tibble(
-    modality = NULL,
+    name = NULL,
     UIfun = NULL, 
     UIvars = NULL, 
     serverFun = NULL, 
@@ -323,12 +323,12 @@ generateAppFile <- function(
       glue::glue("panels.default = {panels.default.string}"),
       "),"
     )
-    panels.extra.subset <- dplyr::filter(panels.extra, modality == modality[i])
-    for(j in seq_len(nrow(panels.extra.subset))){
+    for(j in seq_len(nrow(panels.extra))){
       code.ui <- c(
         code.ui,
-        "tabsetPanel(",
-        glue::glue("{panels.extra.subset$UIfun[j]}({panels.extra.subset$UIvars[j]}),"),
+        "taPanel(",
+        glue::glue("title = '{panels.extra$name[j]}',"),
+        glue::glue("{panels.extra$UIfun[j]}({panels.extra$UIvars[j]}),"),
         "),"
       )
     }
@@ -352,11 +352,10 @@ generateAppFile <- function(
       glue::glue("panels.default = {panels.default.string}"),
       ")"
     )
-    panels.extra.subset <- dplyr::filter(panels.extra, modality == modality[i])
-    for(j in seq_len(nrow(panels.extra.subset))){
+    for(j in seq_len(nrow(panels.extra))){
       code.server <- c(
         code.server, 
-        glue::glue("{panels.extra.subset$serverFun[j]}({panels.extra.subset$serverVars[j]})")
+        glue::glue("{panels.extra$serverFun[j]}({panels.extra$serverVars[j]})")
       )
     }
   }
