@@ -125,13 +125,19 @@ GRNpanelServer <- function(id, expression.matrix, metadata, DEresults, anno){
     ))
     
     observe({
-      if(length(input[["regulators"]]) >= 2){
+      enable_condition <- length(input[["regulators"]]) >= 2 &
+        (input[["n_networks"]] < 1 | length(input[["samples1"]]) > 0) &
+        (input[["n_networks"]] < 2 | length(input[["samples2"]]) > 0) &
+        (input[["n_networks"]] < 3 | length(input[["samples3"]]) > 0) &
+        (input[["n_networks"]] < 4 | length(input[["samples4"]]) > 0)
+      if(enable_condition){
         shinyjs::enable("goGRN")
       }else{
         shinyjs::disable("goGRN")
       }
     }) %>%
-      bindEvent(input[["regulators"]])
+      bindEvent(input[["regulators"]], input[["n_networks"]], input[["samples1"]],
+                input[["samples2"]], input[["samples3"]], input[["samples4"]])
     
     expression.matrix.subset <- reactive({
       genes <- DEresults()$DE()$DEtableSubset$gene_id
