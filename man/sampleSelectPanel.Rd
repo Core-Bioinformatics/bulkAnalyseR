@@ -6,7 +6,7 @@
 \alias{sampleSelectPanelServer}
 \title{Generate the sample select panel of the shiny app}
 \usage{
-sampleSelectPanelUI(id)
+sampleSelectPanelUI(id, show = TRUE)
 
 sampleSelectPanelServer(id, expression.matrix, metadata)
 }
@@ -15,13 +15,15 @@ sampleSelectPanelServer(id, expression.matrix, metadata)
 
 \item{expression.matrix}{the expression matrix; rows correspond to genes and
 columns correspond to samples; usually preprocessed by
-\code{\link{preprocessExpressionMatrix}}}
+\code{\link{preprocessExpressionMatrix}}; a list  (of the same length as
+modality) can be provided if #' \code{length(modality) > 1}}
 
 \item{metadata}{a data frame containing metadata for the samples contained
 in the expression.matrix; must contain at minimum two columns:
 the first column must contain the column names of the expression.matrix,
 while the last column is assumed to contain the experimental conditions
-that will be tested for differential expression}
+that will be tested for differential expression; a list  (of the same
+length as modality) can be provided if #' \code{length(modality) > 1}}
 }
 \value{
 The UI and Server components of the shiny module, that can be used

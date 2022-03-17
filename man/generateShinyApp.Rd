@@ -5,62 +5,73 @@
 \title{Generate all files required for an autonomous shiny app}
 \usage{
 generateShinyApp(
-  expression.matrix,
-  metadata,
   shiny.dir = "shiny_bulkAnalyseR",
   app.title = "Visualisation of RNA-Seq data",
-  organism = NULL,
-  org.db = NULL,
   theme = "flatly",
+  modality = "RNA",
+  expression.matrix,
+  metadata,
+  organism = NA,
+  org.db = NA,
   panels.default = c("Landing", "SampleSelect", "QC", "DE", "DEplot", "DEsummary",
     "Patterns", "Enrichment", "Cross", "GRN"),
-  panels.extra = tibble::tibble(UIfun = NULL, UIvars = NULL, serverFun = NULL,
-    serverVars = NULL),
+  panels.extra = tibble::tibble(name = NULL, UIfun = NULL, UIvars = NULL, serverFun =
+    NULL, serverVars = NULL),
   data.extra = c(),
   packages.extra = c()
 )
 }
 \arguments{
-\item{expression.matrix}{the expression matrix; rows correspond to genes and
-columns correspond to samples; usually preprocessed by
-\code{\link{preprocessExpressionMatrix}}}
-
-\item{metadata}{a data frame containing metadata for the samples contained
-in the expression.matrix; must contain at minimum two columns:
-the first column must contain the column names of the expression.matrix,
-while the last column is assumed to contain the experimental conditions
-that will be tested for differential expression}
-
 \item{shiny.dir}{directory to store the shiny app; if a non-empty
 directory with that name already exists an error is generated}
 
 \item{app.title}{title to be displayed within the app}
 
+\item{theme}{shiny theme to be used in the app; default is 'flatly'}
+
+\item{modality}{name of the modality, or a vector of modalities to be
+included in the app}
+
+\item{expression.matrix}{the expression matrix; rows correspond to genes and
+columns correspond to samples; usually preprocessed by
+\code{\link{preprocessExpressionMatrix}}; a list  (of the same length as
+modality) can be provided if #' \code{length(modality) > 1}}
+
+\item{metadata}{a data frame containing metadata for the samples contained
+in the expression.matrix; must contain at minimum two columns:
+the first column must contain the column names of the expression.matrix,
+while the last column is assumed to contain the experimental conditions
+that will be tested for differential expression; a list  (of the same
+length as modality) can be provided if #' \code{length(modality) > 1}}
+
 \item{organism}{organism name to be passed on to \code{gprofiler2::gost};
 organism names are constructed by concatenating the first letter of the
-name and the family name; default is NULL - enrichment is not included
-to ensure compatibility with datasets that have non-standard gene names}
+name and the family name; default is NA - enrichment is not included
+to ensure compatibility with datasets that have non-standard gene names;
+a vector (of the same length as modality) can be provided if
+\code{length(modality) > 1}}
 
 \item{org.db}{database for annotations to transform ENSEMBL IDs to
 gene names; a list of bioconductor packaged databases can be found with
-\code{BiocManager::available("^org\\.")}; default is human - 'org.Hs.eg.db';
-default in NULL, in which case the row names of the expression matrix are
+\code{BiocManager::available("^org\\.")};
+default in NA, in which case the row names of the expression matrix are
 used directly - it is recommended to provide ENSEMBL IDs if the database
-for your model organism is available}
-
-\item{theme}{shiny theme to be used in the app; default is 'flatly'}
+for your model organism is available;
+a vector (of the same length as modality) can be provided if
+\code{length(modality) > 1}}
 
 \item{panels.default}{argument to control which of the default panels
 will be included in the app; default is all, but the enrichment panel
 will not appear unless organism is also supplied; note that the 'DE' panel
-is required for 'DEplot' and 'Enrichment'}
+is required for 'DEplot', 'Enrichment', and GRN; a list  (of the same
+length as modality) can be provided if \code{length(modality) > 1}}
 
 \item{panels.extra, data.extra, packages.extra}{functionality to add new
 user-created panels to the app to extend functionality or change the default
-behaviour of existing panels; a data frame of the panel UI and server names
-and default parameters should be passed to panels.extra (see example);
-the names of any extra data and/or packages required should be passed to
-the data.extra and packages.extra arguments}
+behaviour of existing panels; a data frame of the modality, panel UI and
+server names and default parameters should be passed to panels.extra
+(see example); the names of any extra data and/or packages required
+should be passed to the data.extra and packages.extra arguments}
 }
 \value{
 The path to shiny.dir (invisibly).
@@ -78,16 +89,16 @@ expression.matrix.preproc <- as.matrix(read.csv(
   system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
   row.names = 1
 ))
-
 metadata <- data.frame(
   srr = colnames(expression.matrix.preproc), 
   timepoint = rep(c("0h", "12h", "36h"), each = 2)
 )
 app.dir <- generateShinyApp(
-  expression.matrix = expression.matrix.preproc,
-  metadata = metadata,
   shiny.dir = paste0(tempdir(), "/shiny_Yang2019"),
   app.title = "Shiny app for the Yang 2019 data",
+  modality = "RNA",
+  expression.matrix = expression.matrix.preproc,
+  metadata = metadata,
   organism = "mmusculus",
   org.db = "org.Mm.eg.db"
 )
@@ -96,17 +107,18 @@ app.dir <- generateShinyApp(
 # Example of an app with a second copy of the QC panel
 
 app.dir.qc2 <- generateShinyApp(
-  expression.matrix = expression.matrix.preproc,
-  metadata = metadata,
   shiny.dir = paste0(tempdir(), "/shiny_Yang2019_QC2"),
   app.title = "Shiny app for the Yang 2019 data",
+  expression.matrix = expression.matrix.preproc,
+  metadata = metadata,
   organism = "mmusculus",
   org.db = "org.Mm.eg.db",
   panels.extra = tibble::tibble(
-    UIfun = "QCpanelUI", 
-    UIvars = "'QC2', metadata", 
-    serverFun = "QCpanelServer", 
-    serverVars = "'QC2', expression.matrix, metadata"
+    modality = "RNA",
+    UIfun = "sampleSelectPanelUI", 
+    UIvars = "'SampleSelect2'", 
+    serverFun = "sampleSelectPanelServer", 
+    serverVars = "'SampleSelect2', expression.matrix[[1]], metadata[[1]]"
   )
 )
 # runApp(app.dir.qc2)

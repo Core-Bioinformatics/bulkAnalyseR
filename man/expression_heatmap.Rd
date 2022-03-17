@@ -23,7 +23,8 @@ of the metadata should become heatmap annotations}
 in the expression.matrix; must contain at minimum two columns:
 the first column must contain the column names of the expression.matrix,
 while the last column is assumed to contain the experimental conditions
-that will be tested for differential expression}
+that will be tested for differential expression; a list  (of the same
+length as modality) can be provided if #' \code{length(modality) > 1}}
 
 \item{type}{type of rescaling; one of "Expression" (defautl, does nothing),
 "Log2 Expression" (returns log2(x + 1) for every value), "Mean Scaled" (each

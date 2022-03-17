@@ -6,7 +6,7 @@
 \alias{landingPanelServer}
 \title{Generate the landing page panel of the shiny app}
 \usage{
-landingPanelUI(id)
+landingPanelUI(id, show = TRUE)
 
 landingPanelServer(id)
 }
