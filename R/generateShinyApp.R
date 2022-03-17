@@ -140,6 +140,7 @@ generateShinyApp <- function(
   if(!is.list(panels.default)){
     panels.default <- rep(list(panels.default), n_modalities)
   }
+  metadata <- lapply(metadata, as.data.frame)
   
   generateAppFile(
     shiny.dir = shiny.dir,
