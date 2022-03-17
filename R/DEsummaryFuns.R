@@ -32,7 +32,7 @@ expression_heatmap <- function(
   
   type <- type[1]
   heatmat <- rescale_matrix(heatmat, type)
-  if(!show.column.names){colnames(heatmat <- NULL)}
+  if(!show.column.names){colnames(heatmat) <- NULL}
   
   if(!is.null(top.annotation.ids)){
     qual.col.pals = dplyr::filter(RColorBrewer::brewer.pal.info, .data$category == 'qual')
