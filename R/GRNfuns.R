@@ -52,13 +52,7 @@ infer_GRN <- function(expression.matrix, metadata, anno, seed = 13,
   if(inference_method == "GENIE3"){
     res <- GENIE3::GENIE3(expression.matrix[, samples], regulators = regulator.ids)
   }else if(inference_method == "GNET2"){
-    gnet_out <- GNET2::gnet(expression.matrix[, samples], reg_names = regulator.ids)
-    for(i in which(sapply(gnet_out$regulators, is.null))){
-      gnet_out$regulators[[i]] <- NULL
-    }
-    for(i in which(sapply(gnet_out$target_genes, is.null))){
-      gnet_out$target_genes[[i]] <- NULL
-    }
+    gnet_out <- gnet_modified(expression.matrix[, samples], reg_names = regulator.ids)
     res <- GNET2::extract_edges(gnet_out)
   }
   res
