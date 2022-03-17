@@ -13,7 +13,8 @@ DEanalysis_deseq2(expression.matrix, condition, var1, var2, anno)
 \arguments{
 \item{expression.matrix}{the expression matrix; rows correspond to genes and
 columns correspond to samples; usually preprocessed by
-\code{\link{preprocessExpressionMatrix}}}
+\code{\link{preprocessExpressionMatrix}}; a list  (of the same length as
+modality) can be provided if #' \code{length(modality) > 1}}
 
 \item{condition}{a vector of the same length as the number of columns of
 expression.matrix, containing the sample conditions; this is usually the

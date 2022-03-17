@@ -6,7 +6,7 @@
 \alias{DEplotPanelServer}
 \title{Generate the DE plot plot panel of the shiny app}
 \usage{
-DEplotPanelUI(id)
+DEplotPanelUI(id, show = TRUE)
 
 DEplotPanelServer(id, DEresults, anno)
 }

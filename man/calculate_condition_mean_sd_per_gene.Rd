@@ -9,7 +9,8 @@ calculate_condition_mean_sd_per_gene(expression.matrix, condition)
 \arguments{
 \item{expression.matrix}{the expression matrix; rows correspond to genes and
 columns correspond to samples; usually preprocessed by
-\code{\link{preprocessExpressionMatrix}}}
+\code{\link{preprocessExpressionMatrix}}; a list  (of the same length as
+modality) can be provided if #' \code{length(modality) > 1}}
 
 \item{condition}{the condition to group the columns of the expression matrix
 by; must be a factor of the same length as ncol(expression.matrix)}

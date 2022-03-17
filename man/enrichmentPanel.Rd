@@ -6,7 +6,7 @@
 \alias{enrichmentPanelServer}
 \title{Generate the enrichment panel of the shiny app}
 \usage{
-enrichmentPanelUI(id)
+enrichmentPanelUI(id, show = TRUE)
 
 enrichmentPanelServer(id, DEresults, organism, seed = 13)
 }
@@ -19,8 +19,10 @@ a reactive list with slots 'DEtable' (all genes), 'DEtableSubset' (only DE genes
 
 \item{organism}{organism name to be passed on to \code{gprofiler2::gost};
 organism names are constructed by concatenating the first letter of the
-name and the family name; default is NULL - enrichment is not included
-to ensure compatibility with datasets that have non-standard gene names}
+name and the family name; default is NA - enrichment is not included
+to ensure compatibility with datasets that have non-standard gene names;
+a vector (of the same length as modality) can be provided if
+\code{length(modality) > 1}}
 
 \item{seed}{the random seed to be set for the jitter plot, to avoid
 seemingly different plots for the same inputs}

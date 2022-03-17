@@ -17,13 +17,15 @@ plot_pca(
 \arguments{
 \item{expression.matrix}{the expression matrix; rows correspond to genes and
 columns correspond to samples; usually preprocessed by
-\code{\link{preprocessExpressionMatrix}}}
+\code{\link{preprocessExpressionMatrix}}; a list  (of the same length as
+modality) can be provided if #' \code{length(modality) > 1}}
 
 \item{metadata}{a data frame containing metadata for the samples contained
 in the expression.matrix; must contain at minimum two columns:
 the first column must contain the column names of the expression.matrix,
 while the last column is assumed to contain the experimental conditions
-that will be tested for differential expression}
+that will be tested for differential expression; a list  (of the same
+length as modality) can be provided if #' \code{length(modality) > 1}}
 
 \item{annotation.id}{a column index denoting which column of the metadata
 should be used to colour the points and draw confidence ellipses}
