@@ -15,56 +15,60 @@ NULL
 
 #' @rdname DEpanel
 #' @export
-DEpanelUI <- function(id, metadata){
+DEpanelUI <- function(id, metadata, show = TRUE){
   ns <- NS(id)
   
-  tabPanel(
-    'Differential expression',
-    shinyjs::useShinyjs(),
-    sidebarLayout(
-      
-      # Sidebar panel for inputs ----
-      sidebarPanel(
+  if(show){
+    tabPanel(
+      'Differential expression',
+      shinyjs::useShinyjs(),
+      sidebarLayout(
         
-        selectInput(ns('condition'), 'Metadata column to use:', colnames(metadata)[-1], 
-                    selected = colnames(metadata)[ncol(metadata)]),
+        # Sidebar panel for inputs ----
+        sidebarPanel(
+          
+          selectInput(ns('condition'), 'Metadata column to use:', colnames(metadata)[-1], 
+                      selected = colnames(metadata)[ncol(metadata)]),
+          
+          # Input: Selector variables to compare
+          selectInput(ns('variable1'), 'Condition 1:', unique(metadata[[ncol(metadata)]])),
+          selectInput(ns('variable2'), 'Condition 2:', unique(metadata[[ncol(metadata)]]),
+                      selected = unique(metadata[[ncol(metadata)]])[2]),
+          
+          selectInput(ns('pipeline'), 'DE pipeline:', c("edgeR", "DESeq2")),
+          
+          #DE thresholds
+          sliderInput(ns('lfcThreshold'), label = 'logFC threshold',
+                      min = 0, value = 1, max = 5, step = 0.5),
+          
+          sliderInput(ns('pvalThreshold'), label = 'Adjusted p-value threshold',
+                      min = 0, value = 0.05, max = 0.2, step = 0.005),
+          
+          #Only start DE when button is pressed
+          actionButton(ns('goDE'), label = 'Start DE'),
+          
+          #download file name and button
+          textInput(ns('fileName'),'File name for download', value ='DEset.csv', placeholder = 'DEset.csv'),
+          downloadButton(ns('download'), 'Download Table'),
+          hr(),
+          tags$b("Gene selection"),
+          div("\nSelect genes of interest by clicking on the corresponds rows in the table\n"),
+          div(style="margin-bottom:10px"),
+          actionButton(ns('resetSelection'), label = "Reset row selection"),
+          div(style="margin-bottom:10px"),
+          actionButton(ns('selectTop50'), label = "Select top 50 genes")
+          
+        ),
         
-        # Input: Selector variables to compare
-        selectInput(ns('variable1'), 'Condition 1:', unique(metadata[[ncol(metadata)]])),
-        selectInput(ns('variable2'), 'Condition 2:', unique(metadata[[ncol(metadata)]]),
-                    selected = unique(metadata[[ncol(metadata)]])[2]),
-        
-        selectInput(ns('pipeline'), 'DE pipeline:', c("edgeR", "DESeq2")),
-        
-        #DE thresholds
-        sliderInput(ns('lfcThreshold'), label = 'logFC threshold',
-                    min = 0, value = 1, max = 5, step = 0.5),
-        
-        sliderInput(ns('pvalThreshold'), label = 'Adjusted p-value threshold',
-                    min = 0, value = 0.05, max = 0.2, step = 0.005),
-        
-        #Only start DE when button is pressed
-        actionButton(ns('goDE'), label = 'Start DE'),
-        
-        #download file name and button
-        textInput(ns('fileName'),'File name for download', value ='DEset.csv', placeholder = 'DEset.csv'),
-        downloadButton(ns('download'), 'Download Table'),
-        hr(),
-        tags$b("Gene selection"),
-        div("\nSelect genes of interest by clicking on the corresponds rows in the table\n"),
-        div(style="margin-bottom:10px"),
-        actionButton(ns('resetSelection'), label = "Reset row selection"),
-        div(style="margin-bottom:10px"),
-        actionButton(ns('selectTop50'), label = "Select top 50 genes")
-        
-      ),
-      
-      #Main panel for displaying table of DE genes
-      mainPanel(
-        DT::dataTableOutput(ns('data'))
+        #Main panel for displaying table of DE genes
+        mainPanel(
+          DT::dataTableOutput(ns('data'))
+        )
       )
     )
-  )
+  }else{
+    NULL
+  }
 }
 
 #' @rdname DEpanel
@@ -132,7 +136,7 @@ DEpanelServer <- function(id, expression.matrix, metadata, anno){
       bindCache(metadata(), input[["condition"]], input[['variable1']], input[['variable2']],
                 input[["pipeline"]], input[["lfcThreshold"]], input[["pvalThreshold"]]) %>%
       bindEvent(input[["goDE"]])
-
+    
     #Define output table (only DE genes)
     dataTable <- reactive({
       DEresults()$DEtableSubset %>% 

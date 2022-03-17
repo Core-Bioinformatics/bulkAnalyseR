@@ -10,15 +10,19 @@ NULL
 
 #' @rdname sampleSelectPanel
 #' @export
-sampleSelectPanelUI <- function(id){
+sampleSelectPanelUI <- function(id, show = TRUE){
   ns <- NS(id)
   
-  tabPanel(
-    'Sample select',
-    actionButton(ns('goSamples'), label = 'Use the selected samples!', 
-                 width = "100%", class = "btn-primary btn-lg"),
-    DT::dataTableOutput(ns('tbl'))
-  )
+  if(show){
+    tabPanel(
+      'Sample select',
+      actionButton(ns('goSamples'), label = 'Use the selected samples!', 
+                   width = "100%", class = "btn-primary btn-lg"),
+      DT::dataTableOutput(ns('tbl'))
+    )
+  }else{
+    NULL
+  }
 }
 
 #' @rdname sampleSelectPanel

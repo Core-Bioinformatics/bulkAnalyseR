@@ -10,78 +10,82 @@ NULL
 
 #' @rdname crossPanel
 #' @export
-crossPanelUI <- function(id, metadata){
+crossPanelUI <- function(id, metadata, show = TRUE){
   ns <- NS(id)
   
-  tabPanel(
-    'Cross plot',
-    shinyjs::useShinyjs(),
-    sidebarLayout(
-      
-      sidebarPanel(
-        selectInput(ns('condition1'), 'Metadata column to use for comparison #1:', colnames(metadata)[-1], 
-                    selected = colnames(metadata)[ncol(metadata)]),
+  if(show){
+    tabPanel(
+      'Cross plot',
+      shinyjs::useShinyjs(),
+      sidebarLayout(
         
-        selectInput(ns('DE1var1'), 'DE comparison #1 Condition 1:', unique(metadata[[ncol(metadata)]])),
-        selectInput(ns('DE1var2'), 'DE comparison #1 Condition 2:', unique(metadata[[ncol(metadata)]]),
-                    selected = unique(metadata[[ncol(metadata)]])[2]),
-        
-        selectInput(ns('pipeline1'), 'DE pipeline for comparison #1:', c("edgeR", "DESeq2")),
-        
-        selectInput(ns('condition2'), 'Metadata column to use for comparison #2:', colnames(metadata)[-1], 
-                    selected = colnames(metadata)[ncol(metadata)]),
-        
-        selectInput(ns('DE2var1'), 'DE comparison #2 Condition 1:', unique(metadata[[ncol(metadata)]])),
-        selectInput(ns('DE2var2'), 'DE comparison #2 Condition 2:', unique(metadata[[ncol(metadata)]]),
-                    selected = unique(metadata[[ncol(metadata)]])[2]),
-        
-        selectInput(ns('pipeline2'), 'DE pipeline for comparison #2:', c("edgeR", "DESeq2")),
-        
-        sliderInput(ns('lfcThreshold'), label = 'logFC threshold',
-                    min = 0, value = 1, max = 5, step = 0.5),
-        sliderInput(ns('pvalThreshold'), label = 'Adjusted p-value threshold',
-                    min = 0, value = 0.05, max = 0.2, step = 0.005),
-        
-        actionButton(ns('goDE'), label = 'Start DE'),
-      ),
-      
-      #Main panel for displaying table of DE genes
-      mainPanel(
-        shinyWidgets::dropdownButton(
-          shinyWidgets::switchInput(
-            inputId = ns('autoLabel'),
-            label = "Auto labels", 
-            labelWidth = "80px",
-            onLabel = 'On',
-            offLabel = 'Off',
-            value = FALSE,
-            onStatus = FALSE
-          ),
-          shinyWidgets::switchInput(
-            inputId = ns('allGenes'),
-            label = "Showing on click:", 
-            labelWidth = "80px",
-            onLabel = 'All genes',
-            offLabel = 'Only DE genes',
-            value = FALSE,
-            onStatus = FALSE
-          ),
+        sidebarPanel(
+          selectInput(ns('condition1'), 'Metadata column to use for comparison #1:', colnames(metadata)[-1], 
+                      selected = colnames(metadata)[ncol(metadata)]),
           
-          selectInput(ns("geneName"), "Genes to highlight:", multiple = TRUE, choices = character(0)),
+          selectInput(ns('DE1var1'), 'DE comparison #1 Condition 1:', unique(metadata[[ncol(metadata)]])),
+          selectInput(ns('DE1var2'), 'DE comparison #1 Condition 2:', unique(metadata[[ncol(metadata)]]),
+                      selected = unique(metadata[[ncol(metadata)]])[2]),
           
-          textInput(ns('plotFileName'), 'File name for plot download', value ='crossPlot.png'),
-          downloadButton(ns('download'), 'Download Plot'),
+          selectInput(ns('pipeline1'), 'DE pipeline for comparison #1:', c("edgeR", "DESeq2")),
           
-          status = "info",
-          icon = icon("gear", verify_fa = FALSE), 
-          tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
+          selectInput(ns('condition2'), 'Metadata column to use for comparison #2:', colnames(metadata)[-1], 
+                      selected = colnames(metadata)[ncol(metadata)]),
+          
+          selectInput(ns('DE2var1'), 'DE comparison #2 Condition 1:', unique(metadata[[ncol(metadata)]])),
+          selectInput(ns('DE2var2'), 'DE comparison #2 Condition 2:', unique(metadata[[ncol(metadata)]]),
+                      selected = unique(metadata[[ncol(metadata)]])[2]),
+          
+          selectInput(ns('pipeline2'), 'DE pipeline for comparison #2:', c("edgeR", "DESeq2")),
+          
+          sliderInput(ns('lfcThreshold'), label = 'logFC threshold',
+                      min = 0, value = 1, max = 5, step = 0.5),
+          sliderInput(ns('pvalThreshold'), label = 'Adjusted p-value threshold',
+                      min = 0, value = 0.05, max = 0.2, step = 0.005),
+          
+          actionButton(ns('goDE'), label = 'Start DE'),
         ),
         
-        plotOutput(ns('plot'), click = ns('plot_click')),
-        tableOutput(ns('data')) 
+        #Main panel for displaying table of DE genes
+        mainPanel(
+          shinyWidgets::dropdownButton(
+            shinyWidgets::switchInput(
+              inputId = ns('autoLabel'),
+              label = "Auto labels", 
+              labelWidth = "80px",
+              onLabel = 'On',
+              offLabel = 'Off',
+              value = FALSE,
+              onStatus = FALSE
+            ),
+            shinyWidgets::switchInput(
+              inputId = ns('allGenes'),
+              label = "Showing on click:", 
+              labelWidth = "80px",
+              onLabel = 'All genes',
+              offLabel = 'Only DE genes',
+              value = FALSE,
+              onStatus = FALSE
+            ),
+            
+            selectInput(ns("geneName"), "Genes to highlight:", multiple = TRUE, choices = character(0)),
+            
+            textInput(ns('plotFileName'), 'File name for plot download', value ='crossPlot.png'),
+            downloadButton(ns('download'), 'Download Plot'),
+            
+            status = "info",
+            icon = icon("gear", verify_fa = FALSE), 
+            tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
+          ),
+          
+          plotOutput(ns('plot'), click = ns('plot_click')),
+          tableOutput(ns('data')) 
+        )
       )
     )
-  )
+  }else{
+    NULL
+  }
 }
 
 #' @rdname crossPanel

@@ -19,16 +19,29 @@
 #     dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))
 # )
 # 
+# DEresults <- DEanalysis_edger(
+#   expression.matrix = expression.matrix[, 1:4], 
+#   condition = metadata$timepoint[1:4], 
+#   var1 = "0h", 
+#   var2 = "12h", 
+#   anno = anno
+# ) %>%
+#   dplyr::filter(abs(log2FC) > 1, pvalAdj < 0.05) %>%
+#   dplyr::arrange(dplyr::desc(abs(log2FC)))
+# DEgenes <- DEresults$gene_id
+# expression.matrix <- expression.matrix[DEgenes, ]
+# 
 # weightMat1 <- infer_GRN(expression.matrix, metadata, anno, 13,
-#                         c("Sox17", "Gm6123"), "timepoint", c("0h", "12h", "36h"), "GENIE3")
+#                         c("Trpm1", "Sp5"), "timepoint", c("0h", "12h", "36h"), "GENIE3")
 # weightMat2 <- infer_GRN(expression.matrix, metadata, anno, 13,
-#                         c("Sox17", "Gm6123"), "timepoint", c("0h", "12h"), "GENIE3")
+#                         c("Trpm1", "Sp5"), "timepoint", c("0h", "12h"), "GENIE3")
 # weightMat3 <- infer_GRN(expression.matrix, metadata, anno, 13,
-#                         c("Sox17", "Gm6123"), "timepoint", c("0h", "36h"), "GENIE3")
+#                         c("Trpm1", "Sp5"), "timepoint", c("0h", "36h"), "GENIE3")
 # weightMat4 <- infer_GRN(expression.matrix, metadata, anno, 13,
-#                         c("Sox17", "Gm6123"), "timepoint", c("12h", "36h"), "GENIE3")
-# # weightMatGNET <- infer_GRN(expression.matrix, metadata, anno, 13,
-# #                         c("Sox17", "Gm6123"), "timepoint", c("0h", "12h", "36h"), "GNET2")
+#                         c("Trpm1", "Sp5"), "timepoint", c("12h", "36h"), "GENIE3")
+# weightMatGNET <- infer_GRN(expression.matrix, metadata, anno, 13,
+#                            c("Trpm1", "Sp5", "Nupr1", "Dnmt3l", "Enox1", "Itga1"), 
+#                            "timepoint", c("0h", "12h", "36h"), "GNET2")
 # 
 # plotConnections <- 5
 # 

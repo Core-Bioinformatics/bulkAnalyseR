@@ -13,31 +13,35 @@ NULL
 
 #' @rdname enrichmentPanel
 #' @export
-enrichmentPanelUI <- function(id){
+enrichmentPanelUI <- function(id, show = TRUE){
   ns <- NS(id)
   
-  tabPanel(
-    'Enrichment',
-    shinyjs::useShinyjs(),
-    sidebarLayout(
-      # Sidebar panel for inputs ----
-      sidebarPanel(
-        checkboxGroupInput(ns('gprofilerSources'), 'Select data sources', 
-                           choices = c('GO:BP', 'GO:MF', 'GO:CC', 'KEGG', 'REAC', 
-                                       'TF', 'MIRNA', 'CORUM', 'HP', 'HPA', 'WP'), 
-                           selected = c('GO:BP', 'GO:MF', 'GO:CC', 'KEGG', 'REAC', 'TF', 'MIRNA')),
-        actionButton(ns('goEnrichment'), label = 'Start enrichment analysis'),
-        textInput(ns('fileName'), 'File name for data download', value ='EnrichmentSet.csv'),
-        downloadButton(ns('downloadTable'), 'Download Data'),
-        textInput(ns('plotFileName'), 'File name for plot download', value ='EnrichmentPlot.png'),
-        downloadButton(ns('downloadPlot'), 'Download Plot'),
-      ),
-      mainPanel(
-        plotOutput(ns('plot'), click = ns('plot_click')),
-        tableOutput(ns('data'))
+  if(show){
+    tabPanel(
+      'Enrichment',
+      shinyjs::useShinyjs(),
+      sidebarLayout(
+        # Sidebar panel for inputs ----
+        sidebarPanel(
+          checkboxGroupInput(ns('gprofilerSources'), 'Select data sources', 
+                             choices = c('GO:BP', 'GO:MF', 'GO:CC', 'KEGG', 'REAC', 
+                                         'TF', 'MIRNA', 'CORUM', 'HP', 'HPA', 'WP'), 
+                             selected = c('GO:BP', 'GO:MF', 'GO:CC', 'KEGG', 'REAC', 'TF', 'MIRNA')),
+          actionButton(ns('goEnrichment'), label = 'Start enrichment analysis'),
+          textInput(ns('fileName'), 'File name for data download', value ='EnrichmentSet.csv'),
+          downloadButton(ns('downloadTable'), 'Download Data'),
+          textInput(ns('plotFileName'), 'File name for plot download', value ='EnrichmentPlot.png'),
+          downloadButton(ns('downloadPlot'), 'Download Plot'),
+        ),
+        mainPanel(
+          plotOutput(ns('plot'), click = ns('plot_click')),
+          tableOutput(ns('data'))
+        )
       )
     )
-  )
+  }else{
+    NULL
+  }
 }
 
 #' @rdname enrichmentPanel

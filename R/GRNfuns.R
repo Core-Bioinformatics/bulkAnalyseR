@@ -43,7 +43,7 @@
 #'   samples = "0h",
 #'   inference_method = "GENIE3"
 #' )
-infer_GRN <- function(expression.matrix, metadata, anno, seed, 
+infer_GRN <- function(expression.matrix, metadata, anno, seed = 13, 
                       regulators, condition, samples, inference_method){
   inference_method <- inference_method[1]
   regulator.ids <- anno$ENSEMBL[match(regulators, anno$NAME)]
@@ -51,9 +51,9 @@ infer_GRN <- function(expression.matrix, metadata, anno, seed,
   set.seed(seed)
   if(inference_method == "GENIE3"){
     res <- GENIE3::GENIE3(expression.matrix[, samples], regulators = regulator.ids)
-  }else if(inference_method == "GNET2"){
-    gnet_out <- GNET2::gnet(expression.matrix[, samples], reg_names = regulator.ids)
-    res <- GNET2::extract_edges(gnet_out)
+  # }else if(inference_method == "GNET2"){
+  #   gnet_out <- GNET2::gnet(expression.matrix[, samples], reg_names = regulator.ids)
+  #   res <- GNET2::extract_edges(gnet_out)
   }
   res
 }

@@ -5,38 +5,47 @@
 #' is standalone and can be used on another platform, as long as bulkAnalyseR
 #' is installed there. It is recommended to run 
 #' \code{\link{preprocessExpressionMatrix}} before this function.
+#' @param shiny.dir directory to store the shiny app; if a non-empty
+#' directory with that name already exists an error is generated
+#' @param app.title title to be displayed within the app
+#' @param theme shiny theme to be used in the app; default is 'flatly'
+#' @param modality name of the modality, or a vector of modalities to be
+#' included in the app
 #' @param expression.matrix the expression matrix; rows correspond to genes and
 #' columns correspond to samples; usually preprocessed by 
-#' \code{\link{preprocessExpressionMatrix}}
+#' \code{\link{preprocessExpressionMatrix}}; a list  (of the same length as 
+#' modality) can be provided if #' \code{length(modality) > 1}
 #' @param metadata a data frame containing metadata for the samples contained
 #' in the expression.matrix; must contain at minimum two columns:
 #' the first column must contain the column names of the expression.matrix,
 #' while the last column is assumed to contain the experimental conditions
-#' that will be tested for differential expression
-#' @param shiny.dir directory to store the shiny app; if a non-empty
-#' directory with that name already exists an error is generated
-#' @param app.title title to be displayed within the app
+#' that will be tested for differential expression; a list  (of the same 
+#' length as modality) can be provided if #' \code{length(modality) > 1}
 #' @param organism organism name to be passed on to \code{gprofiler2::gost};
 #' organism names are constructed by concatenating the first letter of the 
-#' name and the family name; default is NULL - enrichment is not included
-#' to ensure compatibility with datasets that have non-standard gene names
+#' name and the family name; default is NA - enrichment is not included
+#' to ensure compatibility with datasets that have non-standard gene names; 
+#' a vector (of the same length as modality) can be provided if 
+#' \code{length(modality) > 1}
 #' @param org.db database for annotations to transform ENSEMBL IDs to
 #' gene names; a list of bioconductor packaged databases can be found with 
-#' \code{BiocManager::available("^org\\.")}; default is human - 'org.Hs.eg.db';
-#' default in NULL, in which case the row names of the expression matrix are
+#' \code{BiocManager::available("^org\\.")};
+#' default in NA, in which case the row names of the expression matrix are
 #' used directly - it is recommended to provide ENSEMBL IDs if the database
-#' for your model organism is available
-#' @param theme shiny theme to be used in the app; default is 'flatly'
+#' for your model organism is available; 
+#' a vector (of the same length as modality) can be provided if 
+#' \code{length(modality) > 1}
 #' @param panels.default argument to control which of the default panels
 #' will be included in the app; default is all, but the enrichment panel
 #' will not appear unless organism is also supplied; note that the 'DE' panel 
-#' is required for 'DEplot' and 'Enrichment'
+#' is required for 'DEplot', 'Enrichment', and GRN; a list  (of the same 
+#' length as modality) can be provided if \code{length(modality) > 1}
 #' @param panels.extra,data.extra,packages.extra functionality to add new
 #' user-created panels to the app to extend functionality or change the default
-#' behaviour of existing panels; a data frame of the panel UI and server names
-#' and default parameters should be passed to panels.extra (see example);
-#' the names of any extra data and/or packages required should be passed to
-#' the data.extra and packages.extra arguments
+#' behaviour of existing panels; a data frame of the modality, panel UI and 
+#' server names and default parameters should be passed to panels.extra 
+#' (see example); the names of any extra data and/or packages required 
+#' should be passed to the data.extra and packages.extra arguments
 #' @return The path to shiny.dir (invisibly).
 #' @export
 #' @import shiny
@@ -47,16 +56,16 @@
 #'   system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
 #' ))
-#' 
 #' metadata <- data.frame(
 #'   srr = colnames(expression.matrix.preproc), 
 #'   timepoint = rep(c("0h", "12h", "36h"), each = 2)
 #' )
 #' app.dir <- generateShinyApp(
-#'   expression.matrix = expression.matrix.preproc,
-#'   metadata = metadata,
 #'   shiny.dir = paste0(tempdir(), "/shiny_Yang2019"),
 #'   app.title = "Shiny app for the Yang 2019 data",
+#'   modality = "RNA",
+#'   expression.matrix = expression.matrix.preproc,
+#'   metadata = metadata,
 #'   organism = "mmusculus",
 #'   org.db = "org.Mm.eg.db"
 #' )
@@ -65,17 +74,18 @@
 #' # Example of an app with a second copy of the QC panel
 #' 
 #' app.dir.qc2 <- generateShinyApp(
-#'   expression.matrix = expression.matrix.preproc,
-#'   metadata = metadata,
 #'   shiny.dir = paste0(tempdir(), "/shiny_Yang2019_QC2"),
 #'   app.title = "Shiny app for the Yang 2019 data",
+#'   expression.matrix = expression.matrix.preproc,
+#'   metadata = metadata,
 #'   organism = "mmusculus",
 #'   org.db = "org.Mm.eg.db",
 #'   panels.extra = tibble::tibble(
-#'     UIfun = "QCpanelUI", 
-#'     UIvars = "'QC2', metadata", 
-#'     serverFun = "QCpanelServer", 
-#'     serverVars = "'QC2', expression.matrix, metadata"
+#'     modality = "RNA",
+#'     UIfun = "sampleSelectPanelUI", 
+#'     UIvars = "'SampleSelect2'", 
+#'     serverFun = "sampleSelectPanelServer", 
+#'     serverVars = "'SampleSelect2', expression.matrix[[1]], metadata[[1]]"
 #'   )
 #' )
 #' # runApp(app.dir.qc2)
@@ -83,16 +93,18 @@
 #' # clean up tempdir
 #' unlink(paste0(normalizePath(tempdir()), "/", dir(tempdir())), recursive = TRUE)
 generateShinyApp <- function(
-  expression.matrix,
-  metadata,
   shiny.dir = "shiny_bulkAnalyseR",
   app.title = "Visualisation of RNA-Seq data",
-  organism = NULL,
-  org.db = NULL,
   theme = "flatly",
+  modality = "RNA",
+  expression.matrix,
+  metadata,
+  organism = NA,
+  org.db = NA,
   panels.default = c("Landing", "SampleSelect", "QC", "DE", "DEplot", "DEsummary",
                      "Patterns", "Enrichment", "Cross", "GRN"),
   panels.extra = tibble::tibble(
+    name = NULL,
     UIfun = NULL, 
     UIvars = NULL, 
     serverFun = NULL, 
@@ -103,21 +115,48 @@ generateShinyApp <- function(
 ){
   validateAppInputs(
     shiny.dir = shiny.dir,
+    modality = modality,
     expression.matrix = expression.matrix,
-    metadata = metadata
+    metadata = metadata,
+    organism = organism,
+    org.db = org.db,
+    panels.default = panels.default,
+    data.extra = data.extra
   )
+  
+  n_modalities <- length(modality)
+  if(!is.list(expression.matrix)){
+    expression.matrix <- rep(list(expression.matrix), n_modalities)
+  }
+  if(is.data.frame(metadata)){
+    metadata <- rep(list(metadata), n_modalities)
+  }
+  if(length(organism) == 1){
+    organism <- rep(organism, n_modalities)
+  }
+  if(length(org.db) == 1){
+    org.db <- rep(org.db, n_modalities)
+  }
+  if(!is.list(panels.default)){
+    panels.default <- rep(list(panels.default), n_modalities)
+  }
+  metadata <- lapply(metadata, as.data.frame)
+  
   generateAppFile(
     shiny.dir = shiny.dir,
     app.title = app.title,
+    theme = theme,
+    modality = modality,
     organism = organism,
     org.db = org.db,
-    theme = theme,
     panels.default = panels.default,
     panels.extra = panels.extra,
     packages.extra = packages.extra
   )
+  
   generateDataFiles(
     shiny.dir = shiny.dir,
+    modality = modality,
     expression.matrix = expression.matrix,
     metadata = metadata,
     data.extra = data.extra
@@ -127,35 +166,86 @@ generateShinyApp <- function(
 }
 
 validateAppInputs <- function(
-  shiny.dir = shiny.dir,
-  expression.matrix = expression.matrix,
-  metadata = metadata
+  shiny.dir,
+  modality,
+  expression.matrix,
+  metadata,
+  organism,
+  org.db,
+  panels.default,
+  data.extra
 ){
-  if(!is.matrix(expression.matrix)){
-    stop("The expression matrix must be a matrix")
-  }
-  if(ncol(expression.matrix) != nrow(metadata)){
-    stop("Detected different number of columns in expression.matrix to rows in metadata")
-  }else if(!identical(colnames(expression.matrix), metadata[[1]])){
-    stop("The first column on metadata must correspond to the column names of expression.matrix")
-  }else if(ncol(metadata) < 2){
-    stop("metadata must be a data frame with at least 2 columns")
-  }
   if(!dir.exists(shiny.dir)) dir.create(shiny.dir)
   if(length(dir(shiny.dir,  all.files = TRUE, include.dirs = TRUE, no.. = TRUE)) > 0){
     stop("Please specify a new or empty directory")
+  }
+  
+  n_modalities <- length(modality)
+  
+  validate_matrix_metadata <- function(expression.matrix, metadata){
+    if(!is.matrix(expression.matrix)){
+      stop("The expression matrix must be a matrix")
+    }
+    if(ncol(expression.matrix) != nrow(metadata)){
+      stop("Detected different number of columns in expression.matrix to rows in metadata")
+    }else if(!identical(colnames(expression.matrix), metadata[[1]])){
+      stop("The first column on metadata must correspond to the column names of expression.matrix")
+    }else if(ncol(metadata) < 2){
+      stop("metadata must be a data frame with at least 2 columns")
+    }
+  }
+  if(is.list(expression.matrix) & !is.data.frame(metadata)){
+    if(length(expression.matrix) != n_modalities){
+      stop("expression.matrix list must have the same length as modality vector")
+    }
+    if(length(metadata) != n_modalities){
+      stop("metadata list must have the same length as modality vector")
+    }
+    invisible(lapply(X = seq_len(length(expression.matrix)), FUN = function(i){
+      validate_matrix_metadata(expression.matrix[[i]], metadata[[i]])
+    }))
+  }else if(is.list(expression.matrix)){
+    if(length(expression.matrix) != n_modalities){
+      stop("expression.matrix list must have the same length as modality vector")
+    }
+    invisible(lapply(X = expression.matrix, FUN = function(exp){
+      validate_matrix_metadata(exp, metadata)
+    }))
+  }else if(!is.data.frame(metadata)){
+    if(length(metadata) != n_modalities){
+      stop("metadata list must have the same length as modality vector")
+    }
+    invisible(lapply(X = metadata, FUN = function(meta){
+      validate_matrix_metadata(expression.matrix, meta)
+    }))
+  }else{
+    validate_matrix_metadata(expression.matrix, metadata)
+  }
+  
+  if(length(organism) != 1 & length(organism) != n_modalities){
+    stop("organism must be length 1 or have the same length as modality vector")
+  }
+  if(length(org.db) != 1 & length(org.db) != n_modalities){
+    stop("org.db must be length 1 or have the same length as modality vector")
+  }
+  if(is.list(panels.default)){
+    if(length(panels.default) != n_modalities){
+      stop("panels.default list must have the same length as modality vector")
+    }
+  }
+  
+  if(any(c("expression_matrix", "metadata") %in% data.extra)){
+    stop("expression_matrix and metadata are reserved names, please rename your extra objects")
   }
 }
 
 generateDataFiles <- function(
   shiny.dir,
+  modality,
   expression.matrix,
   metadata,
   data.extra
 ){
-  if(any(c("expression_matrix", "metadata") %in% data.extra)){
-    stop("expression_matrix and metadata are reserved names, please rename your extra objects")
-  }
   save(expression.matrix, file = paste0(shiny.dir, "/expression_matrix.rda"))
   save(metadata, file = paste0(shiny.dir, "/metadata.rda"))
   lapply(data.extra, function(name){
@@ -167,9 +257,10 @@ generateDataFiles <- function(
 generateAppFile <- function(
   shiny.dir,
   app.title,
+  theme,
+  modality,
   organism,
   org.db,
-  theme,
   panels.default,
   panels.extra,
   packages.extra
@@ -187,24 +278,30 @@ generateAppFile <- function(
     "rda.files <- list.files(pattern = '\\.rda$')",
     "for(fl in rda.files) load(fl)"
   )
-  if(is.null(org.db)){
-    code.source.objects <- c(
-      code.source.objects,
-      "anno <- data.frame(ENSEMBL = rownames(expression.matrix),",
-      "NAME = rownames(expression.matrix))"
-    )
-  }else{
-    code.source.objects <- c(
-      code.source.objects,
-      "anno <- AnnotationDbi::select(",
-      glue::glue("getExportedValue('{org.db}', '{org.db}'),"),
-      "keys = rownames(expression.matrix),",
-      "keytype = 'ENSEMBL',",
-      "columns = 'SYMBOL'",
-      ") %>%",
-      "dplyr::distinct(ENSEMBL, .keep_all = TRUE) %>%",
-      "dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))"
-    )
+  
+  code.source.objects <- c(code.source.objects, "anno <- list()")
+  for(i in seq_len(length(org.db))){
+    if(is.na(org.db[i])){
+      code.source.objects <- c(
+        code.source.objects,
+        glue::glue("anno[[{i}]] <- data.frame("),
+        "ENSEMBL = rownames(expression.matrix),",
+        "NAME = rownames(expression.matrix)",
+        ")"
+      )
+    }else{
+      code.source.objects <- c(
+        code.source.objects,
+        glue::glue("anno[[{i}]] <- AnnotationDbi::select("),
+        glue::glue("getExportedValue('{org.db}', '{org.db}'),"),
+        glue::glue("keys = rownames(expression.matrix[[{i}]]),"),
+        "keytype = 'ENSEMBL',",
+        "columns = 'SYMBOL'",
+        ") %>%",
+        "dplyr::distinct(ENSEMBL, .keep_all = TRUE) %>%",
+        "dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))"
+      )
+    }
   }
   lines.out <- c(lines.out, code.source.objects, "")
   
@@ -212,76 +309,58 @@ generateAppFile <- function(
     "ui <- navbarPage(",
     glue::glue("'{app.title}',"), 
     glue::glue("theme = shinythemes::shinytheme('{theme}'),"),
-    "header = tags$head(tags$style('body {overflow-y: scroll;}')),",
-    "tabPanel('RNAseq',",
-    "tabsetPanel("
+    "header = tags$head(tags$style('body {overflow-y: scroll;}')),"
   )
-  if("Landing" %in% panels.default) code.ui <- c(code.ui, "landingPanelUI('Landing'),")
-  if("SampleSelect" %in% panels.default) code.ui <- c(code.ui, "sampleSelectPanelUI('SampleSelect'),")
-  if("QC" %in% panels.default) code.ui <- c(code.ui, "QCpanelUI('QC', metadata),")
-  if("DE" %in% panels.default){
-    code.ui <- c(code.ui, "DEpanelUI('DE', metadata),")
-    if("DEplot" %in% panels.default) code.ui <- c(code.ui, "DEplotPanelUI('DEplot'),")
-    if("DEsummary" %in% panels.default) code.ui <- c(code.ui, "DEsummaryPanelUI('DEsummary', metadata),")
-    if("Enrichment" %in% panels.default & !is.null(organism)){
-      code.ui <- c(code.ui, "enrichmentPanelUI('Enrichment'),")
+  for(i in seq_len(length(modality))){
+    panels.default.string <- paste0("c('", paste(panels.default[[i]], collapse = "', '"), "')")
+    code.ui <- c(
+      code.ui, 
+      "tabPanel(",
+      glue::glue("title = '{modality[i]}',"),
+      "modalityPanelUI(",
+      glue::glue("id = '{modality[i]}',"),
+      glue::glue("metadata = metadata[[{i}]],"),
+      glue::glue("organism = '{organism[i]}',"),
+      glue::glue("panels.default = {panels.default.string}"),
+      "),"
+    )
+    for(j in seq_len(nrow(panels.extra))){
+      code.ui <- c(
+        code.ui,
+        "taPanel(",
+        glue::glue("title = '{panels.extra$name[j]}',"),
+        glue::glue("{panels.extra$UIfun[j]}({panels.extra$UIvars[j]}),"),
+        "),"
+      )
     }
+    code.ui <- c(code.ui, "),")
   }
-  if("Patterns" %in% panels.default) code.ui <- c(code.ui, "patternPanelUI('Patterns', metadata),")
-  if("Cross" %in% panels.default) code.ui <- c(code.ui, "crossPanelUI('Cross', metadata),")
-  if("GRN" %in% panels.default) code.ui <- c(code.ui, "GRNpanelUI('GRN', metadata),")
-  for(i in seq_len(nrow(panels.extra))){
-    code.ui <- c(code.ui, glue::glue("{panels.extra$UIfun[i]}({panels.extra$UIvars[i]}),"))
-  }
-  code.ui <- c(code.ui, ")),", ")")
+  code.ui <- c(code.ui, ")")
   lines.out <- c(lines.out, code.ui, "")
   
   code.server <- c("server <- function(input, output, session){")
-  if("SampleSelect" %in% panels.default){
+  
+  for(i in seq_len(length(modality))){
+    panels.default.string <- paste0("c('", paste(panels.default[[i]], collapse = "', '"), "')")
     code.server <- c(
       code.server,
-      "filteredInputs <- sampleSelectPanelServer('SampleSelect', expression.matrix, metadata)",
-      "expression.matrix <- reactive(filteredInputs()[['expression.matrix']])",
-      "metadata <- reactive(filteredInputs()[['metadata']])"
+      "modalityPanelServer(",
+      glue::glue("id = '{modality[i]}',"), 
+      glue::glue("expression.matrix = expression.matrix[[{i}]],"),
+      glue::glue("metadata = metadata[[{i}]],"),
+      glue::glue("anno = anno[[{i}]],"),
+      glue::glue("organism = '{organism[i]}',"), 
+      glue::glue("panels.default = {panels.default.string}"),
+      ")"
     )
-  }else{
-    code.server <- c(
-      code.server,
-      "expression.matrix <- reactiveVal(expression.matrix)",
-      "metadata <- reactiveVal(metadata)"
-    )
-  }
-  if("QC" %in% panels.default){
-    code.server <- c(code.server, "QCpanelServer('QC', expression.matrix, metadata, anno)")
-  }
-  if("DE" %in% panels.default){
-    code.server <- c(code.server, "DEresults <- DEpanelServer('DE', expression.matrix, metadata, anno)")
-    if("DEplot" %in% panels.default){
-      code.server <- c(code.server, "DEplotPanelServer('DEplot', DEresults, anno)")
-    }
-    if("DEsummary" %in% panels.default){
-      code.server <- c(code.server, "DEsummaryPanelServer('DEsummary', expression.matrix, metadata, DEresults, anno)")
-    }
-    if("Enrichment" %in% panels.default & !is.null(organism)){
+    for(j in seq_len(nrow(panels.extra))){
       code.server <- c(
         code.server, 
-        glue::glue("enrichmentPanelServer('Enrichment', DEresults, organism = '{organism}')")
+        glue::glue("{panels.extra$serverFun[j]}({panels.extra$serverVars[j]})")
       )
     }
-    if("Cross" %in% panels.default){
-      code.server <- c(code.server, "crossPanelServer('Cross', expression.matrix, metadata, anno)")
-    }
-    if("Patterns" %in% panels.default){
-      code.server <- c(code.server, "patternPanelServer('Patterns', expression.matrix, metadata, anno)")
-    }
-    if("GRN" %in% panels.default){
-      code.server <- c(code.server, "GRNpanelServer('GRN', expression.matrix, metadata, anno)")
-    }
-    
   }
-  for(i in seq_len(nrow(panels.extra))){
-    code.server <- c(code.server, glue::glue("{panels.extra$serverFun[i]}({panels.extra$serverVars[i]})"))
-  }
+  
   code.server <- c(code.server, "}")
   lines.out <- c(lines.out, code.server, "")
   

@@ -10,57 +10,61 @@ NULL
 
 #' @rdname QCpanel
 #' @export
-QCpanelUI <- function(id, metadata){
+QCpanelUI <- function(id, metadata, show = TRUE){
   ns <- NS(id)
   
-  tabPanel(
-    'Quality checks',
-    tags$h1("Jaccard Similarity Index Heatmap"),
-    shinyWidgets::dropdownButton(
-      shinyjqui::orderInput(ns('jaccard.annotations'), label = "Show annotations", items = colnames(metadata)),
-      sliderInput(ns('jaccard.n.abundant'), label = '# of (most abundant) genes',
-                  min = 50, value = 500, max = 5000, step = 50, ticks = FALSE),
-      checkboxInput(ns("jaccard.show.values"), label = "Show JSI values", value = FALSE),
-      textInput(ns('plotJSIFileName'), 'File name for JSI plot download', value ='JSIPlot.png'),
-      downloadButton(ns('downloadJSIPlot'), 'Download JSI Plot'),
+  if(show){
+    tabPanel(
+      'Quality checks',
+      tags$h1("Jaccard Similarity Index Heatmap"),
+      shinyWidgets::dropdownButton(
+        shinyjqui::orderInput(ns('jaccard.annotations'), label = "Show annotations", items = colnames(metadata)),
+        sliderInput(ns('jaccard.n.abundant'), label = '# of (most abundant) genes',
+                    min = 50, value = 500, max = 5000, step = 50, ticks = FALSE),
+        checkboxInput(ns("jaccard.show.values"), label = "Show JSI values", value = FALSE),
+        textInput(ns('plotJSIFileName'), 'File name for JSI plot download', value ='JSIPlot.png'),
+        downloadButton(ns('downloadJSIPlot'), 'Download JSI Plot'),
+        
+        status = "info",
+        icon = icon("gear", verify_fa = FALSE), 
+        tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
+      ),
+      plotOutput(ns('jaccard')),
       
-      status = "info",
-      icon = icon("gear", verify_fa = FALSE), 
-      tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
-    ),
-    plotOutput(ns('jaccard')),
-    
-    tags$h1("Principal Component Analysis"),
-    shinyWidgets::dropdownButton(
-      radioButtons(ns('pca.annotation'), label = "Group by",
-                   choices = colnames(metadata), selected = colnames(metadata)[ncol(metadata)]),
-      sliderInput(ns('pca.n.abundant'), label = '# of (most abundant) genes',
-                  min = 50, value = 500, max = 5000, step = 50, ticks = FALSE),
-      checkboxInput(ns("pca.show.labels"), label = "Show sample labels", value = FALSE),
-      checkboxInput(ns('pca.show.ellipses'),label = "Show ellipses around groups",value=TRUE),
-      textInput(ns('plotPCAFileName'), 'File name for PCA plot download', value ='PCAPlot.png'),
-      downloadButton(ns('downloadPCAPlot'), 'Download PCA Plot'),
+      tags$h1("Principal Component Analysis"),
+      shinyWidgets::dropdownButton(
+        radioButtons(ns('pca.annotation'), label = "Group by",
+                     choices = colnames(metadata), selected = colnames(metadata)[ncol(metadata)]),
+        sliderInput(ns('pca.n.abundant'), label = '# of (most abundant) genes',
+                    min = 50, value = 500, max = 5000, step = 50, ticks = FALSE),
+        checkboxInput(ns("pca.show.labels"), label = "Show sample labels", value = FALSE),
+        checkboxInput(ns('pca.show.ellipses'),label = "Show ellipses around groups",value=TRUE),
+        textInput(ns('plotPCAFileName'), 'File name for PCA plot download', value ='PCAPlot.png'),
+        downloadButton(ns('downloadPCAPlot'), 'Download PCA Plot'),
+        
+        status = "info",
+        icon = icon("gear", verify_fa = FALSE), 
+        tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
+      ),
+      plotOutput(ns('pca')),
       
-      status = "info",
-      icon = icon("gear", verify_fa = FALSE), 
-      tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
-    ),
-    plotOutput(ns('pca')),
-    
-    tags$h1("MA plots"),
-    shinyWidgets::dropdownButton(
-      checkboxInput(ns("ma.show.guidelines"), label = "Show guidelines", value = TRUE),
-      selectInput(ns('ma.sample1'), 'Sample 1', choices = metadata[, 1], selected = metadata[1, 1]),
-      selectInput(ns('ma.sample2'), 'Sample 2', choices = metadata[, 1], selected = metadata[2, 1]),
-      textInput(ns('plotMAFileName'), 'File name for MA plot download', value = 'MAPlot.png'),
-      downloadButton(ns('downloadMAPlot'), 'Download MA Plot'),
-      
-      status = "info",
-      icon = icon("gear", verify_fa = FALSE), 
-      tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
-    ),
-    plotOutput(ns('ma'))
-  )
+      tags$h1("MA plots"),
+      shinyWidgets::dropdownButton(
+        checkboxInput(ns("ma.show.guidelines"), label = "Show guidelines", value = TRUE),
+        selectInput(ns('ma.sample1'), 'Sample 1', choices = metadata[, 1], selected = metadata[1, 1]),
+        selectInput(ns('ma.sample2'), 'Sample 2', choices = metadata[, 1], selected = metadata[2, 1]),
+        textInput(ns('plotMAFileName'), 'File name for MA plot download', value = 'MAPlot.png'),
+        downloadButton(ns('downloadMAPlot'), 'Download MA Plot'),
+        
+        status = "info",
+        icon = icon("gear", verify_fa = FALSE), 
+        tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
+      ),
+      plotOutput(ns('ma'))
+    )
+  }else{
+    NULL
+  }
 }
 
 #' @rdname QCpanel
@@ -170,7 +174,7 @@ QCpanelServer <- function(id, expression.matrix, metadata, anno){
     output[['downloadPCAPlot']] <- downloadHandler(
       filename = function() { input[['plotPCAFileName']] },
       content = function(file) {
-          ggsave(file, plot = pca.plot(), dpi = 300)
+        ggsave(file, plot = pca.plot(), dpi = 300)
       }
     )
     
