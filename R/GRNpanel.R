@@ -25,14 +25,12 @@ GRNpanelUI <- function(id, metadata, show = TRUE){
                       selected = colnames(metadata)[ncol(metadata)]),
           selectInput(ns('samples1'), 'Samples for GRN #1:', unique(metadata[[ncol(metadata)]]),
                       selected = unique(metadata[[ncol(metadata)]]), multiple = TRUE),
-          selectInput(ns('method1'), 'Inference method for GRN #1', c("GENIE3", "GNET2")),
           conditionalPanel(
             id = ns('samples2'),
             ns=ns,
             condition = "input.n_networks >= 2",
             selectInput(ns('samples2'), 'Samples for GRN #2:', unique(metadata[[ncol(metadata)]]),
                         selected = unique(metadata[[ncol(metadata)]]), multiple = TRUE),
-            selectInput(ns('method2'), 'Inference method for GRN #2', c("GENIE3", "GNET2"))
           ),
           conditionalPanel(
             id = ns('samples3'),
@@ -40,7 +38,6 @@ GRNpanelUI <- function(id, metadata, show = TRUE){
             condition = "input.n_networks >= 3",
             selectInput(ns('samples3'), 'Samples for GRN #3:', unique(metadata[[ncol(metadata)]]),
                         selected = unique(metadata[[ncol(metadata)]]), multiple = TRUE),
-            selectInput(ns('method3'), 'Inference method for GRN #3', c("GENIE3", "GNET2"))
           ),
           conditionalPanel(
             id = ns('samples4'),
@@ -48,7 +45,6 @@ GRNpanelUI <- function(id, metadata, show = TRUE){
             condition = "input.n_networks >= 4",
             selectInput(ns('samples4'), 'Samples for GRN #4:', unique(metadata[[ncol(metadata)]]),
                         selected = unique(metadata[[ncol(metadata)]]), multiple = TRUE),
-            selectInput(ns('method4'), 'Inference method for GRN #4', c("GENIE3", "GNET2"))
           ),
           
           selectInput(ns("regulators"), "Target genes:", multiple = TRUE, choices = character(0)),
@@ -106,23 +102,17 @@ GRNpanelUI <- function(id, metadata, show = TRUE){
 
 #' @rdname GRNpanel
 #' @export
-GRNpanelServer <- function(id, expression.matrix, metadata, DEresults, anno){
+GRNpanelServer <- function(id, expression.matrix, metadata, anno){
   
   stopifnot({
     is.reactive(expression.matrix)
     is.reactive(metadata)
-    is.reactive(DEresults)
     !is.reactive(anno)
   })
   
   moduleServer(id, function(input, output, session){
     
-    observe(updateSelectizeInput(
-      session, 
-      "regulators", 
-      choices = DEresults()$DE()$DEtableSubset$gene_name, 
-      server = TRUE
-    ))
+    updateSelectizeInput(session, "regulators", choices = anno$NAME, server = TRUE)
     
     observe({
       enable_condition <- length(input[["regulators"]]) >= 2 &
@@ -139,10 +129,6 @@ GRNpanelServer <- function(id, expression.matrix, metadata, DEresults, anno){
       bindEvent(input[["regulators"]], input[["n_networks"]], input[["samples1"]],
                 input[["samples2"]], input[["samples3"]], input[["samples4"]])
     
-    expression.matrix.subset <- reactive({
-      genes <- DEresults()$DE()$DEtableSubset$gene_id
-      expression.matrix()[genes, ]
-    })
     
     n_networks <- reactive(input[["n_networks"]]) %>% bindEvent(input[["goGRN"]])
     observe(updateSelectInput(session, "plotId", choices = seq_len(n_networks())))
@@ -151,13 +137,13 @@ GRNpanelServer <- function(id, expression.matrix, metadata, DEresults, anno){
       shinyjs::disable("goGRN")
       if(n_networks() >= 1){
         weightMat <- infer_GRN(
-          expression.matrix = expression.matrix.subset(), 
+          expression.matrix = expression.matrix(), 
           metadata = metadata(), 
           anno = anno, 
           regulators = input[["regulators"]], 
           condition = input[["condition"]], 
           samples = input[["samples1"]], 
-          inference_method = input[["method1"]]
+          inference_method = "GENIE3"
         )
         shinyjs::enable("goGRN")
       }else{
@@ -166,19 +152,19 @@ GRNpanelServer <- function(id, expression.matrix, metadata, DEresults, anno){
       weightMat
     }) %>%
       bindCache(metadata(), input[["regulators"]], input[["condition"]], 
-                input[["samples1"]], input[["method1"]], n_networks()) %>%
+                input[["samples1"]], n_networks()) %>%
       bindEvent(input[["goGRN"]])
     GRNresults2 <- reactive({
       shinyjs::disable("goGRN")
       if(n_networks() >= 2){
         weightMat <- infer_GRN(
-          expression.matrix = expression.matrix.subset(), 
+          expression.matrix = expression.matrix(), 
           metadata = metadata(), 
           anno = anno, 
           regulators = input[["regulators"]], 
           condition = input[["condition"]], 
           samples = input[["samples2"]], 
-          inference_method = input[["method2"]]
+          inference_method = "GENIE3"
         )
         shinyjs::enable("goGRN")
       }else{
@@ -187,19 +173,19 @@ GRNpanelServer <- function(id, expression.matrix, metadata, DEresults, anno){
       weightMat
     }) %>%
       bindCache(metadata(), input[["regulators"]], input[["condition"]], 
-                input[["samples2"]], input[["method2"]], n_networks()) %>%
+                input[["samples2"]], n_networks()) %>%
       bindEvent(input[["goGRN"]])
     GRNresults3 <- reactive({
       shinyjs::disable("goGRN")
       if(n_networks() >= 3){
         weightMat <- infer_GRN(
-          expression.matrix = expression.matrix.subset(), 
+          expression.matrix = expression.matrix(), 
           metadata = metadata(), 
           anno = anno, 
           regulators = input[["regulators"]], 
           condition = input[["condition"]], 
           samples = input[["samples3"]], 
-          inference_method = input[["method3"]]
+          inference_method = "GENIE3"
         )
         shinyjs::enable("goGRN")
       }else{
@@ -208,19 +194,19 @@ GRNpanelServer <- function(id, expression.matrix, metadata, DEresults, anno){
       weightMat
     }) %>%
       bindCache(metadata(), input[["regulators"]], input[["condition"]], 
-                input[["samples3"]], input[["method3"]], n_networks()) %>%
+                input[["samples3"]], n_networks()) %>%
       bindEvent(input[["goGRN"]])
     GRNresults4 <- reactive({
       shinyjs::disable("goGRN")
       if(n_networks() >= 4){
         weightMat <- infer_GRN(
-          expression.matrix = expression.matrix.subset(), 
+          expression.matrix = expression.matrix(), 
           metadata = metadata(), 
           anno = anno, 
           regulators = input[["regulators"]], 
           condition = input[["condition"]], 
           samples = input[["samples4"]], 
-          inference_method = input[["method4"]]
+          inference_method = "GENIE3"
         )
         shinyjs::enable("goGRN")
       }else{
@@ -229,7 +215,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, DEresults, anno){
       weightMat
     }) %>%
       bindCache(metadata(), input[["regulators"]], input[["condition"]], 
-                input[["samples4"]], input[["method4"]], n_networks()) %>%
+                input[["samples4"]], n_networks()) %>%
       bindEvent(input[["goGRN"]])
     
     weightMatList <- reactive({

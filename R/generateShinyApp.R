@@ -50,8 +50,6 @@
 #' @export
 #' @import shiny
 #' @import ggplot2
-#' @import GNET2
-#' @import xgboost
 #' @importFrom rlang .data
 #' @examples
 #' expression.matrix.preproc <- as.matrix(read.csv(

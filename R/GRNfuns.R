@@ -9,8 +9,8 @@
 #' @param condition name of the metadata column to select samples from
 #' @param samples names of the sample groups to select; must appear in
 #' \code{metadata[[condition]]}
-#' @param inference_method method used for GRN inference; supported methods
-#' are GENIE3 and GNET2.
+#' @param inference_method method used for GRN inference; only supported method
+#' is currently GENIE3.
 #' @return The adjacency matrix of the inferred network
 #' @export
 #' @examples 
@@ -51,9 +51,6 @@ infer_GRN <- function(expression.matrix, metadata, anno, seed = 13,
   set.seed(seed)
   if(inference_method == "GENIE3"){
     res <- GENIE3::GENIE3(expression.matrix[, samples], regulators = regulator.ids)
-  }else if(inference_method == "GNET2"){
-    gnet_out <- gnet_modified(expression.matrix[, samples], reg_names = regulator.ids)
-    res <- GNET2::extract_edges(gnet_out)
   }
   res
 }
