@@ -25,7 +25,8 @@ GRNTransPanelUI <- function(id, reference.table.name, comparison.table.name){
     sidebarLayout(
       
       sidebarPanel(
-        selectInput(ns("choices"), 'Table to choose target genes from:',multiple=FALSE,choices=character(0)),
+        selectInput(ns("choices"), 'Table to choose target genes from:',
+                    multiple=FALSE, choices=character(0)),
         selectInput(ns("targetGenes"), "Target genes:", multiple = TRUE, choices = character(0)),
         actionButton(ns('goGRN'), label = 'Start GRN inference'),
         
@@ -43,17 +44,30 @@ GRNTransPanelUI <- function(id, reference.table.name, comparison.table.name){
 
 #' @rdname GRNTransPanel
 #' @export
-GRNTransPanelServer <- function(id, expression.matrix, anno, anno.comparison, expression.matrix.comparison, tablenames, seed = 13){
+GRNTransPanelServer <- function(id, expression.matrix, anno, anno.comparison, 
+                                expression.matrix.comparison, tablenames, seed = 13){
   
   stopifnot({
-    is.reactive(expression.matrix)
+    !is.reactive(expression.matrix)
+    !is.reactive(expression.matrix.comparison)
     !is.reactive(anno)
+    !is.reactive(anno.comparison)
+    !is.reactive(tablenames)
+    !is.reactive(seed)
   })
   moduleServer(id, function(input, output, session){
-    updateSelectizeInput(session, "targetGenes", choices = c(anno$NAME,anno.comparison$NAME), server = TRUE)
+    reference.table <- rbind(anno, anno.comparison)
+    
     updateSelectInput(session, "choices", choices = tablenames)
     
-    reference.table <- rbind(anno,anno.comparison)
+    observe({
+      if(input[["choices"]] == tablenames[1]){
+        updateSelectizeInput(session, "targetGenes", choices = anno$NAME, server = TRUE)
+      }else if(input[["choices"]] == tablenames[2]){
+        updateSelectizeInput(session, "targetGenes", choices = anno.comparison$NAME, server = TRUE)
+      }
+    }) %>%
+      bindEvent(input[["choices"]])
     
     reference.anno <- reactive({
       if (input[['choices']] == tablenames[1]) {reference.anno <- anno} else {reference.anno <- anno.comparison}
