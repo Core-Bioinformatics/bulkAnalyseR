@@ -203,8 +203,6 @@ generateShinyApp <- function(
   )
   generateIntegrationDataFiles(
     shiny.dir = shiny.dir,
-    expression.matrix = expression.matrix,
-    metadata = metadata,
     cis.integration = cis.integration,
     trans.integration = trans.integration,
     custom.integration = custom.integration
@@ -294,17 +292,20 @@ validateIntegrationInputs <- function(
   custom.integration = custom.integration
 ){
   for (i in seq_len(nrow(cis.integration))){
+    if ((cis.integration[i,]$reference.expression.matrix)=='expression.matrix'){
+      stop("Reference expression matrix for cis integration cannot be named expression.matrix, this is a reserved name")
+    }
     cis.integration.row.reference.coord = get(cis.integration[i,]$reference.coord)
     cis.integration.row.comparison.coord = get(cis.integration[i,]$comparison.coord)
     cis.integration.row.reference.expression.matrix = get(cis.integration[i,]$reference.expression.matrix)
-    if((!identical(colnames(cis.integration.row.reference.coord),c("ID","Chrom","Start","Stop","Name"))) | 
-       (!identical(colnames(cis.integration.row.comparison.coord),c("ID","Chrom","Start","Stop","Name")))){
+    if((!identical(colnames(cis.integration.row.reference.coord), c("ID","Chrom","Start","Stop","Name"))) | 
+       (!identical(colnames(cis.integration.row.comparison.coord), c("ID","Chrom","Start","Stop","Name")))){
       stop("Coordinate tables for cis integration should have 5 columns named ID, Chrom, Start, Stop and Name")
     }
-    if(length(intersect(rownames(cis.integration.row.reference.expression.matrix),cis.integration.row.reference.coord$ID))==0){
+    if(length(intersect(rownames(cis.integration.row.reference.expression.matrix), cis.integration.row.reference.coord$ID)) == 0){
       stop("IDs in the reference coordinate table for cis integration should match row names in reference expression matrix")
     }
-    if(length(intersect(cis.integration.row.reference.coord$Chrom,cis.integration.row.comparison.coord$Chrom))==0){
+    if(length(intersect(cis.integration.row.reference.coord$Chrom, cis.integration.row.comparison.coord$Chrom)) == 0){
       stop("Chromosome names for cis integration should match between reference and comparison coordinate tables")
     }
     if((!is.numeric(cis.integration.row.reference.coord$Start) | (!is.numeric(cis.integration.row.reference.coord$Stop)))){
@@ -313,12 +314,19 @@ validateIntegrationInputs <- function(
     if((!is.numeric(cis.integration.row.comparison.coord$Start) | (!is.numeric(cis.integration.row.comparison.coord$Stop)))){
       stop("Start and stop coordinates for cis integration should be numeric")
     }
-    if(length(intersect(rownames(expression.matrix),cis.integration.row.comparison.coord$ID))!=0){
+    if(length(intersect(rownames(expression.matrix),cis.integration.row.comparison.coord$ID)) != 0){
       stop("IDs must be unique to either reference or comparison tables for cis integration")
     }
   }
   
   for (i in seq_len(nrow(trans.integration))){
+    if ((trans.integration[i,]$reference.expression.matrix)=='expression.matrix'){
+      stop("Reference expression matrix for trans integration cannot be named expression.matrix, this is a reserved name")
+    }
+    if ((trans.integration[i,]$comparison.expression.matrix)=='expression.matrix'){
+      stop("Comparison expression matrix for trans integration cannot be named expression.matrix, this is a reserved name")
+    }
+    
     trans.integration.row.reference.expression.matrix = get(trans.integration[i,]$reference.expression.matrix)
     trans.integration.row.comparison.expression.matrix = get(trans.integration[i,]$comparison.expression.matrix)
     
@@ -340,6 +348,11 @@ validateIntegrationInputs <- function(
     }
   
   for (i in seq_len(nrow(custom.integration))){
+    
+    if ((custom.integration[i,]$reference.expression.matrix)=='expression.matrix'){
+      stop("Reference expression matrix for custom integration cannot be named expression.matrix, this is a reserved name")
+    }
+    
     custom.integration.row.comparison.table = get(custom.integration[i,]$comparison.table)
     custom.integration.row.reference.expression.matrix = get(custom.integration[i,]$reference.expression.matrix)
     
@@ -373,8 +386,6 @@ generateDataFiles <- function(
 
 generateIntegrationDataFiles <- function(
   shiny.dir,
-  expression.matrix,
-  metadata,
   cis.integration,
   trans.integration,
   custom.integration
