@@ -8,7 +8,7 @@ preprocessExpressionMatrix(
   expression.matrix,
   denoise = TRUE,
   output.plot = FALSE,
-  normalisation.method = c("quantile", "rpm"),
+  normalisation.method = c("quantile", "rpm", "tmm", "deseq2"),
   ...
 )
 }
@@ -24,7 +24,19 @@ noise analysis (printed to the console); default is FALSE}
 
 \item{normalisation.method}{the normalisation method to be used; default is
 quantile; any unrecognised input will result in no normalisation being
-applied, but proceeding with un-normalised data is not recommended}
+applied, but proceeding with un-normalised data is not recommended;
+currently supported normalisation methods are:
+\describe{
+\item{quantile}{Quantile normalisation using the \code{normalize.quantiles}
+function from the \code{preprocessCore} package}
+\item{rpm}{A version of RPM (reads per million) normalisation, where each
+sample is scaled by the median expression in the sample divided by the
+total number of reads in that sample}
+\item{tmm}{Trimmed Mean of M values normalisation using the
+\code{calcNormFactors} function from the \code{edgeR} package}
+\item{deseq2}{Size factor normalisation using the
+\code{estimateSizeFactorsForMatrix} function from the \code{DESeq2} package}
+}}
 
 \item{...}{optional arguments passed on to \code{noisyr::noisyr_counts()}}
 }
