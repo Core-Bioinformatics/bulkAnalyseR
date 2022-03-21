@@ -235,8 +235,8 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       weightMatList
     })
     
-    recurring_targets <- reactive({
-      find_targets_with_recurring_edges(weightMatList(), input[["plotConnections"]])
+    recurring_regulators <- reactive({
+      find_regulators_with_recurring_edges(weightMatList(), input[["plotConnections"]])
     })
     
     GRNplot1 <- reactive(plot_GRN(
@@ -245,7 +245,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       plotConnections = input[["plotConnections"]], 
       plot_position_grid = 1, 
       n_networks = n_networks(),
-      recurring_targets = recurring_targets()
+      recurring_regulators = recurring_regulators()
     ))
     GRNplot2 <- reactive(plot_GRN(
       weightMat = GRNresults2(), 
@@ -253,7 +253,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       plotConnections = input[["plotConnections"]], 
       plot_position_grid = 2, 
       n_networks = n_networks(),
-      recurring_targets = recurring_targets()
+      recurring_regulators = recurring_regulators()
     ))
     GRNplot3 <- reactive(plot_GRN(
       weightMat = GRNresults3(), 
@@ -261,7 +261,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       plotConnections = input[["plotConnections"]], 
       plot_position_grid = 3, 
       n_networks = n_networks(),
-      recurring_targets = recurring_targets()
+      recurring_regulators = recurring_regulators()
     )) 
     GRNplot4 <- reactive(plot_GRN(
       weightMat = GRNresults4(), 
@@ -269,7 +269,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       plotConnections = input[["plotConnections"]], 
       plot_position_grid = 4, 
       n_networks = n_networks(),
-      recurring_targets = recurring_targets()
+      recurring_regulators = recurring_regulators()
     )) 
     
     upsetPlot <- reactive(plot_upset(weightMatList(), input[["plotConnections"]])) 
