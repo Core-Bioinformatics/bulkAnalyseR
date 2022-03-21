@@ -114,7 +114,8 @@ DEanalysis_deseq2 <- function(
   design <- stats::model.matrix(~ 0 + condition)
   
   deseq <- DESeq2::DESeqDataSetFromMatrix(expression.matrix, data.frame(condition), design)
-  sizeFactors(deseq) <- stats::setNames(rep(1, ncol(expression.matrix)), colnames(expression.matrix))
+  DESeq2::sizeFactors(deseq) <- stats::setNames(rep(1, ncol(expression.matrix)), 
+                                                colnames(expression.matrix))
   deseq <- DESeq2::DESeq(deseq)
   if(var1 < var2) contrast <- c(-1, 1) else contrast <- c(1, -1)
   deseq.res <- DESeq2::results(deseq, contrast = contrast)
