@@ -10,7 +10,19 @@
 #' noise analysis (printed to the console); default is FALSE
 #' @param normalisation.method the normalisation method to be used; default is
 #' quantile; any unrecognised input will result in no normalisation being 
-#' applied, but proceeding with un-normalised data is not recommended
+#' applied, but proceeding with un-normalised data is not recommended;
+#' currently supported normalisation methods are:
+#' \describe{
+#'   \item{quantile}{Quantile normalisation using the \code{normalize.quantiles}
+#'   function from the \code{preprocessCore} package}
+#'   \item{rpm}{A version of RPM (reads per million) normalisation, where each
+#'   sample is scaled by the median expression in the sample divided by the 
+#'   total number of reads in that sample}
+#'   \item{tmm}{Trimmed Mean of M values normalisation using the
+#'   \code{calcNormFactors} function from the \code{edgeR} package}
+#'   \item{deseq2}{Size factor normalisation using the 
+#'   \code{estimateSizeFactorsForMatrix} function from the \code{DESeq2} package}
+#' }
 #' @param ... optional arguments passed on to \code{noisyr::noisyr_counts()}
 #' @return The denoised, normalised expression matrix; some rows (genes)
 #' may have been removed by noisyR.
@@ -25,7 +37,7 @@ preprocessExpressionMatrix <- function(
   expression.matrix,
   denoise = TRUE,
   output.plot = FALSE,
-  normalisation.method = c("quantile", "rpm"),
+  normalisation.method = c("quantile", "rpm", "tmm", "deseq2"),
   ...
 ){
   if(denoise){
@@ -33,20 +45,38 @@ preprocessExpressionMatrix <- function(
   }else{
     warning("Denoise was set to FALSE, proceeding without denoising data is not recommended")
   }
+  message("Performing ", normalisation.method[1], " normalisation...")
   if(normalisation.method[1] == "quantile"){
-    message("Performing ", normalisation.method[1], " normalisation...")
     expression.matrix.normalised <- preprocessCore::normalize.quantiles(expression.matrix)
     rownames(expression.matrix.normalised) <- base::rownames(expression.matrix)
     colnames(expression.matrix.normalised) <- base::colnames(expression.matrix)
     expression.matrix <- expression.matrix.normalised
-    message("Done!")
   }else if(normalisation.method[1] == "rpm"){
-    message("Performing ", normalisation.method[1], " normalisation...")
-    expression.matrix <- expression.matrix / colSums(expression.matrix) * stats::median(colSums(expression.matrix))
-    message("Done!")
+    csums <- colSums(expression.matrix)
+    expression.matrix <- sweep(
+      x = expression.matrix, 
+      MARGIN = 2, 
+      STATS = stats::median(csums) / csums,
+      FUN = "*"
+    )
+  }else if(normalisation.method[1] == "tmm"){
+    expression.matrix <- sweep(
+      x = expression.matrix, 
+      MARGIN = 2, 
+      STATS = edgeR::calcNormFactors(expression.matrix),
+      FUN = "*"
+    )
+  }else if(normalisation.method[1] == "deseq2"){
+    expression.matrix <- sweep(
+      x = expression.matrix, 
+      MARGIN = 2, 
+      STATS = DESeq2::estimateSizeFactorsForMatrix(expression.matrix),
+      FUN = "*"
+    )
   }else{
     warning("No valid normalisation method selected, proceeding with un-normalised data is not recommended")
   }
+  message("Done!")
   expression.matrix
 }
 
