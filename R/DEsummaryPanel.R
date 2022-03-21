@@ -17,6 +17,23 @@ DEsummaryPanelUI <- function(id, metadata, show = TRUE){
   if(show){
     tabPanel(
       'DE Summary',
+      tags$h1("Gene heatmap"),
+      shinyWidgets::dropdownButton(
+        radioButtons(ns('heatmap.processing'), label = "Heatmap values",
+                     choices = c('Expression','Log2 Expression','Z-score'), 
+                     selected = 'Z-score'),
+        shinyjqui::orderInput(ns('heatmap.annotations'), label = "Show annotations", items = colnames(metadata)),
+        selectInput(ns("geneName"), "Additional genes to include:", multiple = TRUE, choices = character(0)),
+        div("\nIf no genes are selected in the DE panel or here then the top 50 DE genes are chosen.\n"),
+        div(style="margin-bottom:10px"),
+        textInput(ns('plotHeatmapFileName'), 'File name for heatmap plot download', value ='HeatmapPlot.png'),
+        downloadButton(ns('downloadHeatmapPlot'), 'Download Heatmap Plot'),
+        
+        status = "info",
+        icon = icon("gear", verify_fa = FALSE), 
+        tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
+      ),
+      plotOutput(ns('heatmap'), height = 800),
       tags$h1("Principal Component Analysis on DE genes"),
       shinyWidgets::dropdownButton(
         radioButtons(ns('pca.annotation'), label = "Group by",
@@ -40,23 +57,6 @@ DEsummaryPanelUI <- function(id, metadata, show = TRUE){
         tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
       ),
       plotOutput(ns('pca')),
-      tags$h1("Gene heatmap"),
-      shinyWidgets::dropdownButton(
-        radioButtons(ns('heatmap.processing'), label = "Heatmap values",
-                     choices = c('Expression','Log2 Expression','Z-score'), 
-                     selected = 'Z-score'),
-        shinyjqui::orderInput(ns('heatmap.annotations'), label = "Show annotations", items = colnames(metadata)),
-        selectInput(ns("geneName"), "Additional genes to include:", multiple = TRUE, choices = character(0)),
-        div("\nIf no genes are selected in the DE panel or here then the top 50 DE genes are chosen.\n"),
-        div(style="margin-bottom:10px"),
-        textInput(ns('plotHeatmapFileName'), 'File name for heatmap plot download', value ='HeatmapPlot.png'),
-        downloadButton(ns('downloadHeatmapPlot'), 'Download Heatmap Plot'),
-        
-        status = "info",
-        icon = icon("gear", verify_fa = FALSE), 
-        tooltip = shinyWidgets::tooltipOptions(title = "Click to see inputs!")
-      ),
-      plotOutput(ns('heatmap'), height = 400),
     )
   }else{
     NULL
@@ -79,29 +79,6 @@ DEsummaryPanelServer <- function(id, expression.matrix, metadata, DEresults, ann
     
     #Set up server-side search for gene names
     updateSelectizeInput(session, "geneName", choices = anno$NAME, server = TRUE)
-    
-    pca.plot <- reactive({
-      results = DEresults()$DE()
-      selectedGenes = DEresults()$selectedGenes()
-      if (input[['pca.useAllDE']]){
-        geneSet = results$DEtableSubset$gene_id
-      }else if (length(selectedGenes) != 0){
-        geneSet = selectedGenes
-      }else{
-        geneSet <- utils::head(results$DEtableSubset$gene_id, 50)
-      }
-      subsetExpression <- expression.matrix()[geneSet, , drop = FALSE]
-      myplot <- plot_pca(
-        expression.matrix = subsetExpression,
-        metadata = metadata(),
-        annotation.id = match(input[['pca.annotation']], colnames(metadata())),
-        n.abundant = NULL,
-        show.labels = input[['pca.show.labels']],
-        show.ellipses = input[['pca.show.ellipses']]
-      )
-      myplot
-    })
-    output[['pca']] <- renderPlot(pca.plot())
     
     observe({
       items <- colnames(metadata())
@@ -142,6 +119,29 @@ DEsummaryPanelServer <- function(id, expression.matrix, metadata, DEresults, ann
       return(myplot)
     })
     output[['heatmap']] <- renderPlot(heatmap.plot(), height = 800)
+    
+    pca.plot <- reactive({
+      results = DEresults()$DE()
+      selectedGenes = DEresults()$selectedGenes()
+      if (input[['pca.useAllDE']]){
+        geneSet = results$DEtableSubset$gene_id
+      }else if (length(selectedGenes) != 0){
+        geneSet = selectedGenes
+      }else{
+        geneSet <- utils::head(results$DEtableSubset$gene_id, 50)
+      }
+      subsetExpression <- expression.matrix()[geneSet, , drop = FALSE]
+      myplot <- plot_pca(
+        expression.matrix = subsetExpression,
+        metadata = metadata(),
+        annotation.id = match(input[['pca.annotation']], colnames(metadata())),
+        n.abundant = NULL,
+        show.labels = input[['pca.show.labels']],
+        show.ellipses = input[['pca.show.ellipses']]
+      )
+      myplot
+    })
+    output[['pca']] <- renderPlot(pca.plot())
     
     output[['downloadHeatmapPlot']] <- downloadHandler(
       filename = function() { input[['plotHeatmapFileName']] },
