@@ -1,10 +1,10 @@
 #' Perform GRN inference
 #' @description This function performs Gene Regulatory Network inference on
-#' a subset of the expression matrix, for a set of potential regulators
+#' a subset of the expression matrix, for a set of potential targets
 #' @inheritParams GRNpanel
 #' @param seed the random seed to be set when running GRN inference, to ensure
 #' reproducibility of outputs
-#' @param regulators the regulators of interest around which the GRN is built;
+#' @param targets the target genes of interest around which the GRN is built;
 #' must be row names of the expression matrix
 #' @param condition name of the metadata column to select samples from
 #' @param samples names of the sample groups to select; must appear in
@@ -38,19 +38,19 @@
 #'   metadata = metadata,
 #'   anno = anno,
 #'   seed = 13,
-#'   regulators = c("Hecw2", "Akr1cl"),
+#'   targets = c("Hecw2", "Akr1cl"),
 #'   condition = "timepoint",
 #'   samples = "0h",
 #'   inference_method = "GENIE3"
 #' )
 infer_GRN <- function(expression.matrix, metadata, anno, seed = 13, 
-                      regulators, condition, samples, inference_method){
+                      targets, condition, samples, inference_method){
   inference_method <- inference_method[1]
-  regulator.ids <- anno$ENSEMBL[match(regulators, anno$NAME)]
+  target.ids <- anno$ENSEMBL[match(targets, anno$NAME)]
   samples <- metadata[[condition]] %in% samples
   set.seed(seed)
   if(inference_method == "GENIE3"){
-    res <- GENIE3::GENIE3(expression.matrix[, samples], regulators = regulator.ids)
+    res <- GENIE3::GENIE3(expression.matrix[, samples], targets = target.ids)
   }
   res
 }

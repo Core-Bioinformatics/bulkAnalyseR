@@ -47,7 +47,7 @@ GRNpanelUI <- function(id, metadata, show = TRUE){
                         selected = unique(metadata[[ncol(metadata)]]), multiple = TRUE),
           ),
           
-          selectInput(ns("regulators"), "Target genes:", multiple = TRUE, choices = character(0)),
+          selectInput(ns("targets"), "Target genes:", multiple = TRUE, choices = character(0)),
           shinyjs::disabled(actionButton(ns('goGRN'), label = 'Start GRN inference')),
           
           numericInput(ns("plotConnections"), "Connections to plot:", 5, 0, 100),
@@ -112,10 +112,10 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
   
   moduleServer(id, function(input, output, session){
     
-    updateSelectizeInput(session, "regulators", choices = anno$NAME, server = TRUE)
+    updateSelectizeInput(session, "targets", choices = anno$NAME, server = TRUE)
     
     observe({
-      enable_condition <- length(input[["regulators"]]) >= 2 &
+      enable_condition <- length(input[["targets"]]) >= 1 &
         (input[["n_networks"]] < 1 | length(input[["samples1"]]) > 0) &
         (input[["n_networks"]] < 2 | length(input[["samples2"]]) > 0) &
         (input[["n_networks"]] < 3 | length(input[["samples3"]]) > 0) &
@@ -126,7 +126,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
         shinyjs::disable("goGRN")
       }
     }) %>%
-      bindEvent(input[["regulators"]], input[["n_networks"]], input[["samples1"]],
+      bindEvent(input[["targets"]], input[["n_networks"]], input[["samples1"]],
                 input[["samples2"]], input[["samples3"]], input[["samples4"]])
     
     
@@ -140,7 +140,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
           expression.matrix = expression.matrix(), 
           metadata = metadata(), 
           anno = anno, 
-          regulators = input[["regulators"]], 
+          targets = input[["targets"]], 
           condition = input[["condition"]], 
           samples = input[["samples1"]], 
           inference_method = "GENIE3"
@@ -151,7 +151,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       }
       weightMat
     }) %>%
-      bindCache(metadata(), input[["regulators"]], input[["condition"]], 
+      bindCache(metadata(), input[["targets"]], input[["condition"]], 
                 input[["samples1"]], n_networks()) %>%
       bindEvent(input[["goGRN"]])
     GRNresults2 <- reactive({
@@ -161,7 +161,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
           expression.matrix = expression.matrix(), 
           metadata = metadata(), 
           anno = anno, 
-          regulators = input[["regulators"]], 
+          targets = input[["targets"]], 
           condition = input[["condition"]], 
           samples = input[["samples2"]], 
           inference_method = "GENIE3"
@@ -172,7 +172,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       }
       weightMat
     }) %>%
-      bindCache(metadata(), input[["regulators"]], input[["condition"]], 
+      bindCache(metadata(), input[["targets"]], input[["condition"]], 
                 input[["samples2"]], n_networks()) %>%
       bindEvent(input[["goGRN"]])
     GRNresults3 <- reactive({
@@ -182,7 +182,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
           expression.matrix = expression.matrix(), 
           metadata = metadata(), 
           anno = anno, 
-          regulators = input[["regulators"]], 
+          targets = input[["targets"]], 
           condition = input[["condition"]], 
           samples = input[["samples3"]], 
           inference_method = "GENIE3"
@@ -193,7 +193,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       }
       weightMat
     }) %>%
-      bindCache(metadata(), input[["regulators"]], input[["condition"]], 
+      bindCache(metadata(), input[["targets"]], input[["condition"]], 
                 input[["samples3"]], n_networks()) %>%
       bindEvent(input[["goGRN"]])
     GRNresults4 <- reactive({
@@ -203,7 +203,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
           expression.matrix = expression.matrix(), 
           metadata = metadata(), 
           anno = anno, 
-          regulators = input[["regulators"]], 
+          targets = input[["targets"]], 
           condition = input[["condition"]], 
           samples = input[["samples4"]], 
           inference_method = "GENIE3"
@@ -214,7 +214,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       }
       weightMat
     }) %>%
-      bindCache(metadata(), input[["regulators"]], input[["condition"]], 
+      bindCache(metadata(), input[["targets"]], input[["condition"]], 
                 input[["samples4"]], n_networks()) %>%
       bindEvent(input[["goGRN"]])
     
