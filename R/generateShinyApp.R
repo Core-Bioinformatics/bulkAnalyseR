@@ -40,6 +40,17 @@
 #' will not appear unless organism is also supplied; note that the 'DE' panel 
 #' is required for 'DEplot', 'Enrichment', and GRN; a list  (of the same 
 #' length as modality) can be provided if \code{length(modality) > 1}
+#' @param cis.integration functionality to integrate extra cis-regulatory information into GRN panel. 
+#' Tibble containing names of reference expression matrix, tables of coordinates for elements corresponding to rows 
+#' of reference expression matrix (reference.coord), tables of coordinates to compare against 
+#' reference.coord (comparison.coord) and names for comparison tables.
+#' @param trans.integration functionality to integrate extra trans-regulatory information into GRN panel. 
+#' Tibble containing names of reference expression matrix, (reference.expression.matrix), comparison expression matrix (comparison.expression.matrix).
+#' Organism database names for each expression matrix and names for each table are also required. 
+#' @param custom.integration functionality to integrate custom information related to rows of 
+#' reference expression matrix. Tibble containining names of reference expression matrix, tables (comparison.table) 
+#' with Reference_ID and Reference_Name (matching ENSEMBL and NAME columns of reference organism database) and 
+#' Comparison_ID and Comparison_Name. Names for the reference expression matrix and comparison table (comparison.table.name) are also required.
 #' @param panels.extra,data.extra,packages.extra functionality to add new
 #' user-created panels to the app to extend functionality or change the default
 #' behaviour of existing panels; a data frame of the modality, panel UI and 
@@ -111,7 +122,30 @@ generateShinyApp <- function(
     serverVars = NULL
   ),
   data.extra = c(),
-  packages.extra = c()
+  packages.extra = c(),
+  cis.integration = tibble::tibble(
+    reference.expression.matrix = NULL,
+    reference.org.db = NULL,
+    reference.coord = NULL,
+    comparison.coord = NULL,
+    reference.table.name = NULL,
+    comparison.table.name = NULL
+  ),
+  trans.integration = tibble::tibble(
+    reference.expression.matrix = NULL,
+    reference.org.db = NULL,
+    comparison.expression.matrix = NULL,
+    comparison.org.db = NULL,
+    reference.table.name = NULL,
+    comparison.table.name = NULL
+  ),
+  custom.integration = tibble::tibble(
+    reference.expression.matrix = NULL,
+    reference.org.db = NULL,
+    comparison.table = NULL,
+    reference.table.name = NULL,
+    comparison.table.name = NULL
+  )
 ){
   validateAppInputs(
     shiny.dir = shiny.dir,
@@ -123,7 +157,11 @@ generateShinyApp <- function(
     panels.default = panels.default,
     data.extra = data.extra
   )
-  
+  validateIntegrationInputs(
+    cis.integration = cis.integration,
+    trans.integration = trans.integration,
+    custom.integration = custom.integration
+  )
   n_modalities <- length(modality)
   if(!is.list(expression.matrix)){
     expression.matrix <- rep(list(expression.matrix), n_modalities)
@@ -151,9 +189,11 @@ generateShinyApp <- function(
     org.db = org.db,
     panels.default = panels.default,
     panels.extra = panels.extra,
-    packages.extra = packages.extra
+    packages.extra = packages.extra,
+    cis.integration = cis.integration,
+    trans.integration = trans.integration,
+    custom.integration = custom.integration
   )
-  
   generateDataFiles(
     shiny.dir = shiny.dir,
     modality = modality,
@@ -161,6 +201,13 @@ generateShinyApp <- function(
     metadata = metadata,
     data.extra = data.extra
   )
+  generateIntegrationDataFiles(
+    shiny.dir = shiny.dir,
+    cis.integration = cis.integration,
+    trans.integration = trans.integration,
+    custom.integration = custom.integration
+  )
+  
   message("App created! To launch, run shiny::runApp('", shiny.dir, "')")
   invisible(shiny.dir)
 }
@@ -239,6 +286,89 @@ validateAppInputs <- function(
   }
 }
 
+validateIntegrationInputs <- function(
+  cis.integration = cis.integration,
+  trans.integration = trans.integration,
+  custom.integration = custom.integration
+){
+  for (i in seq_len(nrow(cis.integration))){
+    if ((cis.integration[i,]$reference.expression.matrix)=='expression.matrix'){
+      stop("Reference expression matrix for cis integration cannot be named expression.matrix, this is a reserved name")
+    }
+    cis.integration.row.reference.coord = get(cis.integration[i,]$reference.coord)
+    cis.integration.row.comparison.coord = get(cis.integration[i,]$comparison.coord)
+    cis.integration.row.reference.expression.matrix = get(cis.integration[i,]$reference.expression.matrix)
+    if((!identical(colnames(cis.integration.row.reference.coord), c("ID","Chrom","Start","Stop","Name"))) | 
+       (!identical(colnames(cis.integration.row.comparison.coord), c("ID","Chrom","Start","Stop","Name")))){
+      stop("Coordinate tables for cis integration should have 5 columns named ID, Chrom, Start, Stop and Name")
+    }
+    if(length(intersect(rownames(cis.integration.row.reference.expression.matrix), cis.integration.row.reference.coord$ID)) == 0){
+      stop("IDs in the reference coordinate table for cis integration should match row names in reference expression matrix")
+    }
+    if(length(intersect(cis.integration.row.reference.coord$Chrom, cis.integration.row.comparison.coord$Chrom)) == 0){
+      stop("Chromosome names for cis integration should match between reference and comparison coordinate tables")
+    }
+    if((!is.numeric(cis.integration.row.reference.coord$Start) | (!is.numeric(cis.integration.row.reference.coord$Stop)))){
+      stop("Start and stop coordinates for cis integration should be numeric")
+    }
+    if((!is.numeric(cis.integration.row.comparison.coord$Start) | (!is.numeric(cis.integration.row.comparison.coord$Stop)))){
+      stop("Start and stop coordinates for cis integration should be numeric")
+    }
+    if(length(intersect(rownames(expression.matrix),cis.integration.row.comparison.coord$ID)) != 0){
+      stop("IDs must be unique to either reference or comparison tables for cis integration")
+    }
+  }
+  
+  for (i in seq_len(nrow(trans.integration))){
+    if ((trans.integration[i,]$reference.expression.matrix)=='expression.matrix'){
+      stop("Reference expression matrix for trans integration cannot be named expression.matrix, this is a reserved name")
+    }
+    if ((trans.integration[i,]$comparison.expression.matrix)=='expression.matrix'){
+      stop("Comparison expression matrix for trans integration cannot be named expression.matrix, this is a reserved name")
+    }
+    
+    trans.integration.row.reference.expression.matrix = get(trans.integration[i,]$reference.expression.matrix)
+    trans.integration.row.comparison.expression.matrix = get(trans.integration[i,]$comparison.expression.matrix)
+    
+    if(!is.matrix(trans.integration.row.reference.expression.matrix)){
+      stop("The expression matrix for trans integration must be a matrix")
+    }
+    if(!is.matrix(trans.integration.row.comparison.expression.matrix)){
+      stop("The expression matrix for trans integration must be a matrix")
+    }
+    if(!identical(colnames(trans.integration.row.reference.expression.matrix),colnames(trans.integration.row.comparison.expression.matrix))){
+      stop("The columns of the two expression matrices must be identical for trans integration")
+    }
+    if(length(intersect(rownames(expression.matrix),rownames(trans.integration.row.comparison.expression.matrix)))!=0){
+      stop("Row names must be unique to either reference or comparison tables for trans integration")
+    }
+    if(trans.integration$reference.table.name[i]==trans.integration$comparison.table.name[i]){
+      stop("Table names for trans integration must be different")
+    }
+    }
+  
+  for (i in seq_len(nrow(custom.integration))){
+    
+    if ((custom.integration[i,]$reference.expression.matrix)=='expression.matrix'){
+      stop("Reference expression matrix for custom integration cannot be named expression.matrix, this is a reserved name")
+    }
+    
+    custom.integration.row.comparison.table = get(custom.integration[i,]$comparison.table)
+    custom.integration.row.reference.expression.matrix = get(custom.integration[i,]$reference.expression.matrix)
+    
+    if(!is.matrix(custom.integration.row.reference.expression.matrix)){
+      stop("The expression matrix for custom integration must be a matrix")
+    }
+                                                             
+    if(!identical(colnames(custom.integration.row.comparison.table),c('Reference_ID','Reference_Name','Comparison_ID','Comparison_Name'))){
+      stop("The columns of comparison.table for custom integration must be Reference_ID, Reference_Name, Comparison_ID, Comparison_Name")
+    }
+    if(length(intersect(rownames(custom.integration.row.reference.expression.matrix),custom.integration.row.comparison.table$Reference_ID[i]))==0){
+      stop("Reference_ID column for custom integration should match row names from reference expression matrix")
+    }
+  }
+}
+
 generateDataFiles <- function(
   shiny.dir,
   modality,
@@ -254,6 +384,42 @@ generateDataFiles <- function(
   })
 }
 
+generateIntegrationDataFiles <- function(
+  shiny.dir,
+  cis.integration,
+  trans.integration,
+  custom.integration
+){
+  if (nrow(cis.integration) > 0){
+  cis.integration.data <- list()
+  for(i in seq_len(nrow(cis.integration))){
+    cis.integration.data[[cis.integration[i,]$reference.expression.matrix]]=get(cis.integration[i,]$reference.expression.matrix)
+    cis.integration.data[[cis.integration[i,]$reference.coord]]=get(cis.integration[i,]$reference.coord)
+    cis.integration.data[[cis.integration[i,]$comparison.coord]]=get(cis.integration[i,]$comparison.coord)
+  }
+  save(cis.integration.data,file = paste0(shiny.dir, "/", "cis_integration_data.rda"))
+  }
+  
+  if (nrow(trans.integration) > 0){
+    trans.integration.data <- list()
+    for(i in seq_len(nrow(trans.integration))){
+      trans.integration.data[[trans.integration[i,]$reference.expression.matrix]]=get(trans.integration[i,]$reference.expression.matrix)
+      trans.integration.data[[trans.integration[i,]$comparison.expression.matrix]]=get(trans.integration[i,]$comparison.expression.matrix)
+    }
+    save(trans.integration.data, file = paste0(shiny.dir, "/", "trans_integration_data.rda"))
+  }
+  
+  if (nrow(custom.integration) > 0){
+    custom.integration.data <- list()
+    for(i in seq_len(nrow(custom.integration))){
+      custom.integration.data[[custom.integration[i,]$reference.expression.matrix]]=get(custom.integration[i,]$reference.expression.matrix)
+      custom.integration.data[[custom.integration[i,]$comparison.table]]=get(custom.integration[i,]$comparison.table)
+    }
+    save(custom.integration.data,file = paste0(shiny.dir, "/", "custom_integration.data.rda"))
+  }
+}
+
+
 generateAppFile <- function(
   shiny.dir,
   app.title,
@@ -263,7 +429,10 @@ generateAppFile <- function(
   org.db,
   panels.default,
   panels.extra,
-  packages.extra
+  packages.extra,
+  cis.integration,
+  trans.integration,
+  custom.integration
 ){
   lines.out <- c()
   
@@ -303,8 +472,122 @@ generateAppFile <- function(
       )
     }
   }
-  lines.out <- c(lines.out, code.source.objects, "")
   
+  if (nrow(cis.integration) > 0){
+    code.source.objects <- c(code.source.objects, "")
+    code.source.objects <- c(code.source.objects, "anno.cis <- list()")
+    for(i in seq_len(nrow(cis.integration))){
+      if(cis.integration[i,]$reference.org.db=='NULL'){
+        code.source.objects <- c(
+          code.source.objects,
+          glue::glue("anno.cis[[{i}]] <- data.frame("),
+          glue::glue("ENSEMBL = rownames(cis.integration.data[['{cis.integration[i,]$reference.expression.matrix}']]),"),
+          glue::glue("SYMBOL = rownames(cis.integration.data[['{cis.integration[i,]$reference.expression.matrix}']]),"),
+          glue::glue("NAME = rownames(cis.integration.data[['{cis.integration[i,]$reference.expression.matrix}']])"),
+          ")"
+        )
+      }else{
+        code.source.objects <- c(
+          code.source.objects,
+          glue::glue("anno.cis[[{i}]] <- AnnotationDbi::select("),
+          glue::glue("getExportedValue('{org.db}', '{org.db}'),"),
+          glue::glue("keys = rownames(cis.integration.data[['{cis.integration[i,]$reference.expression.matrix}']]),"),
+          "keytype = 'ENSEMBL',",
+          "columns = 'SYMBOL'",
+          ") %>%",
+          "dplyr::distinct(ENSEMBL, .keep_all = TRUE) %>%",
+          "dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))"
+        )
+      }
+    }
+  }
+  
+  if (nrow(trans.integration) > 0){
+    code.source.objects <- c(code.source.objects, "")
+    code.source.objects <- c(code.source.objects, "anno.trans.reference <- list()")
+    for(i in seq_len(nrow(trans.integration))){
+      if(trans.integration[i,]$reference.org.db=='NULL'){
+        code.source.objects <- c(
+          code.source.objects,
+          glue::glue("anno.trans.reference[[{i}]] <- data.frame("),
+          glue::glue("ENSEMBL = rownames(trans.integration.data[['{trans.integration[i,]$reference.expression.matrix}']]),"),
+          glue::glue("SYMBOL = rownames(trans.integration.data[['{trans.integration[i,]$reference.expression.matrix}']]),"),
+          glue::glue("NAME = rownames(trans.integration.data[['{trans.integration[i,]$reference.expression.matrix}']])"),
+          ")"
+        )
+      }else{
+        code.source.objects <- c(
+          code.source.objects,
+          glue::glue("anno.trans.reference[[{i}]] <- AnnotationDbi::select("),
+          glue::glue("getExportedValue('{org.db}', '{org.db}'),"),
+          glue::glue("keys = rownames(trans.integration.data[['{trans.integration[i,]$reference.expression.matrix}']]),"),
+          "keytype = 'ENSEMBL',",
+          "columns = 'SYMBOL'",
+          ") %>%",
+          "dplyr::distinct(ENSEMBL, .keep_all = TRUE) %>%",
+          "dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))"
+        )
+      }
+    }
+    
+    code.source.objects <- c(code.source.objects, "anno.trans.comparison <- list()")
+    for(i in seq_len(nrow(trans.integration))){
+      if(trans.integration[i,]$comparison.org.db=='NULL'){
+        code.source.objects <- c(
+          code.source.objects,
+          glue::glue("anno.trans.comparison[[{i}]] <- data.frame("),
+          glue::glue("ENSEMBL = rownames(trans.integration.data[['{trans.integration[i,]$comparison.expression.matrix}']]),"),
+          glue::glue("SYMBOL = rownames(trans.integration.data[['{trans.integration[i,]$comparison.expression.matrix}']]),"),
+          glue::glue("NAME = rownames(trans.integration.data[['{trans.integration[i,]$comparison.expression.matrix}']])"),
+          ")"
+        )
+      }else{
+        code.source.objects <- c(
+          code.source.objects,
+          glue::glue("anno.trans.comparison[[{i}]] <- AnnotationDbi::select("),
+          glue::glue("getExportedValue('{org.db}', '{org.db}'),"),
+          glue::glue("keys = rownames(trans.integration.data[['{trans.integration[i,]$comparison.expression.matrix}']]),"),
+          "keytype = 'ENSEMBL',",
+          "columns = 'SYMBOL'",
+          ") %>%",
+          "dplyr::distinct(ENSEMBL, .keep_all = TRUE) %>%",
+          "dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))"
+        )
+      }
+    }
+  }
+  
+  if (nrow(custom.integration) > 0){
+    code.source.objects <- c(code.source.objects, "")
+    code.source.objects <- c(code.source.objects, "anno.custom <- list()")
+    for(i in seq_len(nrow(custom.integration))){
+      if(custom.integration[i,]$reference.org.db=='NULL'){
+        code.source.objects <- c(
+          code.source.objects,
+          glue::glue("anno.custom[[{i}]] <- data.frame("),
+          glue::glue("ENSEMBL = rownames(custom.integration.data[['{custom.integration[i,]$reference.expression.matrix}']]),"),
+          glue::glue("SYMBOL = rownames(custom.integration.data[['{custom.integration[i,]$reference.expression.matrix}']]),"),
+          glue::glue("NAME = rownames(custom.integration.data[['{custom.integration[i,]$reference.expression.matrix}']])"),
+          ")"
+        )
+      }else{
+        code.source.objects <- c(
+          code.source.objects,
+          glue::glue("anno.custom[[{i}]] <- AnnotationDbi::select("),
+          glue::glue("getExportedValue('{org.db}', '{org.db}'),"),
+          glue::glue("keys = rownames(custom.integration.data[['{custom.integration[i,]$reference.expression.matrix}']]),"),
+          "keytype = 'ENSEMBL',",
+          "columns = 'SYMBOL'",
+          ") %>%",
+          "dplyr::distinct(ENSEMBL, .keep_all = TRUE) %>%",
+          "dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))"
+        )
+      }
+    }
+  }
+  
+  lines.out <- c(lines.out, code.source.objects, "")
+
   code.ui <- c(
     "ui <- navbarPage(",
     glue::glue("'{app.title}',"), 
@@ -327,7 +610,7 @@ generateAppFile <- function(
     for(j in seq_len(nrow(panels.extra))){
       code.ui <- c(
         code.ui,
-        "taPanel(",
+        "tabPanel(",
         glue::glue("title = '{panels.extra$name[j]}',"),
         glue::glue("{panels.extra$UIfun[j]}({panels.extra$UIvars[j]}),"),
         "),"
@@ -335,7 +618,17 @@ generateAppFile <- function(
     }
     code.ui <- c(code.ui, "),")
   }
+  for(i in seq_len(nrow(cis.integration))){
+    code.ui <- c(code.ui, paste0("GRNCisPanelUI('GRNCis_", cis.integration[i,]$reference.table.name,"_vs_", cis.integration[i,]$comparison.table.name, "','", cis.integration[i,]$reference.table.name, "','", cis.integration[i,]$comparison.table.name, "'),"))
+  }
+  for(i in seq_len(nrow(trans.integration))){
+    code.ui <- c(code.ui, paste0("GRNTransPanelUI('GRNTrans_", trans.integration[i,]$reference.table.name,"_vs_", trans.integration[i,]$comparison.table.name, "','", trans.integration[i,]$reference.table.name, "','", trans.integration[i,]$comparison.table.name, "'),"))
+  }
+  for(i in seq_len(nrow(custom.integration))){
+    code.ui <- c(code.ui, paste0("GRNCustomPanelUI('GRNCustom_", custom.integration[i,]$reference.table.name,"_vs_", custom.integration[i,]$comparison.table.name, "','", custom.integration[i,]$reference.table.name, "','", custom.integration[i,]$comparison.table.name, "'),"))
+  }
   code.ui <- c(code.ui, ")")
+  
   lines.out <- c(lines.out, code.ui, "")
   
   code.server <- c("server <- function(input, output, session){")
@@ -353,12 +646,22 @@ generateAppFile <- function(
       glue::glue("panels.default = {panels.default.string}"),
       ")"
     )
+    
     for(j in seq_len(nrow(panels.extra))){
       code.server <- c(
         code.server, 
         glue::glue("{panels.extra$serverFun[j]}({panels.extra$serverVars[j]})")
       )
     }
+  }
+  for(i in seq_len(nrow(cis.integration))){
+    code.server <- c(code.server, paste0("GRNCisPanelServer('GRNCis_", cis.integration[i,]$reference.table.name,"_vs_", cis.integration[i,]$comparison.table.name, "', ", "cis.integration.data$", cis.integration[i,]$reference.expression.matrix, ", anno.cis[[",i,"]], ", "cis.integration.data$", cis.integration[i,]$reference.coord,", ", "cis.integration.data$", cis.integration[i,]$comparison.coord,")"))
+  }
+  for(i in seq_len(nrow(trans.integration))){
+    code.server <- c(code.server, paste0("GRNTransPanelServer('GRNTrans_", trans.integration[i,]$reference.table.name,"_vs_", trans.integration[i,]$comparison.table.name, "', ", "trans.integration.data$", trans.integration[i,]$reference.expression.matrix, ", anno.trans.reference[[",i,"]], anno.trans.comparison[[",i,"]] ,", "trans.integration.data$", trans.integration[i,]$comparison.expression.matrix,", c('", trans.integration[i,]$reference.table.name, "','", trans.integration[i,]$comparison.table.name, "'))"))
+  }
+  for(i in seq_len(nrow(custom.integration))){
+    code.server <- c(code.server, paste0("GRNCustomPanelServer('GRNCustom_", custom.integration[i,]$reference.table.name,"_vs_", custom.integration[i,]$comparison.table.name, "', ", "custom.integration.data$", trans.integration[i,]$reference.expression.matrix, ", anno.custom[[",i,"]], ", "custom.integration.data$", custom.integration[i,]$comparison.table, ")"))
   }
   
   code.server <- c(code.server, "}")
