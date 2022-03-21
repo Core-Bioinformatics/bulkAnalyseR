@@ -14,11 +14,20 @@ generateShinyApp(
   organism = NA,
   org.db = NA,
   panels.default = c("Landing", "SampleSelect", "QC", "DE", "DEplot", "DEsummary",
-    "Enrichment", "GRN", "Patterns", "Cross"),
+    "Patterns", "Enrichment", "Cross", "GRN"),
   panels.extra = tibble::tibble(name = NULL, UIfun = NULL, UIvars = NULL, serverFun =
     NULL, serverVars = NULL),
   data.extra = c(),
-  packages.extra = c()
+  packages.extra = c(),
+  cis.integration = tibble::tibble(reference.expression.matrix = NULL, reference.org.db
+    = NULL, reference.coord = NULL, comparison.coord = NULL, reference.table.name = NULL,
+    comparison.table.name = NULL),
+  trans.integration = tibble::tibble(reference.expression.matrix = NULL,
+    reference.org.db = NULL, comparison.expression.matrix = NULL, comparison.org.db =
+    NULL, reference.table.name = NULL, comparison.table.name = NULL),
+  custom.integration = tibble::tibble(reference.expression.matrix = NULL,
+    reference.org.db = NULL, comparison.table = NULL, reference.table.name = NULL,
+    comparison.table.name = NULL)
 )
 }
 \arguments{
@@ -72,6 +81,20 @@ behaviour of existing panels; a data frame of the modality, panel UI and
 server names and default parameters should be passed to panels.extra
 (see example); the names of any extra data and/or packages required
 should be passed to the data.extra and packages.extra arguments}
+
+\item{cis.integration}{functionality to integrate extra cis-regulatory information into GRN panel.
+Tibble containing names of reference expression matrix, tables of coordinates for elements corresponding to rows
+of reference expression matrix (reference.coord), tables of coordinates to compare against
+reference.coord (comparison.coord) and names for comparison tables.}
+
+\item{trans.integration}{functionality to integrate extra trans-regulatory information into GRN panel.
+Tibble containing names of reference expression matrix, (reference.expression.matrix), comparison expression matrix (comparison.expression.matrix).
+Organism database names for each expression matrix and names for each table are also required.}
+
+\item{custom.integration}{functionality to integrate custom information related to rows of
+reference expression matrix. Tibble containining names of reference expression matrix, tables (comparison.table)
+with Reference_ID and Reference_Name (matching ENSEMBL and NAME columns of reference organism database) and
+Comparison_ID and Comparison_Name. Names for the reference expression matrix and comparison table (comparison.table.name) are also required.}
 }
 \value{
 The path to shiny.dir (invisibly).

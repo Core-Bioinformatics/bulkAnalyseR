@@ -8,7 +8,7 @@
 \usage{
 GRNpanelUI(id, metadata, show = TRUE)
 
-GRNpanelServer(id, expression.matrix, metadata, anno)
+GRNpanelServer(id, expression.matrix, metadata, DEresults, anno)
 }
 \arguments{
 \item{id}{the input slot that will be used to access the value}
