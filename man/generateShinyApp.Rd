@@ -14,10 +14,10 @@ generateShinyApp(
   organism = NA,
   org.db = NA,
   panels.default = c("Landing", "SampleSelect", "QC", "DE", "DEplot", "DEsummary",
-    "Patterns", "Enrichment", "Cross", "GRN"),
+    "Enrichment", "Patterns", "Cross", "GRN"),
   panels.extra = tibble::tibble(name = NULL, UIfun = NULL, UIvars = NULL, serverFun =
     NULL, serverVars = NULL),
-  data.extra = c(),
+  data.extra = list(),
   packages.extra = c(),
   cis.integration = tibble::tibble(reference.expression.matrix = NULL, reference.org.db
     = NULL, reference.coord = NULL, comparison.coord = NULL, reference.table.name = NULL,
@@ -79,8 +79,9 @@ length as modality) can be provided if \code{length(modality) > 1}}
 user-created panels to the app to extend functionality or change the default
 behaviour of existing panels; a data frame of the modality, panel UI and
 server names and default parameters should be passed to panels.extra
-(see example); the names of any extra data and/or packages required
-should be passed to the data.extra and packages.extra arguments}
+(see example); the names of any packages required
+should be passed to the packages.extra argument; extra data should be a
+single list and passed to the data.extra argument}
 
 \item{cis.integration}{functionality to integrate extra cis-regulatory information into GRN panel.
 Tibble containing names of reference expression matrix, tables of coordinates for elements corresponding to rows

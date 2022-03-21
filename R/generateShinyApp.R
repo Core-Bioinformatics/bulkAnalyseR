@@ -55,8 +55,9 @@
 #' user-created panels to the app to extend functionality or change the default
 #' behaviour of existing panels; a data frame of the modality, panel UI and 
 #' server names and default parameters should be passed to panels.extra 
-#' (see example); the names of any extra data and/or packages required 
-#' should be passed to the data.extra and packages.extra arguments
+#' (see example); the names of any packages required 
+#' should be passed to the packages.extra argument; extra data should be a
+#' single list and passed to the data.extra argument
 #' @return The path to shiny.dir (invisibly).
 #' @export
 #' @import shiny
@@ -113,7 +114,7 @@ generateShinyApp <- function(
   organism = NA,
   org.db = NA,
   panels.default = c("Landing", "SampleSelect", "QC", "DE", "DEplot", "DEsummary",
-                     "Enrichment", "GRN", "Patterns", "Cross"),
+                     "Enrichment", "Patterns", "Cross", "GRN"),
   panels.extra = tibble::tibble(
     name = NULL,
     UIfun = NULL, 
@@ -121,7 +122,7 @@ generateShinyApp <- function(
     serverFun = NULL, 
     serverVars = NULL
   ),
-  data.extra = c(),
+  data.extra = list(),
   packages.extra = c(),
   cis.integration = tibble::tibble(
     reference.expression.matrix = NULL,
@@ -378,10 +379,7 @@ generateDataFiles <- function(
 ){
   save(expression.matrix, file = paste0(shiny.dir, "/expression_matrix.rda"))
   save(metadata, file = paste0(shiny.dir, "/metadata.rda"))
-  lapply(data.extra, function(name){
-    object<-get(name)
-    save(object, file = paste0(shiny.dir, "/", name, ".rda"))
-  })
+  save(data.extra, file = paste0(shiny.dir, "/", name, ".rda"))
 }
 
 generateIntegrationDataFiles <- function(
