@@ -113,7 +113,7 @@ generateShinyApp <- function(
   organism = NA,
   org.db = NA,
   panels.default = c("Landing", "SampleSelect", "QC", "DE", "DEplot", "DEsummary",
-                     "Patterns", "Enrichment", "Cross", "GRN"),
+                     "Enrichment", "GRN", "Patterns", "Cross"),
   panels.extra = tibble::tibble(
     name = NULL,
     UIfun = NULL, 
@@ -454,8 +454,8 @@ generateAppFile <- function(
       code.source.objects <- c(
         code.source.objects,
         glue::glue("anno[[{i}]] <- data.frame("),
-        "ENSEMBL = rownames(expression.matrix),",
-        "NAME = rownames(expression.matrix)",
+        glue::glue("ENSEMBL = rownames(expression.matrix[[{i}]]),"),
+        glue::glue("NAME = rownames(expression.matrix[[{i}]])"),
         ")"
       )
     }else{

@@ -30,14 +30,9 @@ modalityPanelUI <- function(id, metadata, organism, panels.default){
       ns('Enrichment'), 
       show = ("DE" %in% panels.default) & ("Enrichment" %in% panels.default) & !is.null(organism)
     ),
-    GRNpanelUI(
-      ns('GRN'), 
-      metadata, 
-      show = ("DE" %in% panels.default) & ("GRN" %in% panels.default)
-    ),
     patternPanelUI(ns('Patterns'), metadata, show = "Patterns" %in% panels.default),
     crossPanelUI(ns('Cross'), metadata, show = "Cross" %in% panels.default),
-    
+    GRNpanelUI(ns('GRN'), metadata, show = "GRN" %in% panels.default),
   )
 }
 
@@ -77,15 +72,15 @@ modalityPanelServer <- function(id, expression.matrix, metadata, anno, organism,
       if("Enrichment" %in% panels.default & !is.null(organism)){
         enrichmentPanelServer('Enrichment', DEresults, organism = organism)
       }
-      if("GRN" %in% panels.default){
-        GRNpanelServer('GRN', expression.matrix, metadata, DEresults, anno)
-      }
     }
     if("Patterns" %in% panels.default){
       patternPanelServer('Patterns', expression.matrix, metadata, anno)
     }
     if("Cross" %in% panels.default){
       crossPanelServer('Cross', expression.matrix, metadata, anno)
+    }
+    if("GRN" %in% panels.default){
+      GRNpanelServer('GRN', expression.matrix, metadata, anno)
     }
   })
 }

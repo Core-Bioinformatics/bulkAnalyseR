@@ -9,7 +9,7 @@ infer_GRN(
   metadata,
   anno,
   seed = 13,
-  regulators,
+  targets,
   condition,
   samples,
   inference_method
@@ -36,7 +36,7 @@ created by \code{\link{generateShinyApp}} using the org.db specified}
 \item{seed}{the random seed to be set when running GRN inference, to ensure
 reproducibility of outputs}
 
-\item{regulators}{the regulators of interest around which the GRN is built;
+\item{targets}{the target genes of interest around which the GRN is built;
 must be row names of the expression matrix}
 
 \item{condition}{name of the metadata column to select samples from}
@@ -44,15 +44,15 @@ must be row names of the expression matrix}
 \item{samples}{names of the sample groups to select; must appear in
 \code{metadata[[condition]]}}
 
-\item{inference_method}{method used for GRN inference; supported methods
-are GENIE3 and GNET2.}
+\item{inference_method}{method used for GRN inference; only supported method
+is currently GENIE3.}
 }
 \value{
 The adjacency matrix of the inferred network
 }
 \description{
 This function performs Gene Regulatory Network inference on
-a subset of the expression matrix, for a set of potential regulators
+a subset of the expression matrix, for a set of potential targets
 }
 \examples{
 expression.matrix.preproc <- as.matrix(read.csv(
@@ -79,7 +79,7 @@ res <- infer_GRN(
   metadata = metadata,
   anno = anno,
   seed = 13,
-  regulators = c("Hecw2", "Akr1cl"),
+  targets = c("Hecw2", "Akr1cl"),
   condition = "timepoint",
   samples = "0h",
   inference_method = "GENIE3"

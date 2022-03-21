@@ -20,10 +20,10 @@
 # )
 # 
 # DEresults <- DEanalysis_edger(
-#   expression.matrix = expression.matrix[, 1:4], 
-#   condition = metadata$timepoint[1:4], 
-#   var1 = "0h", 
-#   var2 = "12h", 
+#   expression.matrix = expression.matrix[, 1:4],
+#   condition = metadata$timepoint[1:4],
+#   var1 = "0h",
+#   var2 = "12h",
 #   anno = anno
 # ) %>%
 #   dplyr::filter(abs(log2FC) > 1, pvalAdj < 0.05) %>%
@@ -40,8 +40,26 @@
 # weightMat4 <- infer_GRN(expression.matrix, metadata, anno, 13,
 #                         c("Trpm1", "Sp5"), "timepoint", c("12h", "36h"), "GENIE3")
 # weightMatGNET <- infer_GRN(expression.matrix, metadata, anno, 13,
-#                            c("Trpm1", "Sp5", "Nupr1", "Dnmt3l", "Enox1", "Itga1"), 
+#                            c("Trpm1", "Sp5", "Nupr1", "Dnmt3l", "Enox1", "Itga1"),
 #                            "timepoint", c("0h", "12h", "36h"), "GNET2")
+# 
+# if(FALSE){
+#   weightMatGNET <- infer_GRN(expression.matrix, metadata, anno, 13,
+#                              c("Trpm1", "Sp5"),
+#                              "timepoint", c("0h", "12h", "36h"), "GNET2")
+#   regulators <- c("Trpm1", "Sp5")
+#   samples.cond <- c("0h", "12h", "36h")
+#   regulator.ids <- anno$ENSEMBL[match(regulators, anno$NAME)]
+#   samples <- metadata$timepoint %in% samples.cond
+#   gnet_out <- gnet_modified(expression.matrix[, samples], reg_names = regulator.ids)
+#   # for(i in which(sapply(gnet_out$regulators, is.null))){
+#   #   gnet_out$regulators[[i]] <- NULL
+#   # }
+#   # for(i in which(sapply(gnet_out$target_genes, is.null))){
+#   #   gnet_out$target_genes[[i]] <- NULL
+#   # }
+#   res <- GNET2::extract_edges(gnet_out)
+# }
 # 
 # plotConnections <- 5
 # 
