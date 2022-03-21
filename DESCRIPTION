@@ -56,8 +56,7 @@ Imports:
     shinyjs,
     tidyr,
     shinyLP,
-    UpSetR,
-    GNET2
+    UpSetR
 Suggests:
     rmarkdown,
     knitr,

@@ -14,7 +14,7 @@ generateShinyApp(
   organism = NA,
   org.db = NA,
   panels.default = c("Landing", "SampleSelect", "QC", "DE", "DEplot", "DEsummary",
-    "Patterns", "Enrichment", "Cross", "GRN"),
+    "Enrichment", "GRN", "Patterns", "Cross"),
   panels.extra = tibble::tibble(name = NULL, UIfun = NULL, UIvars = NULL, serverFun =
     NULL, serverVars = NULL),
   data.extra = c(),
