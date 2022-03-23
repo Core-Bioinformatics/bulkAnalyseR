@@ -84,7 +84,6 @@
 #' # runApp(app.dir)
 #' 
 #' # Example of an app with a second copy of the QC panel
-#' 
 #' app.dir.qc2 <- generateShinyApp(
 #'   shiny.dir = paste0(tempdir(), "/shiny_Yang2019_QC2"),
 #'   app.title = "Shiny app for the Yang 2019 data",
@@ -93,11 +92,11 @@
 #'   organism = "mmusculus",
 #'   org.db = "org.Mm.eg.db",
 #'   panels.extra = tibble::tibble(
-#'     modality = "RNA",
-#'     UIfun = "sampleSelectPanelUI", 
-#'     UIvars = "'SampleSelect2'", 
-#'     serverFun = "sampleSelectPanelServer", 
-#'     serverVars = "'SampleSelect2', expression.matrix[[1]], metadata[[1]]"
+#'     name = "RNA2",
+#'     UIfun = "modalityPanelUI", 
+#'     UIvars = "'RNA2', metadata[[1]], NA, 'QC'", 
+#'     serverFun = "modalityPanelServer", 
+#'     serverVars = "'RNA2', expression.matrix[[1]], metadata[[1]], anno[[1]], NA, 'QC'"
 #'   )
 #' )
 #' # runApp(app.dir.qc2)
@@ -607,15 +606,6 @@ generateAppFile <- function(
       glue::glue("panels.default = {panels.default.string}"),
       "),"
     )
-    for(j in seq_len(nrow(panels.extra))){
-      code.ui <- c(
-        code.ui,
-        "tabPanel(",
-        glue::glue("title = '{panels.extra$name[j]}',"),
-        glue::glue("{panels.extra$UIfun[j]}({panels.extra$UIvars[j]}),"),
-        "),"
-      )
-    }
     code.ui <- c(code.ui, "),")
   }
   for(i in seq_len(nrow(cis.integration))){
@@ -648,6 +638,15 @@ generateAppFile <- function(
                                  "','", 
                                  custom.integration[i,]$comparison.table.name, 
                                  "'),"))
+  }
+  for(j in seq_len(nrow(panels.extra))){
+    code.ui <- c(
+      code.ui,
+      "tabPanel(",
+      glue::glue("title = '{panels.extra$name[j]}',"),
+      glue::glue("{panels.extra$UIfun[j]}({panels.extra$UIvars[j]}),"),
+      "),"
+    )
   }
   code.ui <- c(code.ui, ")")
   
