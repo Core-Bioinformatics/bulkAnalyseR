@@ -142,9 +142,9 @@ plot_GRN <- function(weightMat, anno, plotConnections,
   if(n_networks >= plot_position_grid){
     edges <- get_link_list_rename(weightMat, plotConnections)
     nodes <- tibble::tibble(
-      id = c(edges$from, edges$to),
+      id = c(edges$to, edges$from),
       label = anno$NAME[match(.data$id, anno$ENSEMBL)],
-      group = rep(c("regulator", "target"), each = nrow(edges)),
+      group = rep(c("target", "regulator"), each = nrow(edges)),
       color = NA
     ) %>%
       dplyr::distinct(.data$id, .keep_all = TRUE)
