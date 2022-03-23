@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-Bulk mRNA-seq experiments are essential for exploring a wide range of biological questions. To bring the data analysis closer to its interpretation and facilitate both interactive, exploratory tasks and the sharing of (easily accessible) information, we present *bulkAnalyseR* an R package that offers a seamless, customisable solution for most bulk RNAseq datasets. By integrating state-of-the-art approaches without relying on extensive computational support, and replacing static images with interactive panels, our aim is to further support and strengthen the reusability of data. bulkAnalyseR enables standard analyses of bulk data, using an expression matrix as starting point. It presents the outputs of various steps in an interactive web-based interface, making it easy to generate, explore and verify hypotheses. Moreover, the app can be easily shared and published, incentivising research reproducibility and allowing others to explore the same processed data and enhance the biological conclusions.
+Bulk sequencing experiments are essential for exploring a wide range of biological questions. To bring the data analysis closer to its interpretation and facilitate both interactive, exploratory tasks and the sharing of (easily accessible) information, we present *bulkAnalyseR* an R package that offers a seamless, customisable solution for most bulk sequencing datasets. By integrating state-of-the-art approaches without relying on extensive computational support, and replacing static images with interactive panels, our aim is to further support and strengthen the reusability of data. *bulkAnalyseR* enables standard analyses of bulk data, using an expression matrix as starting point. It presents the outputs of various steps in an interactive web-based interface, making it easy to generate, explore and verify hypotheses. Moreover, the app can be easily shared and published, incentivising research reproducibility and allowing others to explore the same processed data and enhance the biological conclusions.
 
 The example app described in this vignette can be found [here](http://bioinf.stemcells.cam.ac.uk:3838/bulkAnalyseR/Yang2019/)
 
@@ -27,7 +27,6 @@ knitr::include_graphics("figures/workflow.png")
 ## Installation
 
 To install the package, first install all CRAN dependencies:
-
 ```{r cran_install, eval = FALSE}
 packages.cran <- c("ggplot2",
                    "shiny",
@@ -51,7 +50,13 @@ packages.cran <- c("ggplot2",
                    "ggnewscale",
                    "ggrastr",
                    "visNetwork",
-                   "shinyLP")
+                   "shinyLP",
+                   "grid",
+                   "DT",
+                   "scales",
+                   "shinyjs",
+                   "tidyr",
+                   "UpSetR")
 new.packages.cran <- packages.cran[!(packages.cran %in% installed.packages()[, "Package"])]
 if(length(new.packages.cran))
   install.packages(new.packages.cran)
@@ -63,7 +68,6 @@ Then install bioconductor dependencies:
 packages.bioc <- c("edgeR", 
                    "DESeq2",
                    "preprocessCore",
-                   "AnnotationDbi",
                    "GENIE3",
                    "ComplexHeatmap")
 
@@ -75,9 +79,13 @@ if(length(new.packages.bioc)){
 }
 ```
 
-Finally, you can install the latest stable version of *bulkAnalyseR* from GitHub:
+Finally, you can install the package from CRAN, or install the latest stable version of *bulkAnalyseR* from GitHub:
 
 ```{r github_install, eval = FALSE}
+install.packages("bulkAnalyseR")
+
+### OR
+
 if (!requireNamespace("devtools", quietly = TRUE))
   install.packages("devtools")
 
@@ -86,10 +94,12 @@ devtools::install_github("Core-Bioinformatics/bulkAnalyseR")
 
 ## Preprocessing
 
-First, load *bulkAnalyseR*:
+First, load *bulkAnalyseR* (plus dplyr and ggplot2 for convenience):
 
 ```{r setup}
 library(bulkAnalyseR)
+library(dplyr)
+library(ggplot2)
 ```
 
 ### Loading an expression matrix
@@ -111,18 +121,14 @@ meta <- data.frame(
   srr = colnames(exp), 
   timepoint = rep(c("0h", "12h", "36h"), each = 2)
 )
-```
-
-```{r convert type, include = FALSE, eval = FALSE}
-meta$srr = as.character(meta$srr)
-meta$timepoint = as.character(meta$timepoint)
+meta
 ```
 
 This metadata table should be a data frame containing at minimum two columns: the first column must contain the column names of the expression.matrix, while the last column is assumed to contain the experimental conditions that will be tested for differential expression.
 
 ### Denoising and normalisation
 
-Before using the expression matrix to create our shiny app, some preprocessing should be performed. *bulkAnalyseR* contains the function **preprocessExpressionMatrix** which takes the expression matrix as input then denoises the data using [*noisyR*](https://github.com/Core-Bioinformatics/noisyR) and normalises using either quantile (by default) or RPM normalisation (specified using *normalisation.method* parameter). By specifying *output.plot = TRUE*, you can also print the expression-similarity line plots from *noisyR* to console and you can specify further parameters from the noisyR [*noisyr_counts*](https://core-bioinformatics.github.io/noisyR/reference/noisyr_counts.html).
+Before using the expression matrix to create our shiny app, some preprocessing should be performed. *bulkAnalyseR* contains the function **preprocessExpressionMatrix** which takes the expression matrix as input then denoises the data using [*noisyR*](https://github.com/Core-Bioinformatics/noisyR) and normalises it (quantile normalisation by default, other methods can bespecified using the *normalisation.method* parameter). By specifying *output.plot = TRUE*, you can also print the expression-similarity line plots from *noisyR* to console and you can specify further parameters from the noisyR [*noisyr_counts*](https://core-bioinformatics.github.io/noisyR/reference/noisyr_counts.html).
 
 ```{r preprocess,fig.width=7, fig.height=5}
 exp.proc <- preprocessExpressionMatrix(exp, output.plot = TRUE)
@@ -134,7 +140,7 @@ It is not recommended to use data which has not been denoised and normalised as 
 
 The example app for the Yang 2019 data can be found [here](http://bioinf.stemcells.cam.ac.uk:3838/bulkAnalyseR/Yang2019/). Readers are encouraged to try out the different features described below in the live version of the app to familiarise themselves with the different features.
 
-The central function in *bulkAnalyseR* is **generateShinyApp**. This function creates an app.R file and all required objects to run the app in .rda format in the target directory. The key inputs to **generateShinyApp** are *expression.matrix* (after being processed using *preprocessExpressionMatrix*) and *metadata*. You can also specify the title of the app (which will appear in the navigation bar at the top of the app) with *app.title*, the directory where the app should be saved with *shiny.dir* and the shiny theme you wish to use ('flatly' is the default, you can find the other options [here](https://rstudio.github.io/shinythemes/)). It is also recommended that you specify the organism on which your data was generated, firstly using the *organism* parameter using the *gprofiler2* naming convention e.g. 'hsapiens','mmusculus' (see [here](https://biit.cs.ut.ee/gprofiler/page/organism-list) for the full list of organisms and IDs), and secondly specifying the database for annotations to convert ENSEMBL IDs to gene names e.g. org.Hs.eg.db - the full list of bioconductor packaged databases can be seen using this command:
+The central function in *bulkAnalyseR* is **generateShinyApp**. This function creates an app.R file and all required objects to run the app in .rda format in the target directory. The key inputs to **generateShinyApp** are *expression.matrix* (after being processed using *preprocessExpressionMatrix*) and *metadata*. You can also specify the title of the app (which will appear in the navigation bar at the top of the app) with *app.title*, the modality (RNA by default) that will be displayed as the name of the main tab, the directory where the app should be saved with *shiny.dir* and the shiny theme you wish to use ('flatly' is the default, you can find the other options [here](https://rstudio.github.io/shinythemes/)). It is also recommended that you specify the organism on which your data was generated, firstly using the *organism* parameter using the *gprofiler2* naming convention e.g. 'hsapiens','mmusculus' (see [here](https://biit.cs.ut.ee/gprofiler/page/organism-list) for the full list of organisms and IDs), and secondly specifying the database for annotations to convert ENSEMBL IDs to gene names e.g. org.Hs.eg.db - the full list of bioconductor packaged databases can be seen using this command:
 
 ```{r bioconductor dbs, eval = FALSE}
 BiocManager::available("^org\\.")
@@ -144,10 +150,11 @@ The dataset in this example was generated on *M. musculus* so we would generate 
 
 ```{r generate app, eval=FALSE}
 generateShinyApp(
-  expression.matrix = exp.proc,
-  metadata = meta,
   shiny.dir = "shiny_Yang2019",
   app.title = "Shiny app for visualisation of three timepoints from the Yang 2019 data",
+  modality = "RNA",
+  expression.matrix = exp.proc,
+  metadata = meta,
   organism = "mmusculus",
   org.db = "org.Mm.eg.db"
 )
@@ -157,28 +164,52 @@ If no organism is specified for g:profiler then the enrichment tab will be autom
 
 This will create a folder called *shiny_Yang2019* in which there will be 2 data files *expression_matrix.rda* and *metadata.rda* and *app.R* which defines the app. To see the app, you can call *shiny::runApp('shiny_Yang2019')* and the app will start. The app generated is standalone and can be shared with collaborators or published online through a platform like \href{https://www.shinyapps.io/}{shinyapps.io}. This provides an easy way for anyone to explore the data and verify the conclusions, increasing access and promoting reproducibility of the bioinformatics analysis.
 
-By default, the app will have 9 panels: Sample select, Quality checks, Differential expression, Volcano and MA plots, DE summary, Enrichment, Expression patterns, Cross plots, GRN inference. You can choose to remove one or more panels using the *panels.default* parameter. 
+By default, the app will have 10 panels: Home, Sample select, Quality checks, Differential expression, Volcano and MA plots, DE summary, Enrichment, Expression patterns, Cross plot, GRN inference. You can choose to remove one or more panels using the *panels.default* parameter. 
 
 ```{r only QC and DE panels, eval = FALSE}
 generateShinyApp(
-  expression.matrix = exp.proc,
-  metadata = meta,
   shiny.dir = "shiny_Yang2019_onlyQC_DE",
   app.title = "Shiny app for visualisation of three timepoints from the Yang 2019 data",
+  modality = "RNA",
+  expression.matrix = exp.proc,
+  metadata = meta,
   organism = "mmusculus",
   org.db = "org.Mm.eg.db",
   panels.default = c('QC','DE')
 )
 ```
 
-See the following sections for more details about the default panels:
+An app that contains multiple modalities, different datasets, or different subsets of the same dataset can also be generated. The modality, expression.matrix, metadata, organism, org.db, and panels.default parameters are all vectorised and accept multiple arguments (a vector or a list if the original argument was more complex). Note that all these parameters must be the same length (or length 1) to avoid errors. An example of creating an app with two different versions of the original app created above is presented below:
+
+```{r two modalities, eval = FALSE}
+generateShinyApp(
+  shiny.dir = "shiny_Yang2019_two_modalities",
+  app.title = "Shiny app for visualisation of three timepoints from the Yang 2019 data",
+  modality = c("RNA 1", "RNA 2"),
+  expression.matrix = exp.proc,
+  metadata = meta,
+  organism = "mmusculus",
+  org.db = "org.Mm.eg.db",
+  panels.default = list(
+    c("Landing", "SampleSelect", "QC", "DE", "DEplot", "DEsummary", 
+      "Enrichment", "Patterns", "Cross", "GRN"),
+    c('QC','DE')
+  )
+)
+```
+
+See the following sections for more details about the default panels. For each panel, you can also find example code of how you could generate similar results or plots to the ones displayed in the panel without using the app.
+
+### Home
+
+This tab contains some useful links (including this vignette!) to get you started with **bulkAnalyseR**.
 
 ### Sample Select
 
 This tab allows you to select a subset of samples to use for the analysis. In particular this allows you to exclude low quality samples (which you could discover using QC tab) or focus on particular parts of the data. Once you have selected the samples you want, make sure to press the 'Use the selected sample!' button to confirm your choice. If you do not use this button or select samples then all samples will be used.
 
 ```{r sample select, echo = FALSE, out.width = "80%"}
-knitr::include_graphics("figures/ScreenShot.png") 
+knitr::include_graphics("figures/SampleSelect.png")
 ```
 
 ### Quality check (QC)
@@ -193,12 +224,34 @@ Within the JSI plot, you can change the order of samples using an ordering of me
 knitr::include_graphics("figures/JSI.png") 
 ```
 
+```{r JSI_code, eval = FALSE}
+jaccard_heatmap(
+  expression.matrix = exp.proc,
+  metadata = meta,
+  top.annotation.ids = 2,
+  n.abundant = 500, 
+  show.values = FALSE,
+  show.row.column.names = (nrow(meta) <= 20)
+)
+```
+
 #### PCA
 
 The PCA plot can be created for a chosen number of top abundance genes and coloured by the metadata attribute selected. The sample labels and ellipses around groups can also be included or removed.
 
 ```{r PCA, echo = FALSE, out.width = "80%"}
 knitr::include_graphics("figures/PCA.png") 
+```
+
+```{r PCA_code, eval = FALSE}
+plot_pca(
+  expression.matrix = exp.proc,
+  metadata = meta,
+  annotation.id = 2,
+  n.abundant = 500,
+  show.labels = TRUE,
+  show.ellipses = TRUE
+)
 ```
 
 #### MA plots
@@ -217,6 +270,33 @@ The differential expression (DE) tab can be used to compare any of the condition
 knitr::include_graphics("figures/DE.png") 
 ```
 
+```{r DE_code, eval = FALSE}
+# first create annotation table
+anno <- AnnotationDbi::select(
+  org.Mm.eg.db::org.Mm.eg.db,
+  keys = rownames(exp.proc),
+  keytype = 'ENSEMBL',
+  columns = 'SYMBOL'
+) %>%
+  distinct(ENSEMBL, .keep_all = TRUE) %>%
+  mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))
+
+DEtable <- DEanalysis_edger(
+  expression.matrix = exp.proc[, 1:4],
+  condition = meta$timepoint[1:4],
+  var1 = "0h",
+  var2 = "12h",
+  anno = anno
+)
+DEtable_deseq <- DEanalysis_deseq2(
+  expression.matrix = exp.proc[, 1:4],
+  condition = meta$timepoint[1:4],
+  var1 = "0h",
+  var2 = "12h",
+  anno = anno
+)
+```
+
 In this tab, you can also select genes of interest by clicking on the table, which can be used in the DE summary and Volcano/MA tabs. There is also a button to choose the top 50 DE genes (by absolute log2 fold change) or reset the selection.
 
 ### Volcano/MA plots
@@ -231,26 +311,34 @@ Volcano plots show log2 fold change against log10 BH-adjusted p-value. The DE po
 knitr::include_graphics("figures/VolcanoPlot.png") 
 ```
 
+```{r volcano_code, eval = FALSE}
+volcano_plot(
+  genes.de.results = DEtable,
+  pval.threshold = 0.05, 
+  lfc.threshold = 1,
+  log10pval.cap = TRUE
+)
+```
+
 #### MA plots
 
 The DE MA plots show log2 expression levels against log2 fold change for each gene. The DE points are shown in blue with their colour proportional to the log2 expression of the gene. Green and blue guide lines show the DE thresholds and twice the DE thresholds respectively. 
 
-```{r MA DE, echo = FALSE, out.width = "80%"}
+```{r MA_DE, echo = FALSE, out.width = "80%"}
 knitr::include_graphics("figures/MAPlot.png") 
 ```
 
+```{r MA_DE_code, eval = FALSE}
+ma_plot(
+  genes.de.results = DEtable,
+  pval.threshold = 0.05, 
+  lfc.threshold = 1
+)
+```
 
 ### DE summary
 
 The DE summary panel allows further visualisation using the genes called DE or selected by the user in the DE panel.
-
-#### Post-differential expression PCA
-
-Firstly, we can create a PCA using only the DE genes or using the selected genes from the DE panel. You can also create the PCA on only the user-selected DE genes by deselecting the 'Use all DE?' option. As in the QC PCA plot, you can colour points by your chosen metadata columns and add/remove sample labels and group ellipses.
-
-```{r PCA DE, echo = FALSE, out.width = "80%"}
-knitr::include_graphics("figures/PCA_DE.png") 
-```
 
 #### Expression heatmap
 
@@ -258,6 +346,37 @@ Secondly, we can create heatmaps for expression levels (raw expression level, lo
 
 ```{r heatmap, echo = FALSE, out.width = "80%"}
 knitr::include_graphics("figures/ExpressionHeatmap.png") 
+```
+
+```{r heatmap_code, eval = FALSE}
+genes_heatmap <- filter(arrange(DEtable, desc(abs(log2FC))), pvalAdj < 0.05)$gene_id
+expression_heatmap(
+  expression.matrix.subset = exp.proc[genes_heatmap, ],
+  top.annotation.ids = 2,
+  metadata = meta,
+  type = "Z-score",
+  show.column.names = (nrow(meta) <= 20)
+)
+```
+
+#### Post-differential expression PCA
+
+Firstly, we can create a PCA using only the DE genes or using the selected genes from the DE panel. You can also create the PCA on only the user-selected DE genes by deselecting the 'Use all DE?' option. As in the QC PCA plot, you can colour points by your chosen metadata columns and add/remove sample labels and group ellipses.
+
+```{r PCA_DE, echo = FALSE, out.width = "80%"}
+knitr::include_graphics("figures/PCA_DE.png") 
+```
+
+```{r PCA_DE_code, eval = FALSE}
+genes_de <- filter(DEtable, pvalAdj < 0.05, abs(log2FC) > 1)$gene_id
+plot_pca(
+  expression.matrix = exp.proc[genes_de, ],
+  metadata = meta,
+  annotation.id = 2,
+  n.abundant = NULL,
+  show.labels = TRUE,
+  show.ellipses = TRUE
+)
 ```
 
 ### Enrichment
@@ -270,6 +389,25 @@ The output is both the results table from g:profiler which can be downloaded as 
 knitr::include_graphics("figures/Enrichment.png") 
 ```
 
+```{r enrichment_code, eval = FALSE}
+gostres <- gprofiler2::gost(
+  query = genes_de,
+  organism = "mmusculus",
+  correction_method = 'fdr',
+  custom_bg = DEtable$gene_id,
+  evcodes = TRUE
+)
+gostres$result <-  mutate(
+  gostres$result,
+  parents = sapply(.data$parents, toString),
+  intersection_names = sapply(.data$intersection, function(x){
+    ensids <- strsplit(x, split = ",")[[1]]
+    names <- DEtable$gene_name[match(ensids, DEtable$gene_id)]
+    paste(names, collapse = ",")
+  })
+)
+```
+
 ### Expression patterns
 
 The expression pattern tab allows the creation of expression patterns to identify potential genes of interest across a variety of conditions. The most common application of this is a time series, but it could be suitable for another logical progression between conditions. To define the series, the user must select a column of the metadata and drag states into the "Series of states to use" area.
@@ -280,6 +418,12 @@ The grouped expression matrix can then be downloaded, showing which pattern each
 
 ```{r patterns, echo = FALSE, out.width = "30%"}
 knitr::include_graphics("figures/ExpressionPatterns.png") 
+```
+
+```{r patterns_code, eval = FALSE}
+condition <- factor(meta$timepoint)
+tbl <- calculate_condition_mean_sd_per_gene(exp.proc, condition)
+patterns <- make_pattern_matrix(tbl, n_sd = 2)[, "pattern"]
 ```
 
 #### Pattern line plot
@@ -306,56 +450,82 @@ The cross plot tab allows you to compare two differential expression analyses ag
 knitr::include_graphics("figures/CrossPlot.png") 
 ```
 
+```{r cross_code, eval = FALSE}
+cross_plot(
+  DEtable1 = DEtable,
+  DEtable2 = DEtable_deseq,
+  DEtable1Subset = filter(DEtable, pvalAdj < 0.05, abs(log2FC) > 1),
+  DEtable2Subset = filter(DEtable_deseq, pvalAdj < 0.05, abs(log2FC) > 1),
+  lfc.threshold = 1
+)
+```
+
 ### Gene regulatory networks (GRN)
 
-The GRN tab enables the creation of small gene regulatory networks (GRNs) to facilitate further exploration and hypothesis generation based on genes of interest. Target genes can be selected and a small network with them as targets can be generated by clicking the "Start GRN inference" button. The number of regulators can then be adjusted and the plot downloaded in interactive html format. Note that target genes can also regulate each other if the selected genes are functionally similar.
+The GRN tab enables the creation of small gene regulatory networks (GRNs) to facilitate further exploration and hypothesis generation based on genes of interest. Target genes can be selected and a small network with them as targets can be generated by clicking the "Start GRN inference" button. Up to four different GRNs can be inferred at once, to investigate differences between experimental conditions. If more than one GRN is generated, regulators in common are coloured differently and an UpSet plot is shown, summarising the commonalities of edges between the networks. The number of regulators can then be adjusted and the network plots downloaded in interactive html format. Note that target genes can also regulate each other if the selected genes are functionally similar.
 
 ```{r GRN, echo = FALSE, out.width = "80%"}
 knitr::include_graphics("figures/GRN.png") 
 ```
 
+```{r GRN_code, eval = FALSE}
+infer_GRN(
+  expression.matrix = exp.proc, 
+  metadata = meta, 
+  anno = anno,
+  seed = 13,
+  targets = "Trpm1", 
+  condition = "timepoint", 
+  samples = c("0h", "12h"), 
+  inference_method = "GENIE3"
+)
+```
+
 ### Adding extra panels
 
-Alongside the default 8 panels, you can also define your own panels and add them to the app. As an example, we could add an extra QC panel (in this case it will be exactly the same):
+Alongside the default panels, you can also define your own panels and add them to the app. As an example, we could add an extra QC panel (in this case it will be exactly the same). Note that extra panels appear at the top level, and all parameters are converted to lists by **generateShinyApp** and thus need to be supplied as such. It might be useful to explore the app.R file generated by the command below to understand the structure:
 
 ```{r add extra panel, eval = FALSE}
 generateShinyApp(
-  expression.matrix = exp.proc,
-  metadata = meta,
   shiny.dir = "shiny_Yang2019_ExtraQC",
   app.title = "Shiny app for visualisation of three timepoints from the Yang 2019 data - extra QC",
+  modality = "RNA",
+  expression.matrix = exp.proc,
+  metadata = meta,
   organism = "mmusculus",
   org.db = "org.Mm.eg.db",
   panels.extra = tibble::tibble(
-    UIfun = "QCpanelUI", 
-    UIvars = "'QC2', metadata", 
-    serverFun = "QCpanelServer", 
-    serverVars = "'QC2', expression.matrix, metadata"
+    name = "RNA2",
+    UIfun = "modalityPanelUI", 
+    UIvars = "'RNA2', metadata[[1]], NA, 'QC'", 
+    serverFun = "modalityPanelServer", 
+    serverVars = "'RNA2', expression.matrix[[1]], metadata[[1]], anno[[1]], NA, 'QC'"
   )
 )
 ```
 
-If you need to add extra data or package imports for the extra panel(s) then you can do this using the *data.extra* and *packages.extra* parameters. Make sure you have the extra data loaded when you create the app. For example:
+If you need to add extra data or package imports for the extra panel(s) then you can do this using the *data.extra* and *packages.extra* parameters. Make sure you have the extra data loaded when you create the app. Note that the data.exta object will be available in the app as a single list. For example:
 
 ```{r add extra data, eval = FALSE}
-
 extra.data1 = matrix(rnorm(36),nrow=6)
 extra.data2 = matrix(rnorm(60),nrow=10)
 
 generateShinyApp(
+  shiny.dir = "shiny_Yang2019_ExtraQC",
+  app.title = "Shiny app for visualisation of three timepoints from the Yang 2019 data - extra QC",
+  modality = "RNA",
   expression.matrix = exp.proc,
   metadata = meta,
-  shiny.dir = "shiny_Yang2019_ExtraData",
-  app.title = "Shiny app for visualisation of three timepoints from the Yang 2019 data - extra QC",
   organism = "mmusculus",
   org.db = "org.Mm.eg.db",
   panels.extra = tibble::tibble(
-    UIfun = "QCpanelUI", 
-    UIvars = "'QC2', metadata", 
-    serverFun = "QCpanelServer", 
-    serverVars = "'QC2', expression.matrix, metadata"
+    name = "RNA2",
+    UIfun = "modalityPanelUI", 
+    UIvars = "'RNA2', metadata[[1]], NA, 'QC'", 
+    serverFun = "modalityPanelServer", 
+    serverVars = "'RNA2', expression.matrix[[1]], metadata[[1]], anno[[1]], NA, 'QC'"
   ),
-  data.extra = c("extra.data1", "extra.data2"),
+  data.extra = list(extra.data1, extra.data2),
   packages.extra = "somePackage",
 )
 
