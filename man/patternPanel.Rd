@@ -20,6 +20,9 @@ while the last column is assumed to contain the experimental conditions
 that will be tested for differential expression; a list  (of the same
 length as modality) can be provided if #' \code{length(modality) > 1}}
 
+\item{show}{whether to show the panel or not; default is TRUE; there for
+compatibility with specifying panels to show}
+
 \item{expression.matrix}{the expression matrix; rows correspond to genes and
 columns correspond to samples; usually preprocessed by
 \code{\link{preprocessExpressionMatrix}}; a list  (of the same length as

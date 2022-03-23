@@ -13,6 +13,9 @@ sampleSelectPanelServer(id, expression.matrix, metadata)
 \arguments{
 \item{id}{the input slot that will be used to access the value}
 
+\item{show}{whether to show the panel or not; default is TRUE; there for
+compatibility with specifying panels to show}
+
 \item{expression.matrix}{the expression matrix; rows correspond to genes and
 columns correspond to samples; usually preprocessed by
 \code{\link{preprocessExpressionMatrix}}; a list  (of the same length as

@@ -12,6 +12,9 @@ landingPanelServer(id)
 }
 \arguments{
 \item{id}{the input slot that will be used to access the value}
+
+\item{show}{whether to show the panel or not; default is TRUE; there for
+compatibility with specifying panels to show}
 }
 \value{
 The UI and Server components of the shiny module, that can be used

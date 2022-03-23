@@ -27,6 +27,19 @@ while the last column is assumed to contain the experimental conditions
 that will be tested for differential expression; a list  (of the same
 length as modality) can be provided if #' \code{length(modality) > 1}}
 
+\item{organism}{organism name to be passed on to \code{gprofiler2::gost};
+organism names are constructed by concatenating the first letter of the
+name and the family name; default is NA - enrichment is not included
+to ensure compatibility with datasets that have non-standard gene names;
+a vector (of the same length as modality) can be provided if
+\code{length(modality) > 1}}
+
+\item{panels.default}{argument to control which of the default panels
+will be included in the app; default is all, but the enrichment panel
+will not appear unless organism is also supplied; note that the 'DE' panel
+is required for 'DEplot', 'Enrichment', and GRN; a list  (of the same
+length as modality) can be provided if \code{length(modality) > 1}}
+
 \item{expression.matrix}{the expression matrix; rows correspond to genes and
 columns correspond to samples; usually preprocessed by
 \code{\link{preprocessExpressionMatrix}}; a list  (of the same length as
