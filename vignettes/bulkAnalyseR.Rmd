@@ -202,14 +202,14 @@ See the following sections for more details about the default panels. For each p
 
 ### Home
 
-This tab contains some useful links (including this vignette!) to get you started with bulkAnalyseR.
+This tab contains some useful links (including this vignette!) to get you started with **bulkAnalyseR**.
 
 ### Sample Select
 
 This tab allows you to select a subset of samples to use for the analysis. In particular this allows you to exclude low quality samples (which you could discover using QC tab) or focus on particular parts of the data. Once you have selected the samples you want, make sure to press the 'Use the selected sample!' button to confirm your choice. If you do not use this button or select samples then all samples will be used.
 
 ```{r sample select, echo = FALSE, out.width = "80%"}
-knitr::include_graphics("figures/SampleSelect.png") 
+knitr::include_graphics("figures/SampleSelect.png")
 ```
 
 ### Quality check (QC)
@@ -507,7 +507,6 @@ generateShinyApp(
 If you need to add extra data or package imports for the extra panel(s) then you can do this using the *data.extra* and *packages.extra* parameters. Make sure you have the extra data loaded when you create the app. Note that the data.exta object will be available in the app as a single list. For example:
 
 ```{r add extra data, eval = FALSE}
-
 extra.data1 = matrix(rnorm(36),nrow=6)
 extra.data2 = matrix(rnorm(60),nrow=10)
 

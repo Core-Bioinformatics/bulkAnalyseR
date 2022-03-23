@@ -128,7 +128,7 @@ exp.proc <- preprocessExpressionMatrix(exp, output.plot = TRUE)
 #  )
 
 ## ----sample select, echo = FALSE, out.width = "80%"---------------------------
-knitr::include_graphics("figures/SampleSelect.png") 
+knitr::include_graphics("figures/SampleSelect.png")
 
 ## ----JSI, echo = FALSE, out.width = "80%"-------------------------------------
 knitr::include_graphics("figures/JSI.png") 
@@ -317,7 +317,6 @@ knitr::include_graphics("figures/GRN.png")
 #  )
 
 ## ----add extra data, eval = FALSE---------------------------------------------
-#  
 #  extra.data1 = matrix(rnorm(36),nrow=6)
 #  extra.data2 = matrix(rnorm(60),nrow=10)
 #  
