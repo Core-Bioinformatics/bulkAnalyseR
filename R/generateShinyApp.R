@@ -757,17 +757,30 @@ generateAppFile <- function(
 #)
 #)
 
+# mrna.expression.matrix.preproc <- as.matrix(read.csv(
+#   "exampledata/Li2021_miRNA_mRNA/expression_matrix_mRNA_preprocessed.csv",
+#   row.names = 1
+# ))
+# mirna.expression.matrix.preproc <- as.matrix(read.csv(
+#   "exampledata/Li2021_miRNA_mRNA/expression_matrix_miRNA_preprocessed.csv",
+#   row.names = 1
+# ))
 # metadata = data.frame(id=c(paste0('control_',1:3),paste0('IDD_',1:3)),rep=rep(1:3,2),type=c(rep(c('control','IDD'),each=3)))
-# generateShinyApp('mRNA_miRNA_shiny','Li 2021 Trans Regulatory Example',
-#                 modality=c('mRNA','miRNA'),
-#                 metadata = metadata,
-#                 expression.matrix = list(mrna.expression.matrix.preproc,mirna.expression.matrix.preproc),
-#                 org.db = c('org.Hs.eg.db',NA),
-#                 organism=c('hsapiens',NA),
-#                 trans.integration = tibble::tibble(reference.expression.matrix='mrna.expression.matrix.preproc',
-#                                                    reference.org.db='org.Hs.eg.db',
-#                                                    comparison.expression.matrix='mirna.expression.matrix.preproc',
-#                                                    comparison.org.db='NULL',
-#                                                    reference.table.name='mRNA',
-#                                                    comparison.table.name='miRNA')
-#)
+# shiny.dir <- generateShinyApp(
+#   shiny.dir = 'mRNA_miRNA_shiny',
+#   app.title = 'Li 2021 Trans Regulatory Example',
+#   modality = c('mRNA', 'miRNA'),
+#   metadata = metadata,
+#   expression.matrix = list(mrna.expression.matrix.preproc, mirna.expression.matrix.preproc),
+#   org.db = c('org.Hs.eg.db', NA),
+#   organism = c('hsapiens', NA),
+#   trans.integration = tibble::tibble(
+#     reference.expression.matrix = 'mrna.expression.matrix.preproc',
+#     reference.org.db = 'org.Hs.eg.db',
+#     comparison.expression.matrix = 'mirna.expression.matrix.preproc',
+#     comparison.org.db = 'NULL',
+#     reference.table.name = 'mRNA',
+#     comparison.table.name = 'miRNA'
+#   )
+# )
+# shiny::runApp(shiny.dir)

@@ -186,8 +186,9 @@ crossPanelServer <- function(id, expression.matrix, metadata, anno){
                   'lfcThreshold' = input[["lfcThreshold"]], 
                   'pvalThreshold' = input[["pvalThreshold"]]))
     }) %>%
-      bindCache(metadata(), input[["condition1"]], input[['DE1var1']], input[['DE1var2']],
-                input[["pipeline1"]], input[["condition2"]], input[['DE2var1']], input[['DE2var2']],
+      bindCache(head(expression.matrix()),metadata(), input[["condition1"]], 
+                input[['DE1var1']], input[['DE1var2']], input[["pipeline1"]], 
+                input[["condition2"]], input[['DE2var1']], input[['DE2var2']],
                 input[["pipeline2"]], input[["lfcThreshold"]], input[["pvalThreshold"]]) %>%
       bindEvent(input[["goDE"]])
     

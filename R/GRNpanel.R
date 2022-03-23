@@ -151,8 +151,6 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       }
       weightMat
     }) %>%
-      bindCache(metadata(), input[["targets"]], input[["condition"]], 
-                input[["samples1"]], n_networks()) %>%
       bindEvent(input[["goGRN"]])
     GRNresults2 <- reactive({
       shinyjs::disable("goGRN")
@@ -172,8 +170,6 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       }
       weightMat
     }) %>%
-      bindCache(metadata(), input[["targets"]], input[["condition"]], 
-                input[["samples2"]], n_networks()) %>%
       bindEvent(input[["goGRN"]])
     GRNresults3 <- reactive({
       shinyjs::disable("goGRN")
@@ -193,8 +189,6 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       }
       weightMat
     }) %>%
-      bindCache(metadata(), input[["targets"]], input[["condition"]], 
-                input[["samples3"]], n_networks()) %>%
       bindEvent(input[["goGRN"]])
     GRNresults4 <- reactive({
       shinyjs::disable("goGRN")
@@ -214,8 +208,6 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       }
       weightMat
     }) %>%
-      bindCache(metadata(), input[["targets"]], input[["condition"]], 
-                input[["samples4"]], n_networks()) %>%
       bindEvent(input[["goGRN"]])
     
     weightMatList <- reactive({
