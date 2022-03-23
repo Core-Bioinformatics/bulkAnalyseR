@@ -490,7 +490,7 @@ generateAppFile <- function(
         code.source.objects <- c(
           code.source.objects,
           glue::glue("anno.cis[[{i}]] <- AnnotationDbi::select("),
-          glue::glue("getExportedValue('cis.integration[{i},]$reference.org.db', 'cis.integration[{i},]$reference.org.db'),"),
+          glue::glue("getExportedValue('{cis.integration[i,]$reference.org.db}', '{cis.integration[i,]$reference.org.db}'),"),
           glue::glue("keys = rownames(cis.integration.data[['{cis.integration[i,]$reference.expression.matrix}']]),"),
           "keytype = 'ENSEMBL',",
           "columns = 'SYMBOL'",

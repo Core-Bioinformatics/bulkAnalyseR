@@ -84,8 +84,10 @@ QCpanelServer <- function(id, expression.matrix, metadata, anno){
         l <- length(unique(x))
         (l > 1) & (l < length(x))
       })
+      if (sum(include.exclude == TRUE) != 0){
       items <- colnames(metadata())[include.exclude]
       items <- items[c(length(items), seq_len(length(items) - 1))]
+      } else {items = colnames(metadata())[2:ncol(metadata())]}
       shinyjqui::updateOrderInput(session, "jaccard.annotations", items = items)
     })
     jaccard.plot <- reactive({

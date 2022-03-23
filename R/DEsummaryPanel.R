@@ -86,8 +86,10 @@ DEsummaryPanelServer <- function(id, expression.matrix, metadata, DEresults, ann
         l <- length(unique(x))
         (l > 1) & (l < length(x))
       })
-      items <- colnames(metadata())[include.exclude]
-      items <- items[c(length(items), seq_len(length(items) - 1))]
+      if (sum(include.exclude == TRUE) != 0){
+        items <- colnames(metadata())[include.exclude]
+        items <- items[c(length(items), seq_len(length(items) - 1))]
+      } else {items = colnames(metadata())[2:ncol(metadata())]}
       shinyjqui::updateOrderInput(session, "heatmap.annotations", items = items)
     })
     heatmap.plot <- reactive({
