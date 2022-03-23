@@ -237,7 +237,7 @@ validateAppInputs <- function(
     if(ncol(expression.matrix) != nrow(metadata)){
       stop("Detected different number of columns in expression.matrix to rows in metadata")
     }else if(!identical(colnames(expression.matrix), metadata[[1]])){
-      stop("The first column on metadata must correspond to the column names of expression.matrix")
+      stop("The first column of metadata must correspond to the column names of expression.matrix")
     }else if(ncol(metadata) < 2){
       stop("metadata must be a data frame with at least 2 columns")
     }
@@ -293,7 +293,7 @@ validateIntegrationInputs <- function(
   custom.integration = custom.integration
 ){
   for (i in seq_len(nrow(cis.integration))){
-    if ((cis.integration[i,]$reference.expression.matrix)=='expression.matrix'){
+    if ((cis.integration[i,]$reference.expression.matrix) == 'expression.matrix'){
       stop("Reference expression matrix for cis integration cannot be named expression.matrix, this is a reserved name")
     }
     cis.integration.row.reference.coord = get(cis.integration[i,]$reference.coord)
@@ -315,7 +315,7 @@ validateIntegrationInputs <- function(
     if((!is.numeric(cis.integration.row.comparison.coord$Start) | (!is.numeric(cis.integration.row.comparison.coord$Stop)))){
       stop("Start and stop coordinates for cis integration should be numeric")
     }
-    if(length(intersect(rownames(expression.matrix),cis.integration.row.comparison.coord$ID)) != 0){
+    if(length(intersect(rownames(cis.integration.row.reference.expression.matrix), cis.integration.row.comparison.coord$ID)) != 0){
       stop("IDs must be unique to either reference or comparison tables for cis integration")
     }
   }
@@ -340,13 +340,13 @@ validateIntegrationInputs <- function(
     if(!identical(colnames(trans.integration.row.reference.expression.matrix),colnames(trans.integration.row.comparison.expression.matrix))){
       stop("The columns of the two expression matrices must be identical for trans integration")
     }
-    if(length(intersect(rownames(expression.matrix),rownames(trans.integration.row.comparison.expression.matrix)))!=0){
+    if(length(intersect(rownames(trans.integration.row.reference.expression.matrix), rownames(trans.integration.row.comparison.expression.matrix)))!=0){
       stop("Row names must be unique to either reference or comparison tables for trans integration")
     }
-    if(trans.integration$reference.table.name[i]==trans.integration$comparison.table.name[i]){
+    if(trans.integration$reference.table.name[i] == trans.integration$comparison.table.name[i]){
       stop("Table names for trans integration must be different")
     }
-    }
+  }
   
   for (i in seq_len(nrow(custom.integration))){
     
@@ -360,7 +360,7 @@ validateIntegrationInputs <- function(
     if(!is.matrix(custom.integration.row.reference.expression.matrix)){
       stop("The expression matrix for custom integration must be a matrix")
     }
-                                                             
+    
     if(!identical(colnames(custom.integration.row.comparison.table),c('Reference_ID','Reference_Name','Comparison_ID','Comparison_Name'))){
       stop("The columns of comparison.table for custom integration must be Reference_ID, Reference_Name, Comparison_ID, Comparison_Name")
     }
@@ -379,7 +379,7 @@ generateDataFiles <- function(
 ){
   save(expression.matrix, file = paste0(shiny.dir, "/expression_matrix.rda"))
   save(metadata, file = paste0(shiny.dir, "/metadata.rda"))
-  save(data.extra, file = paste0(shiny.dir, "/", name, ".rda"))
+  save(data.extra, file = paste0(shiny.dir, "/data_extra.rda"))
 }
 
 generateIntegrationDataFiles <- function(
@@ -389,13 +389,13 @@ generateIntegrationDataFiles <- function(
   custom.integration
 ){
   if (nrow(cis.integration) > 0){
-  cis.integration.data <- list()
-  for(i in seq_len(nrow(cis.integration))){
-    cis.integration.data[[cis.integration[i,]$reference.expression.matrix]]=get(cis.integration[i,]$reference.expression.matrix)
-    cis.integration.data[[cis.integration[i,]$reference.coord]]=get(cis.integration[i,]$reference.coord)
-    cis.integration.data[[cis.integration[i,]$comparison.coord]]=get(cis.integration[i,]$comparison.coord)
-  }
-  save(cis.integration.data,file = paste0(shiny.dir, "/", "cis_integration_data.rda"))
+    cis.integration.data <- list()
+    for(i in seq_len(nrow(cis.integration))){
+      cis.integration.data[[cis.integration[i,]$reference.expression.matrix]]=get(cis.integration[i,]$reference.expression.matrix)
+      cis.integration.data[[cis.integration[i,]$reference.coord]]=get(cis.integration[i,]$reference.coord)
+      cis.integration.data[[cis.integration[i,]$comparison.coord]]=get(cis.integration[i,]$comparison.coord)
+    }
+    save(cis.integration.data,file = paste0(shiny.dir, "/", "cis_integration_data.rda"))
   }
   
   if (nrow(trans.integration) > 0){
@@ -585,7 +585,7 @@ generateAppFile <- function(
   }
   
   lines.out <- c(lines.out, code.source.objects, "")
-
+  
   code.ui <- c(
     "ui <- navbarPage(",
     glue::glue("'{app.title}',"), 
