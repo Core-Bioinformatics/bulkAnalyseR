@@ -6,6 +6,9 @@
 #' @param coord.table.reference Table of coordinates corresponding to rows of 
 #' expression.matrix
 #' @param coord.table.comparison Table of coordinates to compare against coord.table.reference
+#' @param reference.table.name Name for reference expression matrix and coordinate table
+#' @param comparison.table.name Name for comparison coordinate table
+#' @param seed Random seed to create reproducible GRNs
 #' @return The UI and Server components of the shiny module, that can be used
 #' within the UI and Server definitions of a shiny app.
 #' @name GRNCisPanel
@@ -42,8 +45,10 @@ GRNCisPanelUI <- function(id, reference.table.name, comparison.table.name){
 GRNCisPanelServer <- function(id, expression.matrix, anno, coord.table.reference, coord.table.comparison, seed = 13){
   
   stopifnot({
-    is.reactive(expression.matrix)
+    !is.reactive(expression.matrix)
     !is.reactive(anno)
+    !is.reactive(coord.table.reference)
+    !is.reactive(coord.table.comparison)
   })
   
   moduleServer(id, function(input, output, session){
