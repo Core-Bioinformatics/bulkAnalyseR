@@ -80,6 +80,7 @@ GRNCisPanelServer <- function(id, expression.matrix, anno, coord.table.reference
         color = c(rep(color_target_reference, ncol(weightMat)), rep(color_regulator_reference, nrow(edges)))
       ) %>%
         dplyr::distinct(id, .keep_all = TRUE)
+      rownames(coord.table.reference) <- coord.table.reference$ID
       node.locations <- coord.table.reference[nodes$id,]
       ref.comp.merge <- merge(node.locations,coord.table.comparison,by='Chrom')
       ref.comp.merge <- ref.comp.merge[ref.comp.merge$Stop.y >= (ref.comp.merge$Start.x - input[['maxDistance']]) & 
