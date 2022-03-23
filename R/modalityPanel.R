@@ -29,7 +29,7 @@ modalityPanelUI <- function(id, metadata, organism, panels.default){
     ),
     enrichmentPanelUI(
       ns('Enrichment'), 
-      show = ("DE" %in% panels.default) & ("Enrichment" %in% panels.default) & !is.null(organism)
+      show = ("DE" %in% panels.default) & ("Enrichment" %in% panels.default) & (organism != 'NA')
     ),
     patternPanelUI(ns('Patterns'), metadata, show = "Patterns" %in% panels.default),
     crossPanelUI(ns('Cross'), metadata, show = "Cross" %in% panels.default),
@@ -70,7 +70,7 @@ modalityPanelServer <- function(id, expression.matrix, metadata, anno, organism,
       if("DEsummary" %in% panels.default){
         DEsummaryPanelServer('DEsummary', expression.matrix, metadata, DEresults, anno)
       }
-      if("Enrichment" %in% panels.default & !is.null(organism)){
+      if("Enrichment" %in% panels.default & (organism != 'NA')){
         enrichmentPanelServer('Enrichment', DEresults, organism = organism)
       }
     }

@@ -5,6 +5,9 @@
 #' @inheritParams GRNpanel
 #' @param comparison.table Table linking rows of expression.matrix to custom information, 
 #' for example miRNAs or transcription factors.
+#' @param reference.table.name Name for reference expression matrix and coordinate table
+#' @param comparison.table.name Name for comparison coordinate table
+#' @param seed Random seed to create reproducible GRNs
 #' @return The UI and Server components of the shiny module, that can be used
 #' within the UI and Server definitions of a shiny app.
 #' @name GRNCustomPanel
@@ -39,8 +42,9 @@ GRNCustomPanelUI <- function(id, reference.table.name, comparison.table.name){
 GRNCustomPanelServer <- function(id, expression.matrix, anno, comparison.table, seed = 13){
   
   stopifnot({
-    is.reactive(expression.matrix)
+    !is.reactive(expression.matrix)
     !is.reactive(anno)
+    !is.reactive(comparison.table)
   })
   
   moduleServer(id, function(input, output, session){

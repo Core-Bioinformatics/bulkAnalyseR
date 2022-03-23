@@ -13,6 +13,10 @@ GRNCustomPanelServer(id, expression.matrix, anno, comparison.table, seed = 13)
 \arguments{
 \item{id}{the input slot that will be used to access the value}
 
+\item{reference.table.name}{Name for reference expression matrix and coordinate table}
+
+\item{comparison.table.name}{Name for comparison coordinate table}
+
 \item{expression.matrix}{the expression matrix; rows correspond to genes and
 columns correspond to samples; usually preprocessed by
 \code{\link{preprocessExpressionMatrix}}; a list  (of the same length as
@@ -25,6 +29,8 @@ created by \code{\link{generateShinyApp}} using the org.db specified}
 
 \item{comparison.table}{Table linking rows of expression.matrix to custom information,
 for example miRNAs or transcription factors.}
+
+\item{seed}{Random seed to create reproducible GRNs}
 }
 \value{
 The UI and Server components of the shiny module, that can be used

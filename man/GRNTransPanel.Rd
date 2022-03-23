@@ -40,7 +40,9 @@ The structure matches the anno table created in
 \item{expression.matrix.comparison}{Additional expression matrix to integrate.
 Column names must match column names from expression.matrix.}
 
-\item{tablenames}{Names for reference and comparison expression tables.}
+\item{tablenames, reference.table.name, comparison.table.name}{Names for reference and comparison expression tables.}
+
+\item{seed}{Random seed to create reproducible GRNs}
 }
 \value{
 The UI and Server components of the shiny module, that can be used

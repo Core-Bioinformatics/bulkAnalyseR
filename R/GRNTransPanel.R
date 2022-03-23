@@ -10,7 +10,8 @@
 #' should be rendered within the app and in output files. 
 #' The structure matches the anno table created in 
 #' \code{\link{generateShinyApp}} using the org.db specified
-#' @param tablenames Names for reference and comparison expression tables.
+#' @param tablenames,reference.table.name,comparison.table.name Names for reference and comparison expression tables.
+#' @param seed Random seed to create reproducible GRNs
 #' @return The UI and Server components of the shiny module, that can be used
 #' within the UI and Server definitions of a shiny app.
 #' @name GRNTransPanel
