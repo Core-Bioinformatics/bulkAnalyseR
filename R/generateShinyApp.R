@@ -40,17 +40,25 @@
 #' will not appear unless organism is also supplied; note that the 'DE' panel 
 #' is required for 'DEplot', 'Enrichment', and GRN; a list  (of the same 
 #' length as modality) can be provided if \code{length(modality) > 1}
-#' @param cis.integration functionality to integrate extra cis-regulatory information into GRN panel. 
-#' Tibble containing names of reference expression matrix, tables of coordinates for elements corresponding to rows 
-#' of reference expression matrix (reference.coord), tables of coordinates to compare against 
-#' reference.coord (comparison.coord) and names for comparison tables.
-#' @param trans.integration functionality to integrate extra trans-regulatory information into GRN panel. 
-#' Tibble containing names of reference expression matrix, (reference.expression.matrix), comparison expression matrix (comparison.expression.matrix).
-#' Organism database names for each expression matrix and names for each table are also required. 
-#' @param custom.integration functionality to integrate custom information related to rows of 
-#' reference expression matrix. Tibble containining names of reference expression matrix, tables (comparison.table) 
-#' with Reference_ID and Reference_Name (matching ENSEMBL and NAME columns of reference organism database) and 
-#' Comparison_ID and Comparison_Name. Names for the reference expression matrix and comparison table (comparison.table.name) are also required.
+#' @param cis.integration functionality to integrate extra cis-regulatory 
+#' information into GRN panel. Tibble containing names of reference expression 
+#' matrix, tables of coordinates for elements corresponding to rows of reference 
+#' expression matrix (reference.coord), tables of coordinates to compare against 
+#' reference.coord (comparison.coord) and names for comparison tables. See 
+#' vignettes for more details about inputs.
+#' @param trans.integration functionality to integrate extra trans-regulatory 
+#' information into GRN panel. Tibble containing names of reference expression 
+#' matrix, (reference.expression.matrix), comparison expression matrix 
+#' (comparison.expression.matrix). Organism database names for each expression 
+#' matrix and names for each table are also required. See vignettes for more 
+#' details about inputs.
+#' @param custom.integration functionality to integrate custom information 
+#' related to rows of reference expression matrix. Tibble containing names 
+#' of reference expression matrix, tables (comparison.table) with Reference_ID 
+#' and Reference_Name (matching ENSEMBL and NAME columns of reference organism 
+#' database) and Comparison_ID and Comparison_Name. Names for the reference 
+#' expression matrix and comparison table (comparison.table.name) 
+#' are also required. See vignettes for more details about inputs.
 #' @param panels.extra,data.extra,packages.extra functionality to add new
 #' user-created panels to the app to extend functionality or change the default
 #' behaviour of existing panels; a data frame of the modality, panel UI and 
@@ -298,23 +306,30 @@ validateIntegrationInputs <- function(
     cis.integration.row.reference.coord = get(cis.integration[i,]$reference.coord)
     cis.integration.row.comparison.coord = get(cis.integration[i,]$comparison.coord)
     cis.integration.row.reference.expression.matrix = get(cis.integration[i,]$reference.expression.matrix)
-    if((!identical(colnames(cis.integration.row.reference.coord), c("ID","Chrom","Start","Stop","Name"))) | 
-       (!identical(colnames(cis.integration.row.comparison.coord), c("ID","Chrom","Start","Stop","Name")))){
-      stop("Coordinate tables for cis integration should have 5 columns named ID, Chrom, Start, Stop and Name")
+    print(colnames(cis.integration.row.reference.coord))
+    print(colnames(cis.integration.row.comparison.coord))
+    print((length(intersect(colnames(cis.integration.row.reference.coord), c("ID","Chrom","Start","Stop","Strand","Name")))))
+    print((length(intersect(colnames(cis.integration.row.comparison.coord), c("ID","Chrom","Start","Stop","Strand","Name")))))
+    if((length(intersect(colnames(cis.integration.row.reference.coord), c("ID","Chrom","Start","Stop","Strand","Name"))) != 6) | 
+       (length(intersect(colnames(cis.integration.row.comparison.coord), c("ID","Chrom","Start","Stop","Strand","Name"))) != 6)) {
+      stop("Coordinate tables for cis integration should have 6 columns named ID, Chrom, Start, Stop, Strand and Name")
     }
-    if(length(intersect(rownames(cis.integration.row.reference.expression.matrix), cis.integration.row.reference.coord$ID)) == 0){
+    if(length(intersect(rownames(cis.integration.row.reference.expression.matrix), cis.integration.row.reference.coord$ID)) == 0) {
       stop("IDs in the reference coordinate table for cis integration should match row names in reference expression matrix")
     }
     if(length(intersect(cis.integration.row.reference.coord$Chrom, cis.integration.row.comparison.coord$Chrom)) == 0){
       stop("Chromosome names for cis integration should match between reference and comparison coordinate tables")
     }
-    if((!is.numeric(cis.integration.row.reference.coord$Start) | (!is.numeric(cis.integration.row.reference.coord$Stop)))){
+    if (length(cis.integration.row.reference.coord$Strand[!(cis.integration.row.reference.coord$Strand %in% c('+','-'))]) != 0) {
+      stop('Strand column should only contain values "+" or "-". If you do not know the strand information, use "+".')
+    }
+    if((!is.numeric(cis.integration.row.reference.coord$Start) | (!is.numeric(cis.integration.row.reference.coord$Stop)))) {
       stop("Start and stop coordinates for cis integration should be numeric")
     }
-    if((!is.numeric(cis.integration.row.comparison.coord$Start) | (!is.numeric(cis.integration.row.comparison.coord$Stop)))){
+    if((!is.numeric(cis.integration.row.comparison.coord$Start) | (!is.numeric(cis.integration.row.comparison.coord$Stop)))) {
       stop("Start and stop coordinates for cis integration should be numeric")
     }
-    if(length(intersect(rownames(cis.integration.row.reference.expression.matrix), cis.integration.row.comparison.coord$ID)) != 0){
+    if(length(intersect(rownames(cis.integration.row.reference.expression.matrix), cis.integration.row.comparison.coord$ID)) != 0) {
       stop("IDs must be unique to either reference or comparison tables for cis integration")
     }
   }
@@ -360,7 +375,7 @@ validateIntegrationInputs <- function(
       stop("The expression matrix for custom integration must be a matrix")
     }
     
-    if(!identical(colnames(custom.integration.row.comparison.table),c('Reference_ID','Reference_Name','Comparison_ID','Comparison_Name'))){
+    if(length(intersect(colnames(custom.integration.row.comparison.table),c('Reference_ID','Reference_Name','Comparison_ID','Comparison_Name')) != 4)){
       stop("The columns of comparison.table for custom integration must be Reference_ID, Reference_Name, Comparison_ID, Comparison_Name")
     }
     if(length(intersect(rownames(custom.integration.row.reference.expression.matrix),custom.integration.row.comparison.table$Reference_ID[i]))==0){
@@ -392,9 +407,9 @@ generateIntegrationDataFiles <- function(
   if (nrow(cis.integration) > 0){
     cis.integration.data <- list()
     for(i in seq_len(nrow(cis.integration))){
-      cis.integration.data[[cis.integration[i,]$reference.expression.matrix]]=get(cis.integration[i,]$reference.expression.matrix)
-      cis.integration.data[[cis.integration[i,]$reference.coord]]=get(cis.integration[i,]$reference.coord)
-      cis.integration.data[[cis.integration[i,]$comparison.coord]]=get(cis.integration[i,]$comparison.coord)
+      cis.integration.data[[cis.integration[i,]$reference.expression.matrix]] <- get(cis.integration[i,]$reference.expression.matrix)
+      cis.integration.data[[cis.integration[i,]$reference.coord]] <- get(cis.integration[i,]$reference.coord)
+      cis.integration.data[[cis.integration[i,]$comparison.coord]] <- get(cis.integration[i,]$comparison.coord)
     }
     save(cis.integration.data,file = paste0(shiny.dir, "/", "cis_integration_data.rda"))
   }
@@ -402,8 +417,8 @@ generateIntegrationDataFiles <- function(
   if (nrow(trans.integration) > 0){
     trans.integration.data <- list()
     for(i in seq_len(nrow(trans.integration))){
-      trans.integration.data[[trans.integration[i,]$reference.expression.matrix]]=get(trans.integration[i,]$reference.expression.matrix)
-      trans.integration.data[[trans.integration[i,]$comparison.expression.matrix]]=get(trans.integration[i,]$comparison.expression.matrix)
+      trans.integration.data[[trans.integration[i,]$reference.expression.matrix]] <- get(trans.integration[i,]$reference.expression.matrix)
+      trans.integration.data[[trans.integration[i,]$comparison.expression.matrix]] <- get(trans.integration[i,]$comparison.expression.matrix)
     }
     save(trans.integration.data, file = paste0(shiny.dir, "/", "trans_integration_data.rda"))
   }
@@ -411,8 +426,8 @@ generateIntegrationDataFiles <- function(
   if (nrow(custom.integration) > 0){
     custom.integration.data <- list()
     for(i in seq_len(nrow(custom.integration))){
-      custom.integration.data[[custom.integration[i,]$reference.expression.matrix]]=get(custom.integration[i,]$reference.expression.matrix)
-      custom.integration.data[[custom.integration[i,]$comparison.table]]=get(custom.integration[i,]$comparison.table)
+      custom.integration.data[[custom.integration[i,]$reference.expression.matrix]] <- get(custom.integration[i,]$reference.expression.matrix)
+      custom.integration.data[[custom.integration[i,]$comparison.table]] <- get(custom.integration[i,]$comparison.table)
     }
     save(custom.integration.data,file = paste0(shiny.dir, "/", "custom_integration.data.rda"))
   }
@@ -476,7 +491,7 @@ generateAppFile <- function(
     code.source.objects <- c(code.source.objects, "")
     code.source.objects <- c(code.source.objects, "anno.cis <- list()")
     for(i in seq_len(nrow(cis.integration))){
-      if(cis.integration[i,]$reference.org.db=='NULL'){
+      if(cis.integration[i,]$reference.org.db == 'NULL'){
         code.source.objects <- c(
           code.source.objects,
           glue::glue("anno.cis[[{i}]] <- data.frame("),
@@ -700,7 +715,7 @@ generateAppFile <- function(
                                          "trans.integration.data$", 
                                          trans.integration[i,]$reference.expression.matrix, 
                                          ", anno.trans.reference[[",i,"]], anno.trans.comparison[[",i,"]] ,", 
-                                         "trans.integration.data$", 
+                                         "trans.integration.data$",
                                          trans.integration[i,]$comparison.expression.matrix,
                                          ", c('", 
                                          trans.integration[i,]$reference.table.name, 
@@ -765,7 +780,7 @@ generateAppFile <- function(
 #   row.names = 1
 # ))
 # metadata = data.frame(id=c(paste0('control_',1:3),paste0('IDD_',1:3)),rep=rep(1:3,2),type=c(rep(c('control','IDD'),each=3)))
-# shiny.dir <- generateShinyApp(
+# generateShinyApp(
 #   shiny.dir = 'mRNA_miRNA_shiny',
 #   app.title = 'Li 2021 Trans Regulatory Example',
 #   modality = c('mRNA', 'miRNA'),
