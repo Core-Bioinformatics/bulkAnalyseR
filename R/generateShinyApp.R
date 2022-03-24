@@ -306,10 +306,6 @@ validateIntegrationInputs <- function(
     cis.integration.row.reference.coord = get(cis.integration[i,]$reference.coord)
     cis.integration.row.comparison.coord = get(cis.integration[i,]$comparison.coord)
     cis.integration.row.reference.expression.matrix = get(cis.integration[i,]$reference.expression.matrix)
-    print(colnames(cis.integration.row.reference.coord))
-    print(colnames(cis.integration.row.comparison.coord))
-    print((length(intersect(colnames(cis.integration.row.reference.coord), c("ID","Chrom","Start","Stop","Strand","Name")))))
-    print((length(intersect(colnames(cis.integration.row.comparison.coord), c("ID","Chrom","Start","Stop","Strand","Name")))))
     if((length(intersect(colnames(cis.integration.row.reference.coord), c("ID","Chrom","Start","Stop","Strand","Name"))) != 6) | 
        (length(intersect(colnames(cis.integration.row.comparison.coord), c("ID","Chrom","Start","Stop","Strand","Name"))) != 6)) {
       stop("Coordinate tables for cis integration should have 6 columns named ID, Chrom, Start, Stop, Strand and Name")
@@ -374,8 +370,7 @@ validateIntegrationInputs <- function(
     if(!is.matrix(custom.integration.row.reference.expression.matrix)){
       stop("The expression matrix for custom integration must be a matrix")
     }
-    
-    if(length(intersect(colnames(custom.integration.row.comparison.table),c('Reference_ID','Reference_Name','Comparison_ID','Comparison_Name')) != 4)){
+    if(length(intersect(colnames(custom.integration.row.comparison.table),c('Reference_ID','Reference_Name','Comparison_ID','Comparison_Name'))) != 4){
       stop("The columns of comparison.table for custom integration must be Reference_ID, Reference_Name, Comparison_ID, Comparison_Name")
     }
     if(length(intersect(rownames(custom.integration.row.reference.expression.matrix),custom.integration.row.comparison.table$Reference_ID[i]))==0){
@@ -588,7 +583,7 @@ generateAppFile <- function(
         code.source.objects <- c(
           code.source.objects,
           glue::glue("anno.custom[[{i}]] <- AnnotationDbi::select("),
-          glue::glue("getExportedValue('{org.db}', '{org.db}'),"),
+          glue::glue("getExportedValue('{custom.integration[i,]$reference.org.db}', '{custom.integration[i,]$reference.org.db}'),"),
           glue::glue("keys = rownames(custom.integration.data[['{custom.integration[i,]$reference.expression.matrix}']]),"),
           "keytype = 'ENSEMBL',",
           "columns = 'SYMBOL'",
