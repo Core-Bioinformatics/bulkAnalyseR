@@ -14,7 +14,7 @@ generateShinyApp(
   organism = NA,
   org.db = NA,
   panels.default = c("Landing", "SampleSelect", "QC", "DE", "DEplot", "DEsummary",
-    "Enrichment", "Patterns", "Cross", "GRN"),
+    "Enrichment", "GRNenrichment", "Patterns", "Cross", "GRN"),
   panels.extra = tibble::tibble(name = NULL, UIfun = NULL, UIvars = NULL, serverFun =
     NULL, serverVars = NULL),
   data.extra = list(),
@@ -72,7 +72,7 @@ a vector (of the same length as modality) can be provided if
 \item{panels.default}{argument to control which of the default panels
 will be included in the app; default is all, but the enrichment panel
 will not appear unless organism is also supplied; note that the 'DE' panel
-is required for 'DEplot', 'Enrichment', and GRN; a list  (of the same
+is required for 'DEplot', 'DEsummary', 'Enrichment', and 'GRNenrichment'; a list  (of the same
 length as modality) can be provided if \code{length(modality) > 1}}
 
 \item{panels.extra, data.extra, packages.extra}{functionality to add new
@@ -101,7 +101,8 @@ details about inputs.}
 related to rows of reference expression matrix. Tibble containing names
 of reference expression matrix, tables (comparison.table) with Reference_ID
 and Reference_Name (matching ENSEMBL and NAME columns of reference organism
-database) and Comparison_ID and Comparison_Name. Names for the reference
+database) and Comparison_ID and Comparison_Name plus a Category column
+containing extra information. Names for the reference
 expression matrix and comparison table (comparison.table.name)
 are also required. See vignettes for more details about inputs.}
 }

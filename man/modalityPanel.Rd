@@ -37,7 +37,7 @@ a vector (of the same length as modality) can be provided if
 \item{panels.default}{argument to control which of the default panels
 will be included in the app; default is all, but the enrichment panel
 will not appear unless organism is also supplied; note that the 'DE' panel
-is required for 'DEplot', 'Enrichment', and GRN; a list  (of the same
+is required for 'DEplot', 'DEsummary', 'Enrichment', and 'GRNenrichment'; a list  (of the same
 length as modality) can be provided if \code{length(modality) > 1}}
 
 \item{expression.matrix}{the expression matrix; rows correspond to genes and

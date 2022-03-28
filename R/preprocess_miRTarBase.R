@@ -26,11 +26,11 @@
 #' temp.dir = tempdir()
 #' comparison.table <- preprocess_miRTarBase(
 #'   temp.dir = temp.dir,
-#'   organism.code = 'mmu',
-#'   org.db = 'org.Mm.eg.db',
-#'   support.type ='Functional MTI',
-#'   validation.method = 'Luciferase reporter assay'
-#'   reference = 'miRNA')
+#'   organism.code = "mmu",
+#'   org.db = "org.Mm.eg.db",
+#'   support.type = "Functional MTI",
+#'   validation.method = "Luciferase reporter assay",
+#'   reference = "miRNA")
 #' # clean up tempdir
 #' unlink(paste0(normalizePath(tempdir()), "/", dir(tempdir())), recursive = TRUE)
 preprocess_miRTarBase <- function(temp.dir = '.',
@@ -43,7 +43,7 @@ preprocess_miRTarBase <- function(temp.dir = '.',
                                       print.validation.methods = FALSE)
                                       {
   file.suffix = ifelse(organism.code == 'hsa', 'xlsx', 'xls')
-  download.file(
+  utils::download.file(
     paste0('https://mirtarbase.cuhk.edu.cn/~miRTarBase/miRTarBase_2019/cache/download/8.0/',
            organism.code, '_MTI.', file.suffix), 
     destfile = paste0(temp.dir, '/miRTarBase_', organism.code, '.', file.suffix),
@@ -62,8 +62,8 @@ preprocess_miRTarBase <- function(temp.dir = '.',
     }
   }
   if (length(validation.method > 0) | print.validation.methods) {
-    mirtarbase <- tidyr::separate_rows(mirtarbase, Experiments, convert = TRUE, sep = '//')
-    mirtarbase <- tidyr::separate_rows(mirtarbase, Experiments, convert = TRUE, sep = ';')
+    mirtarbase <- tidyr::separate_rows(mirtarbase, .data$Experiments, convert = TRUE, sep = '//')
+    mirtarbase <- tidyr::separate_rows(mirtarbase, .data$Experiments, convert = TRUE, sep = ';')
     mirtarbase$Experiments <- trimws(mirtarbase$Experiments)
     if (print.validation.methods){
       message('Available validation methods:')
@@ -82,8 +82,8 @@ preprocess_miRTarBase <- function(temp.dir = '.',
     keytype = 'SYMBOL',
     columns = 'ENSEMBL'
   ) %>%
-    dplyr::distinct(SYMBOL, .keep_all = TRUE) %>%
-    dplyr::mutate(NAME = ifelse(is.na(SYMBOL), ENSEMBL, SYMBOL))
+    dplyr::distinct(.data$SYMBOL, .keep_all = TRUE) %>%
+    dplyr::mutate(NAME = ifelse(is.na(.data$SYMBOL), .data$ENSEMBL, .data$SYMBOL))
   )
   
   if (reference[[1]] == 'mRNA'){
@@ -91,14 +91,16 @@ preprocess_miRTarBase <- function(temp.dir = '.',
             Reference_ID = anno$ENSEMBL[match(mirtarbase$`Target Gene`, anno$NAME)],
             Reference_Name = mirtarbase$`Target Gene`,
             Comparison_ID = mirtarbase$miRNA,
-            Comparison_Name = mirtarbase$miRNA)
+            Comparison_Name = mirtarbase$miRNA,
+            Category = 'miRNA')
     mirtarbase.comparison.table <- unique(mirtarbase.comparison.table)
   } else if (reference[[1]] == 'miRNA'){
     mirtarbase.comparison.table <- data.frame(
             Reference_ID = mirtarbase$miRNA,
             Reference_Name = mirtarbase$miRNA,
             Comparison_ID = anno$ENSEMBL[match(mirtarbase$`Target Gene`, anno$NAME)],
-            Comparison_Name = mirtarbase$`Target Gene`)
+            Comparison_Name = mirtarbase$`Target Gene`,
+            Category = 'miRNA')
     mirtarbase.comparison.table = unique(mirtarbase.comparison.table)
   } else { stop('Reference should be one of mRNA or miRNA for mirtarbase integration') }
   return(mirtarbase.comparison.table)

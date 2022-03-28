@@ -7,3 +7,4 @@
 ^doc$
 ^Meta$
 ^exampledata$
+^vignettes/IntegratingMultiomics\.Rmd$

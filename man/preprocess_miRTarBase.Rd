@@ -53,11 +53,11 @@ custom integration in \code{\link{generateShinyApp}}.
 temp.dir = tempdir()
 comparison.table <- preprocess_miRTarBase(
   temp.dir = temp.dir,
-  organism.code = 'mmu',
-  org.db = 'org.Mm.eg.db',
-  support.type ='Functional MTI',
-  validation.method = 'Luciferase reporter assay'
-  reference = 'miRNA')
+  organism.code = "mmu",
+  org.db = "org.Mm.eg.db",
+  support.type = "Functional MTI",
+  validation.method = "Luciferase reporter assay",
+  reference = "miRNA")
 # clean up tempdir
 unlink(paste0(normalizePath(tempdir()), "/", dir(tempdir())), recursive = TRUE)
 }
