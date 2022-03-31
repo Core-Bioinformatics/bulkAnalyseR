@@ -19,7 +19,6 @@ modalityPanelUI <- function(id, metadata, organism, panels.default){
     sampleSelectPanelUI(ns('SampleSelect'), show = "SampleSelect" %in% panels.default),
     QCpanelUI(ns('QC'), metadata, show = "QC" %in% panels.default),
     GRNpanelUI(ns('GRN'), metadata, show = "GRN" %in% panels.default),
-    patternPanelUI(ns('Patterns'), metadata, show = "Patterns" %in% panels.default),
     DEpanelUI(ns('DE'), metadata, show = "DE" %in% panels.default),
     DEplotPanelUI(
       ns('DEplot'), 
@@ -40,6 +39,7 @@ modalityPanelUI <- function(id, metadata, organism, panels.default){
              ("GRNenrichment" %in% panels.default) & 
              (organism != 'NA')),
     crossPanelUI(ns('Cross'), metadata, show = "Cross" %in% panels.default),
+    patternPanelUI(ns('Patterns'), metadata, show = "Patterns" %in% panels.default)
   )
 }
 
