@@ -200,6 +200,7 @@ crossPanelServer <- function(id, expression.matrix, metadata, anno){
         DEtable1Subset = results$DEtable1Subset,
         DEtable2Subset = results$DEtable2Subset,
         lfc.threshold = results$lfcThreshold,
+        raster = TRUE,
         labels.per.region = ifelse(input[["autoLabel"]], 5, 0),
         add.labels.custom = length(input[["geneName"]]) > 0,
         genes.to.label = input[["geneName"]]

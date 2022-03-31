@@ -60,6 +60,7 @@ cross_plot = function(
   DEtable2Subset,
   lfc.threshold = NULL,
   mask = FALSE,
+  raster = FALSE,
   labnames = c("not DE", "DE both", "DE comparison 1", "DE comparison 2"),
   cols.chosen = c("grey", "purple", "dodgerblue", "lightcoral"),
   labels.per.region = 5,
@@ -102,10 +103,17 @@ cross_plot = function(
     colours = colours
   )
   
-  cp <- ggplot(df) +
-    theme_minimal() +
-    geom_point(aes(x = lfc1, y = lfc2, colour = colours), alpha = 0.5) +
-    scale_colour_manual(values = cols.chosen)
+  if(raster){
+    cp <- ggplot(df) +
+      theme_minimal() +
+      ggrastr::rasterise(geom_point(aes(x = lfc1, y = lfc2, colour = colours), alpha = 0.5)) +
+      scale_colour_manual(values = cols.chosen)
+  }else{
+    cp <- ggplot(df) +
+      theme_minimal() +
+      geom_point(aes(x = lfc1, y = lfc2, colour = colours), alpha = 0.5) +
+      scale_colour_manual(values = cols.chosen)
+  }
   
   if(fix.axis.ratio){
     max.lfc <- max(abs(df$lfc1), abs(df$lfc2), na.rm=TRUE)
