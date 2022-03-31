@@ -27,8 +27,8 @@ sampleSelectPanelUI <- function(id, show = TRUE){
 
 #' @rdname sampleSelectPanel
 #' @export
-sampleSelectPanelServer <- function(id, expression.matrix, metadata){
-  ns <- NS(id)
+sampleSelectPanelServer <- function(id, expression.matrix, metadata, modality = "RNA"){
+  ns <- NS(c(modality, id))
   # check whether inputs (other than id) are reactive or not
   stopifnot({
     !is.reactive(expression.matrix)
@@ -37,19 +37,19 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata){
   
   moduleServer(id, function(input, output, session){
     # create a character vector of shiny inputs
-    shinyInput = function(FUN, len, id, value, ...) {
+    shinyInput = function(FUN, len, ID, value, ...) {
       if (length(value) == 1) value <- rep(value, len)
       inputs = character(len)
       for (i in seq_len(len)) {
-        inputs[i] = as.character(FUN(ns(paste0(id, i)), label = NULL, value = value[i]))
+        inputs[i] = as.character(FUN(ns(paste0(ID, i)), label = NULL, value = value[i]))
       }
       inputs
     }
     
     # obtain the values of inputs
-    shinyValue = function(id, len) {
+    shinyValue = function(ID, len) {
       unlist(lapply(seq_len(len), function(i) {
-        value = input[[paste0(id, i)]]
+        value = input[[paste0(ID, i)]]
         if (is.null(value)) TRUE else value
       }))
     }
@@ -89,14 +89,24 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata){
     }) %>%
       bindEvent(input[["goSamples"]], ignoreNULL = FALSE)
     
+    return(filteredInputs)
+    
   })
 }
 
-# sampleSelectPanelApp <- function(){
-#   shinyApp(
-#     ui = fluidPage(sampleSelectPanelUI('SampleSelect')),
-#     server = function(input, output, session){
-#       sampleSelectPanelServer('SampleSelect', expression.matrix, metadata)
-#     }
-#   )
-# }
+sampleSelectPanelApp <- function(){
+  expression.matrix.preproc <- as.matrix(read.csv(
+    system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
+    row.names = 1
+  ))
+  metadata <- data.frame(
+    srr = colnames(expression.matrix.preproc), 
+    timepoint = rep(c("0h", "12h", "36h"), each = 2)
+  )
+  shinyApp(
+    ui = fluidPage(sampleSelectPanelUI('SampleSelect')),
+    server = function(input, output, session){
+      sampleSelectPanelServer('SampleSelect', expression.matrix.preproc, metadata)
+    }
+  )
+}
