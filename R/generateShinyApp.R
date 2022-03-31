@@ -418,7 +418,6 @@ generateIntegrationDataFiles <- function(
   }
 }
 
-
 generateAppFile <- function(
   shiny.dir,
   app.title,
@@ -588,10 +587,12 @@ generateAppFile <- function(
   lines.out <- c(lines.out, code.source.objects, "")
   
   code.ui <- c(
-    "ui <- navbarPage(",
+    "ui <- function(request){",
+    "navbarPage(",
     glue::glue("'{app.title}',"), 
     glue::glue("theme = shinythemes::shinytheme('{theme}'),"),
-    "header = tags$head(tags$style('body {overflow-y: scroll;}')),"
+    "header = tags$head(tags$style('body {overflow-y: scroll;}')),",
+    "footer = bookmarkButton(),"
   )
   for(i in seq_len(length(modality))){
     panels.default.string <- paste0("c('", paste(panels.default[[i]], collapse = "', '"), "')")
@@ -649,6 +650,7 @@ generateAppFile <- function(
     )
   }
   code.ui <- c(code.ui, ")")
+  code.ui <- c(code.ui, "}")
   
   lines.out <- c(lines.out, code.ui, "")
   
@@ -723,7 +725,7 @@ generateAppFile <- function(
   code.server <- c(code.server, "}")
   lines.out <- c(lines.out, code.server, "")
   
-  lines.out <- c(lines.out, "shinyApp(ui, server)")
+  lines.out <- c(lines.out, "shinyApp(ui, server, enableBookmarking = 'url')")
   
   lines.out <- gsub("\\\\", "\\\\\\\\", lines.out)
   
