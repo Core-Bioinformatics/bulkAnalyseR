@@ -115,7 +115,7 @@ patternPanelServer <- function(id, expression.matrix, metadata, anno){
       shinyjs::enable("goPatterns")
       list("tbl" = tbl, "patterns" = patterns)
     }) %>%
-      bindCache(head(expression.matrix()), metadata(), input[["condition"]], 
+      bindCache(utils::head(expression.matrix()), metadata(), input[["condition"]], 
                 input[["series"]], input[["nSD"]]) %>%
       bindEvent(input[["goPatterns"]])
     
