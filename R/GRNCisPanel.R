@@ -87,8 +87,8 @@ GRNCisPanelServer <- function(id, expression.matrix, anno, coord.table.reference
                                          ref.comp.merge$Start.y <= (ref.comp.merge$Stop.x + input[['maxDistance']]),]
       ref.comp.merge$Midpoint.x <- (ref.comp.merge$Start.x + ref.comp.merge$Stop.x) / 2
       ref.comp.merge$Midpoint.y <- (ref.comp.merge$Start.y + ref.comp.merge$Stop.y) / 2
-      ref.comp.merge$Direction <- ifelse(( (ref.comp.merge$Strand.x=='+' & (ref.comp.merge$Midpoint.y < ref.comp.merge$Midpoint.x)) |
-                                          (ref.comp.merge$Strand.x=='-' & (ref.comp.merge$Midpoint.y > ref.comp.merge$Midpoint.x)) ) , 
+      ref.comp.merge$Direction <- ifelse(( (ref.comp.merge$Strand.x == '+' & (ref.comp.merge$Midpoint.y < ref.comp.merge$Midpoint.x)) |
+                                          (ref.comp.merge$Strand.x == '-' & (ref.comp.merge$Midpoint.y > ref.comp.merge$Midpoint.x)) ), 
                                          'Upstream' , 
                                          'Downstream')
       ref.comp.merge$Distance <- 1/abs(ref.comp.merge$Midpoint.y - ref.comp.merge$Midpoint.x)

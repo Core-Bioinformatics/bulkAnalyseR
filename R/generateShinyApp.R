@@ -38,7 +38,7 @@
 #' @param panels.default argument to control which of the default panels
 #' will be included in the app; default is all, but the enrichment panel
 #' will not appear unless organism is also supplied; note that the 'DE' panel 
-#' is required for 'DEplot', 'Enrichment', and GRN; a list  (of the same 
+#' is required for 'DEplot', 'DEsummary', 'Enrichment', and 'GRNenrichment'; a list  (of the same 
 #' length as modality) can be provided if \code{length(modality) > 1}
 #' @param cis.integration functionality to integrate extra cis-regulatory 
 #' information into GRN panel. Tibble containing names of reference expression 
@@ -56,7 +56,8 @@
 #' related to rows of reference expression matrix. Tibble containing names 
 #' of reference expression matrix, tables (comparison.table) with Reference_ID 
 #' and Reference_Name (matching ENSEMBL and NAME columns of reference organism 
-#' database) and Comparison_ID and Comparison_Name. Names for the reference 
+#' database) and Comparison_ID and Comparison_Name plus a Category column 
+#' containing extra information. Names for the reference 
 #' expression matrix and comparison table (comparison.table.name) 
 #' are also required. See vignettes for more details about inputs.
 #' @param panels.extra,data.extra,packages.extra functionality to add new
@@ -121,7 +122,7 @@ generateShinyApp <- function(
   organism = NA,
   org.db = NA,
   panels.default = c("Landing", "SampleSelect", "QC", "DE", "DEplot", "DEsummary",
-                     "Enrichment", "Patterns", "Cross", "GRN"),
+                     "Enrichment", "GRNenrichment", "Patterns", "Cross", "GRN"),
   panels.extra = tibble::tibble(
     name = NULL,
     UIfun = NULL, 
@@ -370,8 +371,8 @@ validateIntegrationInputs <- function(
     if(!is.matrix(custom.integration.row.reference.expression.matrix)){
       stop("The expression matrix for custom integration must be a matrix")
     }
-    if(length(intersect(colnames(custom.integration.row.comparison.table),c('Reference_ID','Reference_Name','Comparison_ID','Comparison_Name'))) != 4){
-      stop("The columns of comparison.table for custom integration must be Reference_ID, Reference_Name, Comparison_ID, Comparison_Name")
+    if(length(intersect(colnames(custom.integration.row.comparison.table),c('Reference_ID','Reference_Name','Comparison_ID','Comparison_Name','Category'))) != 5){
+      stop("The columns of comparison.table for custom integration must be Reference_ID, Reference_Name, Comparison_ID, Comparison_Name and Category")
     }
     if(length(intersect(rownames(custom.integration.row.reference.expression.matrix),custom.integration.row.comparison.table$Reference_ID[i]))==0){
       stop("Reference_ID column for custom integration should match row names from reference expression matrix")
@@ -644,9 +645,10 @@ generateAppFile <- function(
                                  "_vs_", 
                                  custom.integration[i,]$comparison.table.name, 
                                  "','", 
-                                 custom.integration[i,]$reference.table.name, 
-                                 "','", 
-                                 custom.integration[i,]$comparison.table.name, 
+                                 "GRN with custom integration - ",
+                                 custom.integration[i,]$reference.table.name,
+                                 " + ",
+                                 custom.integration[i,]$comparison.table.name,
                                  "'),"))
   }
   for(j in seq_len(nrow(panels.extra))){
@@ -724,10 +726,10 @@ generateAppFile <- function(
                                          "_vs_", 
                                          custom.integration[i,]$comparison.table.name, 
                                          "', ", "custom.integration.data$", 
-                                         trans.integration[i,]$reference.expression.matrix, 
+                                         custom.integration[i,]$reference.expression.matrix, 
                                          ", anno.custom[[",i,"]], ", 
                                          "custom.integration.data$", 
-                                         custom.integration[i,]$comparison.table, ")"))
+                                         custom.integration[i,]$comparison.table, ", NULL)"))
   }
   
   code.server <- c(code.server, "}")
