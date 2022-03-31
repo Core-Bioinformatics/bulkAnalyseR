@@ -78,6 +78,8 @@ enrichmentPanelServer <- function(id, DEresults, organism, seed = 13){
       bindCache(DEresults()$DE()$DEtableSubset$gene_id, input[['gprofilerSources']]) %>%
       bindEvent(input[["goEnrichment"]])
     
+    source <- NULL; p_value <- NULL; `-log10(pVal)` <- NULL
+    
     #Jitter plot and save coordinates
     getenrichmentPlot <- reactive({
       set.seed(seed)
@@ -92,11 +94,10 @@ enrichmentPanelServer <- function(id, DEresults, organism, seed = 13){
     })
     
     #Plot enrichment data
-    source <- NULL; p_value <- NULL
     plotenrichmentPlot <- reactive({
       plotdata <- getenrichmentPlot()
       myplot <- ggplot(plotdata) + 
-        geom_point(aes(x = jitter, y = .data$`-log10(pVal)`, colour = source)) + 
+        geom_point(aes(x = jitter, y = `-log10(pVal)`, colour = source)) + 
         theme_bw()+ 
         scale_x_continuous(breaks = seq(1, length(unique(plotdata$source)), 1), 
                            labels = unique(plotdata$source)) + 
@@ -109,7 +110,12 @@ enrichmentPanelServer <- function(id, DEresults, organism, seed = 13){
     #Define clicking on enrichment data table
     output[['data']] <- renderTable({
       req(input[['plot_click']])
-      nearPoints(df = getenrichmentPlot()[,c('term_name','source','term_id','-log10(pVal)','intersection_size','jitter')], coordinfo = input[['plot_click']], maxpoints = 5)
+      nearPoints(
+        df = getenrichmentPlot()[, c('term_name', 'source', 'term_id', '-log10(pVal)',
+                                     'intersection_size', 'jitter')], 
+        coordinfo = input[['plot_click']], 
+        maxpoints = 5
+      )
     })
     
     #Download enrichment
