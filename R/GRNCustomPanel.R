@@ -56,9 +56,8 @@ GRNCustomPanelUI <- function(id, title = 'GRN with custom integration', show = T
 GRNCustomPanelServer <- function(id, expression.matrix, anno, comparison.table, DEresults = NULL, seed = 13){
   
   stopifnot({
-#    is.reactive(expression.matrix)
+    !is.null(DEresults) & is.reactive(expression.matrix) & is.reactive(comparison.table)
     !is.reactive(anno)
-#    is.reactive(comparison.table)
   })
   
   moduleServer(id, function(input, output, session){
@@ -90,7 +89,7 @@ GRNCustomPanelServer <- function(id, expression.matrix, anno, comparison.table, 
       if (!is.null(DEresults)) {
         expression.matrix <- expression.matrix()[DEresults()$DE()$DEtableSubset$gene_id,]
       }
-      target.genes <- anno$ENSEMBL[match(input[["targetGenes"]], anno$NAME)]
+      target.genes <- DEresults()$DE()$DEtableSubset$gene_id[match(input[["targetGenes"]], DEresults()$DE()$DEtableSubset$gene_name)]
       set.seed(seed)
       GENIE3::GENIE3(expression.matrix, targets = target.genes)
     }) %>%
