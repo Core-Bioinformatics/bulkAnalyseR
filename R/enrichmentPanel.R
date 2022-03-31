@@ -94,11 +94,11 @@ enrichmentPanelServer <- function(id, DEresults, organism, seed = 13){
     #Jitter plot and save coordinates
     getenrichmentPlot <- reactive({
       set.seed(seed)
-      jitter.plot = ggplot(getenrichmentData()) + 
+      jitter.plot <- ggplot(getenrichmentData()) + 
         geom_jitter(aes(x = source, y = p_value, colour = source))
       jitter.build <- ggplot_build(jitter.plot)
-      x = jitter.build$data[[1]]$x
-      df = getenrichmentData()
+      x <- jitter.build$data[[1]]$x
+      df <- getenrichmentData()
       df$jitter = x
       df$`-log10(pVal)`= -log10(df$p_value)
       return(df)

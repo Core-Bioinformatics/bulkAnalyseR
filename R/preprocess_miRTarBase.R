@@ -102,7 +102,7 @@ preprocess_miRTarBase <- function(temp.dir = '.',
             Comparison_Name = mirtarbase$`Target Gene`,
             Category = 'miRNA')
     mirtarbase.comparison.table = unique(mirtarbase.comparison.table)
-  } else { stop('Reference should be one of mRNA or miRNA for mirtarbase integration') }
+  } else { stop('Reference should be one of mRNA or miRNA for miRTarBase integration') }
   return(mirtarbase.comparison.table)
 }
 

@@ -78,7 +78,7 @@ GRNTransPanelServer <- function(id, expression.matrix, anno, anno.comparison,
     GRNresults <- reactive({
       target.genes.names <- intersect(input[['targetGenes']],reference.anno()$NAME)
       target.genes <- reference.anno()$ENSEMBL[match(target.genes.names,reference.anno()$NAME)]
-      total.expression.matrix = rbind(expression.matrix,expression.matrix.comparison)
+      total.expression.matrix <- rbind(expression.matrix,expression.matrix.comparison)
       set.seed(seed)
       GENIE3::GENIE3(total.expression.matrix, targets = target.genes)
     }) %>%
@@ -86,7 +86,7 @@ GRNTransPanelServer <- function(id, expression.matrix, anno, anno.comparison,
     
     
     GRNplot <- reactive({
-      reference.table = rbind(anno,anno.comparison)
+      reference.table <- rbind(anno,anno.comparison)
       weightMat <- GRNresults()
       edges <- GENIE3::getLinkList(weightMat, input[["plotConnections"]]) %>%
         dplyr::rename(from = .data$regulatoryGene, to = .data$targetGene, value = .data$weight) %>%
@@ -97,7 +97,7 @@ GRNTransPanelServer <- function(id, expression.matrix, anno, anno.comparison,
         group = c(rep("target", ncol(weightMat)), rep("regulator", nrow(edges)))
       ) %>%
         dplyr::distinct(id, .keep_all = TRUE)
-      nodes$group = paste0(nodes$group,ifelse(nodes$id %in% reference.anno()$ENSEMBL,'reference','nonreference'))
+      nodes$group <- paste0(nodes$group, ifelse(nodes$id %in% reference.anno()$ENSEMBL, 'reference', 'nonreference'))
       
       color_regulator_reference <- list("background" = '#D2E5FF')
       color_target_reference <- list("background" = '#E0E0E0')

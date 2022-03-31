@@ -126,17 +126,17 @@ GRNCustomPanelServer <- function(id, expression.matrix, anno, comparison.table, 
       }
       if (nrow(comparison.table.subset)!=0){
         
-        edges.comparison <- data.frame('from'=comparison.table$Reference_ID,
-                                       'to'=comparison.table$Comparison_ID,
-                                       'value'=(1/nrow(comparison.table))*sum(edges$value))
-        nodes.comparison <- dplyr::as_tibble(data.frame('id'=comparison.table.subset$Comparison_ID,
-                                                        'label'=comparison.table.subset$Comparison_Name,
-                                                        'group'='table2',
+        edges.comparison <- data.frame('from' = comparison.table$Reference_ID,
+                                       'to' = comparison.table$Comparison_ID,
+                                       'value' = (1/nrow(comparison.table))*sum(edges$value))
+        nodes.comparison <- dplyr::as_tibble(data.frame('id' = comparison.table.subset$Comparison_ID,
+                                                        'label' = comparison.table.subset$Comparison_Name,
+                                                        'group' = 'table2',
                                                         'color' = color_regulator_nonreference))
         nodes.comparison <- unique(nodes.comparison)
         edges.comparison <- unique(edges.comparison)
-        nodes = rbind(nodes,nodes.comparison)
-        edges = rbind(edges,edges.comparison)
+        nodes <- rbind(nodes,nodes.comparison)
+        edges <- rbind(edges,edges.comparison)
       }
       
       visNetwork::visNetwork(nodes, edges)
