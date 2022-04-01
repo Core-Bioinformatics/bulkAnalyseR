@@ -24,7 +24,7 @@ in log2(fold-change) between two DE analyses."><!-- mathjax --><script src="http
     
     <a class="navbar-brand me-2" href="../index.html">bulkAnalyseR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +37,12 @@ in log2(fold-change) between two DE analyses."><!-- mathjax --><script src="http
 </li>
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
+</li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/IntegratingMultiomics.html">bulkAnalyseR: Integrating multi-omics or external data</a>
+  </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -83,6 +89,7 @@ in log2(fold-change) between two DE analyses.</p>
   <span class="va">DEtable2Subset</span>,
   lfc.threshold <span class="op">=</span> <span class="cn">NULL</span>,
   mask <span class="op">=</span> <span class="cn">FALSE</span>,
+  raster <span class="op">=</span> <span class="cn">FALSE</span>,
   labnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"not DE"</span>, <span class="st">"DE both"</span>, <span class="st">"DE comparison 1"</span>, <span class="st">"DE comparison 2"</span><span class="op">)</span>,
   cols.chosen <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"grey"</span>, <span class="st">"purple"</span>, <span class="st">"dodgerblue"</span>, <span class="st">"lightcoral"</span><span class="op">)</span>,
   labels.per.region <span class="op">=</span> <span class="fl">5</span>,
@@ -107,6 +114,9 @@ thresholds to determine whether a gene is DE</p></dd>
 <dt>mask</dt>
 <dd><p>whether to hide genes that were not called DE in either
 comparison; default is FALSE</p></dd>
+<dt>raster</dt>
+<dd><p>whether to rasterize non-DE genes with ggraster to reduce
+memory usage; particularly useful when saving plots to files</p></dd>
 <dt>labnames, cols.chosen</dt>
 <dd><p>the legend labels and colours for the 4
 categories of genes ("not DE", "DE both", "DE comparison 1", "DE comparison 2")</p></dd>

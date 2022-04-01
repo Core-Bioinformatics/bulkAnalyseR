@@ -27,6 +27,9 @@ compatibility with specifying panels to show}
 columns correspond to samples; usually preprocessed by
 \code{\link{preprocessExpressionMatrix}}; a list  (of the same length as
 modality) can be provided if #' \code{length(modality) > 1}}
+
+\item{modality}{the modality, needs to be passed when used within another
+shiny module for namespacing reasons}
 }
 \value{
 The UI and Server components of the shiny module, that can be used

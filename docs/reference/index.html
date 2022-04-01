@@ -22,7 +22,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">bulkAnalyseR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,12 @@
 </li>
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
+</li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/IntegratingMultiomics.html">bulkAnalyseR: Integrating multi-omics or external data</a>
+  </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -128,14 +134,44 @@
         <dd>Create heatmap of an expression matrix</dd>
       </dl><dl><dt>
           
+          <code><a href="find_regulators_with_recurring_edges.html">find_regulators_with_recurring_edges()</a></code> 
+        </dt>
+        <dd>Find recurring regulators</dd>
+      </dl><dl><dt>
+          
           <code><a href="generateShinyApp.html">generateShinyApp()</a></code> 
         </dt>
         <dd>Generate all files required for an autonomous shiny app</dd>
       </dl><dl><dt>
           
+          <code><a href="get_link_list_rename.html">get_link_list_rename()</a></code> 
+        </dt>
+        <dd>Convert the adjacency matrix to network links</dd>
+      </dl><dl><dt>
+          
+          <code><a href="GRNCisPanel.html">GRNCisPanelUI()</a></code> <code><a href="GRNCisPanel.html">GRNCisPanelServer()</a></code> 
+        </dt>
+        <dd>Generate the GRN cis integration panel of the shiny app</dd>
+      </dl><dl><dt>
+          
+          <code><a href="GRNCustomPanel.html">GRNCustomPanelUI()</a></code> <code><a href="GRNCustomPanel.html">GRNCustomPanelServer()</a></code> 
+        </dt>
+        <dd>Generate the GRN custom integration panel of the shiny app</dd>
+      </dl><dl><dt>
+          
           <code><a href="GRNpanel.html">GRNpanelUI()</a></code> <code><a href="GRNpanel.html">GRNpanelServer()</a></code> 
         </dt>
         <dd>Generate the GRN panel of the shiny app</dd>
+      </dl><dl><dt>
+          
+          <code><a href="GRNTransPanel.html">GRNTransPanelUI()</a></code> <code><a href="GRNTransPanel.html">GRNTransPanelServer()</a></code> 
+        </dt>
+        <dd>Generate the GRN trans integration panel of the shiny app</dd>
+      </dl><dl><dt>
+          
+          <code><a href="infer_GRN.html">infer_GRN()</a></code> 
+        </dt>
+        <dd>Perform GRN inference</dd>
       </dl><dl><dt>
           
           <code><a href="jaccard_heatmap.html">jaccard_heatmap()</a></code> 
@@ -169,6 +205,11 @@ an experiment</dd>
         <dd>Create an MA plot visualising differential expression (DE) results</dd>
       </dl><dl><dt>
           
+          <code><a href="modalityPanel.html">modalityPanelUI()</a></code> <code><a href="modalityPanel.html">modalityPanelServer()</a></code> 
+        </dt>
+        <dd>Generate an app panel for a modality</dd>
+      </dl><dl><dt>
+          
           <code><a href="noisyr_counts_with_plot.html">noisyr_counts_with_plot()</a></code> 
         </dt>
         <dd>Apply a modified noisyR counts pipeline printing a plot</dd>
@@ -177,6 +218,11 @@ an experiment</dd>
           <code><a href="patternPanel.html">patternPanelUI()</a></code> <code><a href="patternPanel.html">patternPanelServer()</a></code> 
         </dt>
         <dd>Generate the expression patterns panel of the shiny app</dd>
+      </dl><dl><dt>
+          
+          <code><a href="plot_GRN.html">plot_GRN()</a></code> 
+        </dt>
+        <dd>Plot a GRN</dd>
       </dl><dl><dt>
           
           <code><a href="plot_line_pattern.html">plot_line_pattern()</a></code> 
@@ -189,9 +235,19 @@ an experiment</dd>
         <dd>Create a principal component analysis (PCA) plot the samples of an experiment</dd>
       </dl><dl><dt>
           
+          <code><a href="plot_upset.html">plot_upset()</a></code> 
+        </dt>
+        <dd>Visualise the overlap of edges between different networks</dd>
+      </dl><dl><dt>
+          
           <code><a href="preprocessExpressionMatrix.html">preprocessExpressionMatrix()</a></code> 
         </dt>
         <dd>Pre-process the expression matrix before generating the shiny app</dd>
+      </dl><dl><dt>
+          
+          <code><a href="preprocess_miRTarBase.html">preprocess_miRTarBase()</a></code> 
+        </dt>
+        <dd>Creates a comparison table for miRTarBase to be used for custom integration</dd>
       </dl><dl><dt>
           
           <code><a href="QCpanel.html">QCpanelUI()</a></code> <code><a href="QCpanel.html">QCpanelServer()</a></code> 

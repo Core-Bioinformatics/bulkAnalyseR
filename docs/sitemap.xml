@@ -10,6 +10,9 @@
     <loc>/articles/index.html</loc>
   </url>
   <url>
+    <loc>/articles/IntegratingMultiomics.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -49,13 +52,31 @@
     <loc>/reference/expression_heatmap.html</loc>
   </url>
   <url>
+    <loc>/reference/find_regulators_with_recurring_edges.html</loc>
+  </url>
+  <url>
     <loc>/reference/generateShinyApp.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_link_list_rename.html</loc>
+  </url>
+  <url>
+    <loc>/reference/GRNCisPanel.html</loc>
+  </url>
+  <url>
+    <loc>/reference/GRNCustomPanel.html</loc>
   </url>
   <url>
     <loc>/reference/GRNpanel.html</loc>
   </url>
   <url>
+    <loc>/reference/GRNTransPanel.html</loc>
+  </url>
+  <url>
     <loc>/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/infer_GRN.html</loc>
   </url>
   <url>
     <loc>/reference/jaccard_heatmap.html</loc>
@@ -76,6 +97,9 @@
     <loc>/reference/ma_plot.html</loc>
   </url>
   <url>
+    <loc>/reference/modalityPanel.html</loc>
+  </url>
+  <url>
     <loc>/reference/noisyr_counts_with_plot.html</loc>
   </url>
   <url>
@@ -85,13 +109,22 @@
     <loc>/reference/pipe.html</loc>
   </url>
   <url>
+    <loc>/reference/plot_GRN.html</loc>
+  </url>
+  <url>
     <loc>/reference/plot_line_pattern.html</loc>
   </url>
   <url>
     <loc>/reference/plot_pca.html</loc>
   </url>
   <url>
+    <loc>/reference/plot_upset.html</loc>
+  </url>
+  <url>
     <loc>/reference/preprocessExpressionMatrix.html</loc>
+  </url>
+  <url>
+    <loc>/reference/preprocess_miRTarBase.html</loc>
   </url>
   <url>
     <loc>/reference/QCpanel.html</loc>

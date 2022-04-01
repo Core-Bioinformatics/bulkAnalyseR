@@ -3,5 +3,6 @@ pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
   bulkAnalyseR: bulkAnalyseR.html
-last_built: 2022-02-08T12:13Z
+  IntegratingMultiomics: IntegratingMultiomics.html
+last_built: 2022-04-01T18:26Z
 

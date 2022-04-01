@@ -26,7 +26,7 @@ generateShinyApp."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aja
     
     <a class="navbar-brand me-2" href="../index.html">bulkAnalyseR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +39,12 @@ generateShinyApp."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aja
 </li>
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
+</li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/IntegratingMultiomics.html">bulkAnalyseR: Integrating multi-omics or external data</a>
+  </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -83,7 +89,7 @@ and then normalises it. It is recommended to use this function before using
   <span class="va">expression.matrix</span>,
   denoise <span class="op">=</span> <span class="cn">TRUE</span>,
   output.plot <span class="op">=</span> <span class="cn">FALSE</span>,
-  normalisation.method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"quantile"</span>, <span class="st">"rpm"</span><span class="op">)</span>,
+  normalisation.method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"quantile"</span>, <span class="st">"rpm"</span>, <span class="st">"tmm"</span>, <span class="st">"deseq2"</span><span class="op">)</span>,
   <span class="va">...</span>
 <span class="op">)</span></code></pre></div>
     </div>
@@ -102,7 +108,26 @@ noise analysis (printed to the console); default is FALSE</p></dd>
 <dt>normalisation.method</dt>
 <dd><p>the normalisation method to be used; default is
 quantile; any unrecognised input will result in no normalisation being
-applied, but proceeding with un-normalised data is not recommended</p></dd>
+applied, but proceeding with un-normalised data is not recommended;
+currently supported normalisation methods are:</p><dl><dt>quantile</dt>
+<dd><p>Quantile normalisation using the <code>normalize.quantiles</code>
+function from the <code>preprocessCore</code> package</p></dd>
+
+<dt>rpm</dt>
+<dd><p>A version of RPM (reads per million) normalisation, where each
+sample is scaled by the median expression in the sample divided by the
+total number of reads in that sample</p></dd>
+
+<dt>tmm</dt>
+<dd><p>Trimmed Mean of M values normalisation using the
+<code>calcNormFactors</code> function from the <code>edgeR</code> package</p></dd>
+
+<dt>deseq2</dt>
+<dd><p>Size factor normalisation using the
+<code>estimateSizeFactorsForMatrix</code> function from the <code>DESeq2</code> package</p></dd>
+
+
+</dl></dd>
 <dt>...</dt>
 <dd><p>optional arguments passed on to <code><a href="https://rdrr.io/pkg/noisyr/man/noisyr_counts.html" class="external-link">noisyr::noisyr_counts()</a></code></p></dd>
 </dl></div>

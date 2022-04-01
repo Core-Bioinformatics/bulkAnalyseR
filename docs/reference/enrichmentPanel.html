@@ -26,7 +26,7 @@ of generateShinyApp."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/
     
     <a class="navbar-brand me-2" href="../index.html">bulkAnalyseR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +39,12 @@ of generateShinyApp."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/
 </li>
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
+</li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/IntegratingMultiomics.html">bulkAnalyseR: Integrating multi-omics or external data</a>
+  </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -79,7 +85,7 @@ of <code><a href="generateShinyApp.html">generateShinyApp</a></code>.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">enrichmentPanelUI</span><span class="op">(</span><span class="va">id</span><span class="op">)</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">enrichmentPanelUI</span><span class="op">(</span><span class="va">id</span>, show <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
 <span class="fu">enrichmentPanelServer</span><span class="op">(</span><span class="va">id</span>, <span class="va">DEresults</span>, <span class="va">organism</span>, seed <span class="op">=</span> <span class="fl">13</span><span class="op">)</span></code></pre></div>
     </div>
@@ -88,6 +94,9 @@ of <code><a href="generateShinyApp.html">generateShinyApp</a></code>.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>id</dt>
 <dd><p>the input slot that will be used to access the value</p></dd>
+<dt>show</dt>
+<dd><p>whether to show the panel or not; default is TRUE; there for
+compatibility with specifying panels to show</p></dd>
 <dt>DEresults</dt>
 <dd><p>differential expression results output from DEpanelServer;
 a reactive list with slots 'DEtable' (all genes), 'DEtableSubset' (only DE genes),
@@ -95,8 +104,10 @@ a reactive list with slots 'DEtable' (all genes), 'DEtableSubset' (only DE genes
 <dt>organism</dt>
 <dd><p>organism name to be passed on to <code><a href="https://rdrr.io/pkg/gprofiler2/man/gost.html" class="external-link">gprofiler2::gost</a></code>;
 organism names are constructed by concatenating the first letter of the
-name and the family name; default is NULL - enrichment is not included
-to ensure compatibility with datasets that have non-standard gene names</p></dd>
+name and the family name; default is NA - enrichment is not included
+to ensure compatibility with datasets that have non-standard gene names;
+a vector (of the same length as modality) can be provided if
+<code>length(modality) &gt; 1</code></p></dd>
 <dt>seed</dt>
 <dd><p>the random seed to be set for the jitter plot, to avoid
 seemingly different plots for the same inputs</p></dd>
