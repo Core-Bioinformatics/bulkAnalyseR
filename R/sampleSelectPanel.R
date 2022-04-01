@@ -66,38 +66,27 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata, modality = 
       }))
     }
     
-    observe(updateCheckboxGroupInput(
-      session = session, 
-      inputId = "selectMeta", 
-      choices = unique(metadata[[input[["condition"]]]]), 
-      selected = NULL, 
-      inline = TRUE)
-    )
-    observe(updateCheckboxInput(
-      session = session,
-      inputId = "selectAll",
-      value = all(shinyValue("cb_", n), !input[["deselectAll"]])
-    ))
-    observe(updateCheckboxInput(
-      session = session,
-      inputId = "deselectAll",
-      value = !any(shinyValue("cb_", n))
-    ))
     observe({
-      updateCheckboxGroupInput(
+      updateCheckboxInput(
         session = session,
-        inputId = "selectMeta",
-        selected = sapply(X = unique(metadata[[input[["condition"]]]]),
-                       USE.NAMES = FALSE,
-                       FUN = function(cnd){
-          if(all(shinyValue("cb_", n)[metadata[[input[["condition"]]]] == cnd])){
-            return(cnd)
-          }else{
-            return(NULL)
-          }
-        })
+        inputId = "selectAll",
+        value = FALSE
       )
-    })
+      updateCheckboxInput(
+        session = session,
+        inputId = "deselectAll",
+        value = FALSE
+      )
+      updateCheckboxGroupInput(
+        session = session, 
+        inputId = "selectMeta", 
+        choices = unique(metadata[[input[["condition"]]]]), 
+        selected = NULL,
+        inline = TRUE
+      )
+    }) %>%
+      bindEvent(input[["selectAll"]], input[["deselectAll"]], 
+                input[["condition"]], input[["selectMeta"]])
     
     n <- nrow(metadata)
     df = cbind(
@@ -111,8 +100,10 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata, modality = 
       }else if(input[["deselectAll"]]){
         df$selected <<- shinyInput(checkboxInput, n, 'cb_', value = FALSE, width='1px')
       }else if(length(input[["selectMeta"]]) > 0){
-        df$selected <<- shinyInput(checkboxInput, n, 'cb_', width='1px',
-                                   value = metadata[[input[["condition"]]]] %in% input[["selectMeta"]])
+        df$selected <<- shinyInput(
+          checkboxInput, n, 'cb_', width='1px',
+          value = shinyValue('cb_', n) | metadata[[input[["condition"]]]] %in% input[["selectMeta"]]
+        )
       }else{
         df$selected <<- shinyInput(checkboxInput, n, 'cb_', value = shinyValue('cb_', n), width='1px')
       }
