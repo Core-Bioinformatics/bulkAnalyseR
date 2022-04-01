@@ -1,9 +1,9 @@
 ---
-title: "bulkAnalyseR: An easy way to analyse and share bulk mRNA-Seq data"
+title: "bulkAnalyseR: An accessible, interactive pipeline for analysing and sharing bulk sequencing results"
 output: 
   rmarkdown::html_vignette:
     vignette: >
-      %\VignetteIndexEntry{bulkAnalyseR: An easy way to analyse and share bulk mRNA-Seq data}
+      %\VignetteIndexEntry{bulkAnalyseR: An accessible, interactive pipeline for analysing and sharing bulk sequencing results}
       %\VignetteEngine{knitr::rmarkdown}
       \usepackage[utf8]{inputenc}
 ---
@@ -530,7 +530,10 @@ generateShinyApp(
   data.extra = list(extra.data1, extra.data2),
   packages.extra = "somePackage",
 )
+```
 
+```{r sessionInfo}
+sessionInfo()
 ```
 
 

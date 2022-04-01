@@ -338,5 +338,7 @@ knitr::include_graphics("figures/GRN.png")
 #    data.extra = list(extra.data1, extra.data2),
 #    packages.extra = "somePackage",
 #  )
-#  
+
+## ----sessionInfo--------------------------------------------------------------
+sessionInfo()
 

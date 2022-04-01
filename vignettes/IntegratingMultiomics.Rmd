@@ -28,8 +28,7 @@ devtools::load_all('../')
 
 ```{r load Yang 2019 mRNAseq}
 exp.yang <- read.csv(
-  system.file("extdata", "expression_matrix_preprocessed.csv", 
-              package = "bulkAnalyseR"),
+  system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"),
   row.names = 1) %>% as.matrix
 head(exp.yang)
 ```
@@ -80,13 +79,14 @@ The two coordinate tables should always have this structure and chromosome names
 To create the integration tab, we need to define the following tibble:
 
 ```{r}
-cis.integration <- tibble::tibble(reference.expression.matrix = 'exp.yang',
-                                  reference.org.db = 'org.Mm.eg.db',
-                                  reference.coord = 'gene.coord.table',
-                                  comparison.coord = 'chip.coord.table',
-                                  reference.table.name = 'mRNAseq',
-                                  comparison.table.name = 'ChIPseq')
-
+cis.integration <- tibble::tibble(
+  reference.expression.matrix = 'exp.yang',
+  reference.org.db = 'org.Mm.eg.db',
+  reference.coord = 'gene.coord.table',
+  comparison.coord = 'chip.coord.table',
+  reference.table.name = 'mRNAseq',
+  comparison.table.name = 'ChIPseq'
+)
 ```
 
 Note that in this table, the names of all tables should be enclosed in quotation marks.
@@ -119,14 +119,18 @@ We could instead create an app with two modality tabs, including the ChIPseq exp
 exp.chip <- read.csv(
   url('https://raw.githubusercontent.com/Core-Bioinformatics/bulkAnalyseR/master/exampledata/Yang2019_ChIP/ChIP_expression_matrix_preprocessed.csv'),
   row.names = 1) %>% as.matrix
-meta.chip = data.frame(id = colnames(exp.chip),
-                       timepoint = c('0h','12h','36h'))
-cis.integration.2 <- tibble::tibble(reference.expression.matrix = c('exp.yang','exp.chip'),
-                                    reference.org.db = c('org.Mm.eg.db','NULL'),
-                                    reference.coord = c('gene.coord.table','chip.coord.table'),
-                                    comparison.coord = c('chip.coord.table','gene.coord.table'),
-                                    reference.table.name = c('mRNAseq','ChIPseq'),
-                                    comparison.table.name = c('ChIPseq','mRNAseq'))
+meta.chip = data.frame(
+  id = colnames(exp.chip),
+  timepoint = c('0h','12h','36h')
+)
+cis.integration.2 <- tibble::tibble(
+  reference.expression.matrix = c('exp.yang','exp.chip'),
+  reference.org.db = c('org.Mm.eg.db','NULL'),
+  reference.coord = c('gene.coord.table','chip.coord.table'),
+  comparison.coord = c('chip.coord.table','gene.coord.table'),
+  reference.table.name = c('mRNAseq','ChIPseq'),
+  comparison.table.name = c('ChIPseq','mRNAseq')
+)
 generateShinyApp(
   expression.matrix = list(exp.yang,exp.chip),
   metadata = list(meta,meta.chip),
@@ -164,20 +168,23 @@ meta.trans
 ```
 
 ```{r li trans app, eval=FALSE}
-generateShinyApp(shiny.dir = 'shiny_Li_2021',
-                 app.title = 'Li 2021 Trans Regulatory Example',
-                 modality=list('mRNA','miRNA'),
-                 metadata = meta.trans,
-                 expression.matrix = list(exp.mrna,exp.mirna),
-                 org.db = list('org.Hs.eg.db',NA),
-                 organism=list('hsapiens',NA),
-                 trans.integration = tibble::tibble(reference.expression.matrix='exp.mrna',
-                                                    reference.org.db='org.Hs.eg.db',
-                                                    comparison.expression.matrix='exp.mirna',
-                                                    comparison.org.db='NULL',
-                                                    reference.table.name='mRNA',
-                                                    comparison.table.name='miRNA')
-                 )
+generateShinyApp(
+  shiny.dir = 'shiny_Li_2021',
+  app.title = 'Li 2021 Trans Regulatory Example',
+  modality=list('mRNA','miRNA'),
+  metadata = meta.trans,
+  expression.matrix = list(exp.mrna,exp.mirna),
+  org.db = list('org.Hs.eg.db',NA),
+  organism=list('hsapiens',NA),
+  trans.integration = tibble::tibble(
+    reference.expression.matrix='exp.mrna',
+    reference.org.db='org.Hs.eg.db',
+    comparison.expression.matrix='exp.mirna',
+    comparison.org.db='NULL',
+    reference.table.name='mRNA',
+    comparison.table.name='miRNA'
+  )
+)
 shiny::runApp('shiny_Li_2021')
 ```
 
@@ -195,18 +202,19 @@ An example app with trans-integration can be found [here](https://github.com/Cor
 
 To integration miRNA-mRNA target interaction information, you can use the following function to create a custom comparison table:
 
-```{r, messages=FALSE}
-mirtarbase.comparison.table <- preprocess_miRTarBase(organism.code='mmu', org.db='org.Mm.eg.db')
-head(mirtarbase.comparison.table)
+```{r, messages = FALSE, eval = FALSE}
+mirtarbase.comparison.table <- preprocess_miRTarBase(organism.code = 'mmu', org.db = 'org.Mm.eg.db')
 ```
 
 To view the available filtering options for Support Type and Experiments (validation type), run the function with the extra *print* arguments:
 
 ```{r, messages=FALSE, eval=FALSE}
-mirtarbase.comparison.table <- preprocess_miRTarBase(organism.code='mmu',
-                                                     org.db='org.Mm.eg.db',
-                                                     print.support.types = TRUE, 
-                                                     print.validation.methods = TRUE)
+mirtarbase.comparison.table <- preprocess_miRTarBase(
+  organism.code = 'mmu',
+  org.db = 'org.Mm.eg.db',
+  print.support.types = TRUE, 
+  print.validation.methods = TRUE
+)
 ```
 
 Any comparison table supplied for custom integration should have these 5 columns. Reference_ID and Reference_Name should match the reference expression matrix. The final Category column allows the selection of more specific category of integration information. 
@@ -214,20 +222,22 @@ Any comparison table supplied for custom integration should have these 5 columns
 To define the full app, we again use the typical Yang 2019 call to *generateShinyApp* but add the *custom.integration* parameter.
 
 ```{r, eval=FALSE}
-custom.integration <- tibble::tibble(reference.expression.matrix = 'exp.yang',
-                                    reference.org.db = 'org.Mm.eg.db',
-                                    comparison.table = 'mirtarbase.comparison.table',
-                                    reference.table.name = 'RNA',
-                                    comparison.table.name = 'miRTarBase')
+custom.integration <- tibble::tibble(
+  reference.expression.matrix = 'exp.yang',
+  reference.org.db = 'org.Mm.eg.db',
+  comparison.table = 'mirtarbase.comparison.table',
+  reference.table.name = 'RNA',
+  comparison.table.name = 'miRTarBase'
+)
 generateShinyApp(
-    expression.matrix = exp.yang,
-    metadata = meta,
-    modality = "RNA",
-    shiny.dir = "shiny_Yang2019_CustomIntegration",
-    app.title = "Shiny app for visualisation of three timepoints from the Yang 2019 data",
-    organism = "mmusculus",
-    org.db = "org.Mm.eg.db",
-    custom.integration = custom.integration
+  expression.matrix = exp.yang,
+  metadata = meta,
+  modality = "RNA",
+  shiny.dir = "shiny_Yang2019_CustomIntegration",
+  app.title = "Shiny app for visualisation of three timepoints from the Yang 2019 data",
+  organism = "mmusculus",
+  org.db = "org.Mm.eg.db",
+  custom.integration = custom.integration
 )
 shiny::runApp('shiny_Yang2019_CustomIntegration')
 ```
@@ -246,4 +256,8 @@ An example app with custom integration can be found [here](http://bioinf.stemcel
 
 ```{r EnrichmentIntegration, echo = FALSE, out.width = "80%"}
 knitr::include_graphics("figures/EnrichmentIntegrationExample.png") 
+```
+
+```{r sessionInfo}
+sessionInfo()
 ```
