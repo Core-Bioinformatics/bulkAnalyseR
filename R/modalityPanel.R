@@ -16,7 +16,7 @@ modalityPanelUI <- function(id, metadata, organism, panels.default){
   
   tabsetPanel(
     landingPanelUI(ns('Landing'), show = "Landing" %in% panels.default),
-    sampleSelectPanelUI(ns('SampleSelect'), show = "SampleSelect" %in% panels.default),
+    sampleSelectPanelUI(ns('SampleSelect'), metadata, show = "SampleSelect" %in% panels.default),
     QCpanelUI(ns('QC'), metadata, show = "QC" %in% panels.default),
     DEpanelUI(ns('DE'), metadata, show = "DE" %in% panels.default),
     DEplotPanelUI(
