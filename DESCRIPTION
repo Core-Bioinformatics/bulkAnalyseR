@@ -56,7 +56,8 @@ Imports:
     shinyjs,
     tidyr,
     shinyLP,
-    UpSetR
+    UpSetR,
+    stringr
 Suggests:
     rmarkdown,
     knitr,
@@ -64,6 +65,7 @@ Suggests:
     AnnotationDbi,
     org.Hs.eg.db,
     org.Mm.eg.db,
+    readxl,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3

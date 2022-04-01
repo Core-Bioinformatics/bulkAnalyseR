@@ -78,18 +78,31 @@ enrichmentPanelServer <- function(id, DEresults, organism, seed = 13){
       bindCache(DEresults()$DE()$DEtableSubset$gene_id, input[['gprofilerSources']]) %>%
       bindEvent(input[["goEnrichment"]])
     
-    source <- NULL; p_value <- NULL; `-log10(pVal)` <- NULL
+    returnableResult <- reactive({
+      term_id <- term_name <- intersection <- intersection_names <- source <- NULL
+      gostres <- getenrichmentData() %>% 
+        dplyr::select(c(term_id, term_name, intersection, intersection_names, source)) %>% 
+        dplyr::filter(source %in% c('TF', 'MIRNA')) %>% 
+        dplyr::mutate(term_name = dplyr::case_when(source=='TF' ~ stringr::str_extract(term_name, "Factor[:punct:] .*[:punct:] motif") %>% substr(9,nchar(.)-7))) %>%
+        dplyr::mutate('term_id' = term_name) %>%
+        tidyr::separate_rows(c('intersection', 'intersection_names'), sep=',', convert = TRUE) %>%
+        dplyr::select(c('intersection', 'intersection_names', 'term_id', 'term_name', 'source'))
+      colnames(gostres) <- c('Reference_ID', 'Reference_Name', 'Comparison_ID', 'Comparison_Name', 'Category')
+      return(gostres)
+    })
+    
+    source <- p_value <- `-log10(pVal)` <- NULL
     
     #Jitter plot and save coordinates
     getenrichmentPlot <- reactive({
       set.seed(seed)
-      jitter.plot = ggplot(getenrichmentData()) + 
+      jitter.plot <- ggplot(getenrichmentData()) + 
         geom_jitter(aes(x = source, y = p_value, colour = source))
       jitter.build <- ggplot_build(jitter.plot)
-      x = jitter.build$data[[1]]$x
-      df = getenrichmentData()
-      df$jitter = x
-      df$`-log10(pVal)`= -log10(df$p_value)
+      x <- jitter.build$data[[1]]$x
+      df <- getenrichmentData()
+      df$jitter <- x
+      df$`-log10(pVal)` <- -log10(df$p_value)
       return(df)
     })
     
@@ -134,6 +147,9 @@ enrichmentPanelServer <- function(id, DEresults, organism, seed = 13){
         ggsave(file, plot = plotenrichmentPlot(), dpi = 300)
       }
     )
+    
+    return(returnableResult)
+    
   })
 }
 

@@ -14,7 +14,7 @@ generateShinyApp(
   organism = NA,
   org.db = NA,
   panels.default = c("Landing", "SampleSelect", "QC", "DE", "DEplot", "DEsummary",
-    "Enrichment", "Patterns", "Cross", "GRN"),
+    "Enrichment", "GRNenrichment", "Patterns", "Cross", "GRN"),
   panels.extra = tibble::tibble(name = NULL, UIfun = NULL, UIvars = NULL, serverFun =
     NULL, serverVars = NULL),
   data.extra = list(),
@@ -72,7 +72,7 @@ a vector (of the same length as modality) can be provided if
 \item{panels.default}{argument to control which of the default panels
 will be included in the app; default is all, but the enrichment panel
 will not appear unless organism is also supplied; note that the 'DE' panel
-is required for 'DEplot', 'Enrichment', and GRN; a list  (of the same
+is required for 'DEplot', 'DEsummary', 'Enrichment', and 'GRNenrichment'; a list  (of the same
 length as modality) can be provided if \code{length(modality) > 1}}
 
 \item{panels.extra, data.extra, packages.extra}{functionality to add new
@@ -83,19 +83,28 @@ server names and default parameters should be passed to panels.extra
 should be passed to the packages.extra argument; extra data should be a
 single list and passed to the data.extra argument}
 
-\item{cis.integration}{functionality to integrate extra cis-regulatory information into GRN panel.
-Tibble containing names of reference expression matrix, tables of coordinates for elements corresponding to rows
-of reference expression matrix (reference.coord), tables of coordinates to compare against
-reference.coord (comparison.coord) and names for comparison tables.}
+\item{cis.integration}{functionality to integrate extra cis-regulatory
+information into GRN panel. Tibble containing names of reference expression
+matrix, tables of coordinates for elements corresponding to rows of reference
+expression matrix (reference.coord), tables of coordinates to compare against
+reference.coord (comparison.coord) and names for comparison tables. See
+vignettes for more details about inputs.}
 
-\item{trans.integration}{functionality to integrate extra trans-regulatory information into GRN panel.
-Tibble containing names of reference expression matrix, (reference.expression.matrix), comparison expression matrix (comparison.expression.matrix).
-Organism database names for each expression matrix and names for each table are also required.}
+\item{trans.integration}{functionality to integrate extra trans-regulatory
+information into GRN panel. Tibble containing names of reference expression
+matrix, (reference.expression.matrix), comparison expression matrix
+(comparison.expression.matrix). Organism database names for each expression
+matrix and names for each table are also required. See vignettes for more
+details about inputs.}
 
-\item{custom.integration}{functionality to integrate custom information related to rows of
-reference expression matrix. Tibble containining names of reference expression matrix, tables (comparison.table)
-with Reference_ID and Reference_Name (matching ENSEMBL and NAME columns of reference organism database) and
-Comparison_ID and Comparison_Name. Names for the reference expression matrix and comparison table (comparison.table.name) are also required.}
+\item{custom.integration}{functionality to integrate custom information
+related to rows of reference expression matrix. Tibble containing names
+of reference expression matrix, tables (comparison.table) with Reference_ID
+and Reference_Name (matching ENSEMBL and NAME columns of reference organism
+database) and Comparison_ID and Comparison_Name plus a Category column
+containing extra information. Names for the reference
+expression matrix and comparison table (comparison.table.name)
+are also required. See vignettes for more details about inputs.}
 }
 \value{
 The path to shiny.dir (invisibly).
