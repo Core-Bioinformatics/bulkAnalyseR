@@ -10,7 +10,7 @@ NULL
 
 #' @rdname sampleSelectPanel
 #' @export
-sampleSelectPanelUI <- function(id, show = TRUE){
+sampleSelectPanelUI <- function(id, metadata, show = TRUE){
   ns <- NS(id)
   
   if(show){
@@ -18,6 +18,18 @@ sampleSelectPanelUI <- function(id, show = TRUE){
       'Sample select',
       actionButton(ns('goSamples'), label = 'Use the selected samples!', 
                    width = "100%", class = "btn-primary btn-lg"),
+      fluidRow(
+        column(2, checkboxInput(ns("selectAll"), label = "Select all", value = TRUE)),
+        column(2, checkboxInput(ns("deselectAll"), label = "Deselect all", value = FALSE)),
+        column(2, style = "padding-top: 10px;", 'Select using metadata column:'),
+        column(2, style = "padding-top: 5px;",
+               selectInput(ns('condition'), NULL, colnames(metadata), 
+                           selected = colnames(metadata)[ncol(metadata)])),
+        column(4, style = "padding-top: 10px;",
+               checkboxGroupInput(ns("selectMeta"), label = NULL, inline = TRUE,
+                                  choices = unique(metadata[[ncol(metadata)]]),
+                                  selected = unique(metadata[[ncol(metadata)]]))),
+      ),
       DT::dataTableOutput(ns('tbl'))
     )
   }else{
@@ -27,8 +39,8 @@ sampleSelectPanelUI <- function(id, show = TRUE){
 
 #' @rdname sampleSelectPanel
 #' @export
-sampleSelectPanelServer <- function(id, expression.matrix, metadata){
-  ns <- NS(id)
+sampleSelectPanelServer <- function(id, expression.matrix, metadata, modality = "RNA"){
+  ns <- NS(c(modality, id))
   # check whether inputs (other than id) are reactive or not
   stopifnot({
     !is.reactive(expression.matrix)
@@ -37,22 +49,44 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata){
   
   moduleServer(id, function(input, output, session){
     # create a character vector of shiny inputs
-    shinyInput = function(FUN, len, id, value, ...) {
+    shinyInput = function(FUN, len, ID, value, ...) {
       if (length(value) == 1) value <- rep(value, len)
       inputs = character(len)
       for (i in seq_len(len)) {
-        inputs[i] = as.character(FUN(ns(paste0(id, i)), label = NULL, value = value[i]))
+        inputs[i] = as.character(FUN(ns(paste0(ID, i)), label = NULL, value = value[i]))
       }
       inputs
     }
     
     # obtain the values of inputs
-    shinyValue = function(id, len) {
+    shinyValue = function(ID, len) {
       unlist(lapply(seq_len(len), function(i) {
-        value = input[[paste0(id, i)]]
+        value = input[[paste0(ID, i)]]
         if (is.null(value)) TRUE else value
       }))
     }
+    
+    observe({
+      updateCheckboxInput(
+        session = session,
+        inputId = "selectAll",
+        value = FALSE
+      )
+      updateCheckboxInput(
+        session = session,
+        inputId = "deselectAll",
+        value = FALSE
+      )
+      updateCheckboxGroupInput(
+        session = session, 
+        inputId = "selectMeta", 
+        choices = unique(metadata[[input[["condition"]]]]), 
+        selected = NULL,
+        inline = TRUE
+      )
+    }) %>%
+      bindEvent(input[["selectAll"]], input[["deselectAll"]], 
+                input[["condition"]], input[["selectMeta"]])
     
     n <- nrow(metadata)
     df = cbind(
@@ -61,7 +95,18 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata){
     )
     
     loopData = reactive({
-      df$selected <<- shinyInput(checkboxInput, n, 'cb_', value = shinyValue('cb_', n), width='1px')
+      if(input[["selectAll"]]){
+        df$selected <<- shinyInput(checkboxInput, n, 'cb_', value = TRUE, width='1px')
+      }else if(input[["deselectAll"]]){
+        df$selected <<- shinyInput(checkboxInput, n, 'cb_', value = FALSE, width='1px')
+      }else if(length(input[["selectMeta"]]) > 0){
+        df$selected <<- shinyInput(
+          checkboxInput, n, 'cb_', width='1px',
+          value = shinyValue('cb_', n) | metadata[[input[["condition"]]]] %in% input[["selectMeta"]]
+        )
+      }else{
+        df$selected <<- shinyInput(checkboxInput, n, 'cb_', value = shinyValue('cb_', n), width='1px')
+      }
       df
     })
     
@@ -89,14 +134,24 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata){
     }) %>%
       bindEvent(input[["goSamples"]], ignoreNULL = FALSE)
     
+    return(filteredInputs)
+    
   })
 }
 
-# sampleSelectPanelApp <- function(){
-#   shinyApp(
-#     ui = fluidPage(sampleSelectPanelUI('SampleSelect')),
-#     server = function(input, output, session){
-#       sampleSelectPanelServer('SampleSelect', expression.matrix, metadata)
-#     }
-#   )
-# }
+sampleSelectPanelApp <- function(){
+  expression.matrix.preproc <- as.matrix(read.csv(
+    system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
+    row.names = 1
+  ))
+  metadata <- data.frame(
+    srr = colnames(expression.matrix.preproc), 
+    timepoint = rep(c("0h", "12h", "36h"), each = 2)
+  )
+  shinyApp(
+    ui = fluidPage(sampleSelectPanelUI('SampleSelect')),
+    server = function(input, output, session){
+      sampleSelectPanelServer('SampleSelect', expression.matrix.preproc, metadata)
+    }
+  )
+}

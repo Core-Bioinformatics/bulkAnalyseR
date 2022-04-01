@@ -186,7 +186,7 @@ crossPanelServer <- function(id, expression.matrix, metadata, anno){
                   'lfcThreshold' = input[["lfcThreshold"]], 
                   'pvalThreshold' = input[["pvalThreshold"]]))
     }) %>%
-      bindCache(head(expression.matrix()),metadata(), input[["condition1"]], 
+      bindCache(utils::head(expression.matrix()),metadata(), input[["condition1"]], 
                 input[['DE1var1']], input[['DE1var2']], input[["pipeline1"]], 
                 input[["condition2"]], input[['DE2var1']], input[['DE2var2']],
                 input[["pipeline2"]], input[["lfcThreshold"]], input[["pvalThreshold"]]) %>%
@@ -200,6 +200,7 @@ crossPanelServer <- function(id, expression.matrix, metadata, anno){
         DEtable1Subset = results$DEtable1Subset,
         DEtable2Subset = results$DEtable2Subset,
         lfc.threshold = results$lfcThreshold,
+        raster = TRUE,
         labels.per.region = ifelse(input[["autoLabel"]], 5, 0),
         add.labels.custom = length(input[["geneName"]]) > 0,
         genes.to.label = input[["geneName"]]

@@ -16,7 +16,7 @@ modalityPanelUI <- function(id, metadata, organism, panels.default){
   
   tabsetPanel(
     landingPanelUI(ns('Landing'), show = "Landing" %in% panels.default),
-    sampleSelectPanelUI(ns('SampleSelect'), show = "SampleSelect" %in% panels.default),
+    sampleSelectPanelUI(ns('SampleSelect'), metadata, show = "SampleSelect" %in% panels.default),
     QCpanelUI(ns('QC'), metadata, show = "QC" %in% panels.default),
     GRNpanelUI(ns('GRN'), metadata, show = "GRN" %in% panels.default),
     DEpanelUI(ns('DE'), metadata, show = "DE" %in% panels.default),
@@ -58,7 +58,7 @@ modalityPanelServer <- function(id, expression.matrix, metadata, anno, organism,
   
   moduleServer(id, function(input, output, session){
     if("SampleSelect" %in% panels.default){
-      filteredInputs <- sampleSelectPanelServer('SampleSelect', expression.matrix, metadata)
+      filteredInputs <- sampleSelectPanelServer('SampleSelect', expression.matrix, metadata, id)
       expression.matrix <- reactive(filteredInputs()[['expression.matrix']])
       metadata <- reactive(filteredInputs()[['metadata']])
     }else{

@@ -82,14 +82,16 @@ enrichmentPanelServer <- function(id, DEresults, organism, seed = 13){
       term_id <- term_name <- intersection <- intersection_names <- source <- NULL
       gostres <- getenrichmentData() %>% 
         dplyr::select(c(term_id, term_name, intersection, intersection_names, source)) %>% 
-        dplyr::filter(source %in% c('TF','MIRNA')) %>% 
+        dplyr::filter(source %in% c('TF', 'MIRNA')) %>% 
         dplyr::mutate(term_name = dplyr::case_when(source=='TF' ~ stringr::str_extract(term_name, "Factor[:punct:] .*[:punct:] motif") %>% substr(9,nchar(.)-7))) %>%
         dplyr::mutate('term_id' = term_name) %>%
         tidyr::separate_rows(c('intersection', 'intersection_names'), sep=',', convert = TRUE) %>%
         dplyr::select(c('intersection', 'intersection_names', 'term_id', 'term_name', 'source'))
-      colnames(gostres) <- c('Reference_ID','Reference_Name','Comparison_ID','Comparison_Name', 'Category')
+      colnames(gostres) <- c('Reference_ID', 'Reference_Name', 'Comparison_ID', 'Comparison_Name', 'Category')
       return(gostres)
     })
+    
+    source <- p_value <- `-log10(pVal)` <- NULL
     
     #Jitter plot and save coordinates
     getenrichmentPlot <- reactive({
@@ -105,11 +107,10 @@ enrichmentPanelServer <- function(id, DEresults, organism, seed = 13){
     })
     
     #Plot enrichment data
-    source <- NULL; p_value <- NULL
     plotenrichmentPlot <- reactive({
       plotdata <- getenrichmentPlot()
       myplot <- ggplot(plotdata) + 
-        geom_point(aes(x = jitter, y = .data$`-log10(pVal)`, colour = source)) + 
+        geom_point(aes(x = jitter, y = `-log10(pVal)`, colour = source)) + 
         theme_bw()+ 
         scale_x_continuous(breaks = seq(1, length(unique(plotdata$source)), 1), 
                            labels = unique(plotdata$source)) + 
@@ -122,7 +123,12 @@ enrichmentPanelServer <- function(id, DEresults, organism, seed = 13){
     #Define clicking on enrichment data table
     output[['data']] <- renderTable({
       req(input[['plot_click']])
-      nearPoints(df = getenrichmentPlot()[,c('term_name','source','term_id','-log10(pVal)','intersection_size','jitter')], coordinfo = input[['plot_click']], yvar='-log10(pVal)', maxpoints = 5)
+      nearPoints(
+        df = getenrichmentPlot()[, c('term_name', 'source', 'term_id', '-log10(pVal)',
+                                     'intersection_size', 'jitter')], 
+        coordinfo = input[['plot_click']], 
+        maxpoints = 5
+      )
     })
     
     #Download enrichment
@@ -142,7 +148,7 @@ enrichmentPanelServer <- function(id, DEresults, organism, seed = 13){
       }
     )
     
-    return(reactive(returnableResult()))
+    return(returnableResult)
     
   })
 }

@@ -135,7 +135,7 @@ DEpanelServer <- function(id, expression.matrix, metadata, anno){
                   'lfcThreshold' = input[["lfcThreshold"]], 
                   'pvalThreshold' = input[["pvalThreshold"]]))
     }) %>%
-      bindCache(head(expression.matrix()), metadata(), input[["condition"]], 
+      bindCache(utils::head(expression.matrix()), metadata(), input[["condition"]], 
                 input[['variable1']], input[['variable2']], input[["pipeline"]], 
                 input[["lfcThreshold"]], input[["pvalThreshold"]]) %>%
       bindEvent(input[["goDE"]])

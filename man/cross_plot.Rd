@@ -11,6 +11,7 @@ cross_plot(
   DEtable2Subset,
   lfc.threshold = NULL,
   mask = FALSE,
+  raster = FALSE,
   labnames = c("not DE", "DE both", "DE comparison 1", "DE comparison 2"),
   cols.chosen = c("grey", "purple", "dodgerblue", "lightcoral"),
   labels.per.region = 5,
@@ -32,6 +33,9 @@ thresholds to determine whether a gene is DE}
 
 \item{mask}{whether to hide genes that were not called DE in either
 comparison; default is FALSE}
+
+\item{raster}{whether to rasterize non-DE genes with ggraster to reduce
+memory usage; particularly useful when saving plots to files}
 
 \item{labnames, cols.chosen}{the legend labels and colours for the 4
 categories of genes ("not DE", "DE both", "DE comparison 1", "DE comparison 2")}
