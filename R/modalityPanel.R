@@ -33,7 +33,7 @@ modalityPanelUI <- function(id, metadata, organism, panels.default){
       show = ("DE" %in% panels.default) & ("Enrichment" %in% panels.default) & (organism != 'NA')
     ),
     GRNCustomPanelUI(
-      ns('GRNenrichment'),'DE & enrichment GRN',
+      ns('GRNenrichment'), 'DE & enrichment GRN',
       show = ("DE" %in% panels.default) & 
              ("Enrichment" %in% panels.default) &
              ("GRNenrichment" %in% panels.default) & 
@@ -68,6 +68,9 @@ modalityPanelServer <- function(id, expression.matrix, metadata, anno, organism,
     if("QC" %in% panels.default){
       QCpanelServer('QC', expression.matrix, metadata, anno)
     }
+    if("GRN" %in% panels.default){
+      GRNpanelServer('GRN', expression.matrix, metadata, anno)
+    }
     if("DE" %in% panels.default){
       DEresults <- DEpanelServer('DE', expression.matrix, metadata, anno)
       if("DEplot" %in% panels.default){
@@ -83,14 +86,11 @@ modalityPanelServer <- function(id, expression.matrix, metadata, anno, organism,
         }
       }
     }
-    if("Patterns" %in% panels.default){
-      patternPanelServer('Patterns', expression.matrix, metadata, anno)
-    }
     if("Cross" %in% panels.default){
       crossPanelServer('Cross', expression.matrix, metadata, anno)
     }
-    if("GRN" %in% panels.default){
-      GRNpanelServer('GRN', expression.matrix, metadata, anno)
+    if("Patterns" %in% panels.default){
+      patternPanelServer('Patterns', expression.matrix, metadata, anno)
     }
   })
 }

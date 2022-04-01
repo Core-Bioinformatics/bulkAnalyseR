@@ -121,8 +121,8 @@ generateShinyApp <- function(
   metadata,
   organism = NA,
   org.db = NA,
-  panels.default = c("Landing", "SampleSelect", "QC", "DE", "DEplot", "DEsummary",
-                     "Enrichment", "GRNenrichment", "Patterns", "Cross", "GRN"),
+  panels.default = c("Landing", "SampleSelect", "QC", "GRN", "DE", "DEplot", 
+                     "DEsummary", "Enrichment", "GRNenrichment", "Cross", "Patterns"),
   panels.extra = tibble::tibble(
     name = NULL,
     UIfun = NULL, 
