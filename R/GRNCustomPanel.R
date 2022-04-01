@@ -88,8 +88,10 @@ GRNCustomPanelServer <- function(id, expression.matrix, anno, comparison.table, 
     GRNresults <- reactive({
       if (!is.null(DEresults)) {
         expression.matrix <- expression.matrix()[DEresults()$DE()$DEtableSubset$gene_id,]
+        target.genes <- DEresults()$DE()$DEtableSubset$gene_id[match(input[["targetGenes"]], DEresults()$DE()$DEtableSubset$gene_name)]
+      } else {
+        target.genes <- anno$ENSEMBL[match(input[["targetGenes"]],anno$NAME)]
       }
-      target.genes <- DEresults()$DE()$DEtableSubset$gene_id[match(input[["targetGenes"]], DEresults()$DE()$DEtableSubset$gene_name)]
       set.seed(seed)
       GENIE3::GENIE3(expression.matrix, targets = target.genes)
     }) %>%

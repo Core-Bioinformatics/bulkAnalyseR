@@ -32,7 +32,7 @@ GRNTransPanelUI <- function(id, reference.table.name, comparison.table.name){
         actionButton(ns('goGRN'), label = 'Start GRN inference'),
         
         numericInput(ns("plotConnections"), "Connections to plot:", 5, 0, 100),
-        textInput(ns('plotFileName'), 'File name for plot download', value ='GRNplot.html'),
+        textInput(ns('plotFileName'), 'File name for plot download', value ='GRNTransPlot.html'),
         downloadButton(ns('download'), 'Download Plot'),
       ),
       
