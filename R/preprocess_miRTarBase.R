@@ -33,21 +33,23 @@
 #'   reference = "miRNA")
 #' # clean up tempdir
 #' unlink(paste0(normalizePath(tempdir()), "/", dir(tempdir())), recursive = TRUE)
-preprocess_miRTarBase <- function(temp.dir = '.',
-                                      organism.code,
-                                      org.db,
-                                      support.type = c(),
-                                      validation.method = c(),
-                                      reference = c('mRNA','miRNA'),
-                                      print.support.types = FALSE,
-                                      print.validation.methods = FALSE)
-                                      {
+preprocess_miRTarBase <- function(
+  temp.dir = '.',
+  organism.code,
+  org.db,
+  support.type = c(),
+  validation.method = c(),
+  reference = c('mRNA','miRNA'),
+  print.support.types = FALSE,
+  print.validation.methods = FALSE
+){
   file.suffix = ifelse(organism.code == 'hsa', 'xlsx', 'xls')
   utils::download.file(
     paste0('https://mirtarbase.cuhk.edu.cn/~miRTarBase/miRTarBase_2019/cache/download/8.0/',
            organism.code, '_MTI.', file.suffix), 
     destfile = paste0(temp.dir, '/miRTarBase_', organism.code, '.', file.suffix),
-    method = 'wget')
+    method = 'wget'
+  )
   mirtarbase <- readxl::read_excel(paste0(temp.dir,'/miRTarBase_',organism.code,'.',file.suffix))
   unlink(paste0(temp.dir,'/miRTarBase_',organism.code,'.',file.suffix))
   if (print.support.types) {
@@ -77,30 +79,30 @@ preprocess_miRTarBase <- function(temp.dir = '.',
   }
   suppressMessages(
     anno <- AnnotationDbi::select(
-    getExportedValue(org.db, org.db),
-    keys = unique(mirtarbase$`Target Gene`),
-    keytype = 'SYMBOL',
-    columns = 'ENSEMBL'
-  ) %>%
-    dplyr::distinct(.data$SYMBOL, .keep_all = TRUE) %>%
-    dplyr::mutate(NAME = ifelse(is.na(.data$SYMBOL), .data$ENSEMBL, .data$SYMBOL))
+      getExportedValue(org.db, org.db),
+      keys = unique(mirtarbase$`Target Gene`),
+      keytype = 'SYMBOL',
+      columns = 'ENSEMBL'
+    ) %>%
+      dplyr::distinct(.data$SYMBOL, .keep_all = TRUE) %>%
+      dplyr::mutate(NAME = ifelse(is.na(.data$SYMBOL), .data$ENSEMBL, .data$SYMBOL))
   )
   
   if (reference[[1]] == 'mRNA'){
     mirtarbase.comparison.table <- data.frame(
-            Reference_ID = anno$ENSEMBL[match(mirtarbase$`Target Gene`, anno$NAME)],
-            Reference_Name = mirtarbase$`Target Gene`,
-            Comparison_ID = mirtarbase$miRNA,
-            Comparison_Name = mirtarbase$miRNA,
-            Category = 'miRNA')
+      Reference_ID = anno$ENSEMBL[match(mirtarbase$`Target Gene`, anno$NAME)],
+      Reference_Name = mirtarbase$`Target Gene`,
+      Comparison_ID = mirtarbase$miRNA,
+      Comparison_Name = mirtarbase$miRNA,
+      Category = 'miRNA')
     mirtarbase.comparison.table <- unique(mirtarbase.comparison.table)
   } else if (reference[[1]] == 'miRNA'){
     mirtarbase.comparison.table <- data.frame(
-            Reference_ID = mirtarbase$miRNA,
-            Reference_Name = mirtarbase$miRNA,
-            Comparison_ID = anno$ENSEMBL[match(mirtarbase$`Target Gene`, anno$NAME)],
-            Comparison_Name = mirtarbase$`Target Gene`,
-            Category = 'miRNA')
+      Reference_ID = mirtarbase$miRNA,
+      Reference_Name = mirtarbase$miRNA,
+      Comparison_ID = anno$ENSEMBL[match(mirtarbase$`Target Gene`, anno$NAME)],
+      Comparison_Name = mirtarbase$`Target Gene`,
+      Category = 'miRNA')
     mirtarbase.comparison.table = unique(mirtarbase.comparison.table)
   } else { stop('Reference should be one of mRNA or miRNA for miRTarBase integration') }
   return(mirtarbase.comparison.table)
