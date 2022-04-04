@@ -74,11 +74,18 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata, modality = 
         inputId = "selectAll",
         value = FALSE
       )
+    }) %>%
+      bindEvent(shinyValue('cb_', n), input[["condition"]], 
+                input[["deselectAll"]], input[["selectMeta"]])
+    observe({
       updateCheckboxInput(
         session = session,
         inputId = "deselectAll",
         value = FALSE
       )
+    }) %>%
+      bindEvent(shinyValue('cb_', n), input[["condition"]], input[["selectMeta"]])
+    observe({
       updateCheckboxGroupInput(
         session = session, 
         inputId = "selectMeta", 
@@ -88,8 +95,6 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata, modality = 
       )
     }) %>%
       bindEvent(shinyValue('cb_', n), input[["condition"]])
-      # bindEvent(input[["selectAll"]], input[["deselectAll"]], 
-      #           input[["condition"]], input[["selectMeta"]])
     
     n <- nrow(metadata)
     df = cbind(
