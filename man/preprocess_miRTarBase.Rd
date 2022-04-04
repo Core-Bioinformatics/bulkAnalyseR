@@ -5,7 +5,9 @@
 \title{Creates a comparison table for miRTarBase to be used for custom integration}
 \usage{
 preprocess_miRTarBase(
-  temp.dir = ".",
+  download.dir = ".",
+  download.method = "auto",
+  mirtarbase.file = NULL,
   organism.code,
   org.db,
   support.type = c(),
@@ -16,7 +18,13 @@ preprocess_miRTarBase(
 )
 }
 \arguments{
-\item{temp.dir}{Directory where miRTarBase database will be temporarily downloaded.}
+\item{download.dir}{Directory where miRTarBase database will be downloaded.}
+
+\item{download.method}{Method for downloading miRTarBase file through download.file,
+see download.file documentation for options for your operating system.}
+
+\item{mirtarbase.file}{Path to pre-downloaded miRTarBase file for your organism.
+If this is left NULL then the file will be downloaded.}
 
 \item{organism.code}{Three letter code for the organism of choice. See miRTarBase
 website for options. For human, enter 'hsa' and for mouse, 'mmu'.}
@@ -50,14 +58,11 @@ of choice, filters it according to user-specified values and formats ready for
 custom integration in \code{\link{generateShinyApp}}.
 }
 \examples{
-temp.dir = tempdir()
 comparison.table <- preprocess_miRTarBase(
-  temp.dir = temp.dir,
+  mirtarbase.file = system.file("extdata", "mmu_MTI_sub.xls", package = "bulkAnalyseR"),
   organism.code = "mmu",
   org.db = "org.Mm.eg.db",
   support.type = "Functional MTI",
   validation.method = "Luciferase reporter assay",
   reference = "miRNA")
-# clean up tempdir
-unlink(paste0(normalizePath(tempdir()), "/", dir(tempdir())), recursive = TRUE)
 }
