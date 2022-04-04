@@ -112,7 +112,16 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
   
   moduleServer(id, function(input, output, session){
     
-    updateSelectizeInput(session, "targets", choices = anno$NAME, server = TRUE)
+    expression.matrix.sub <- reactive(# Remove genes of constant expression
+      expression.matrix()[matrixStats::rowMins(expression.matrix()) != 
+                            matrixStats::rowMaxs(expression.matrix()), ]
+    )
+    observe({
+      updateSelectizeInput(
+        session, "targets", server = TRUE,
+        choices = anno$NAME[anno$ENSEMBL %in% rownames(expression.matrix.sub())]
+      )
+    })
     
     observe({
       enable_condition <- length(input[["targets"]]) >= 1 &
@@ -137,7 +146,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       shinyjs::disable("goGRN")
       if(n_networks() >= 1){
         weightMat <- infer_GRN(
-          expression.matrix = expression.matrix(), 
+          expression.matrix = expression.matrix.sub(), 
           metadata = metadata(), 
           anno = anno, 
           targets = input[["targets"]], 
@@ -156,7 +165,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       shinyjs::disable("goGRN")
       if(n_networks() >= 2){
         weightMat <- infer_GRN(
-          expression.matrix = expression.matrix(), 
+          expression.matrix = expression.matrix.sub(), 
           metadata = metadata(), 
           anno = anno, 
           targets = input[["targets"]], 
@@ -175,7 +184,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       shinyjs::disable("goGRN")
       if(n_networks() >= 3){
         weightMat <- infer_GRN(
-          expression.matrix = expression.matrix(), 
+          expression.matrix = expression.matrix.sub(), 
           metadata = metadata(), 
           anno = anno, 
           targets = input[["targets"]], 
@@ -194,7 +203,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       shinyjs::disable("goGRN")
       if(n_networks() >= 4){
         weightMat <- infer_GRN(
-          expression.matrix = expression.matrix(), 
+          expression.matrix = expression.matrix.sub(), 
           metadata = metadata(), 
           anno = anno, 
           targets = input[["targets"]], 
