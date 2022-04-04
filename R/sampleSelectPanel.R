@@ -87,8 +87,9 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata, modality = 
         inline = TRUE
       )
     }) %>%
-      bindEvent(input[["selectAll"]], input[["deselectAll"]], 
-                input[["condition"]], input[["selectMeta"]])
+      bindEvent(shinyValue('cb_', n), input[["condition"]])
+      # bindEvent(input[["selectAll"]], input[["deselectAll"]], 
+      #           input[["condition"]], input[["selectMeta"]])
     
     n <- nrow(metadata)
     df = cbind(
