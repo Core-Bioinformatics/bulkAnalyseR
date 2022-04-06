@@ -55,6 +55,6 @@ similarity against expression for all samples.
 expression.matrix <- as.matrix(read.csv(
   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
   row.names = 1
-))[1:500, 1:4]
+))[1:10, 1:4]
 expression.matrix.denoised <- noisyr_counts_with_plot(expression.matrix)
 }

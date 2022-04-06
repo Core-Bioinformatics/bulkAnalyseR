@@ -31,7 +31,7 @@
 #' expression.matrix <- as.matrix(read.csv(
 #'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
-#' ))[1:500, 1:4]
+#' ))[1:10, 1:4]
 #' expression.matrix.preproc <- preprocessExpressionMatrix(expression.matrix)
 preprocessExpressionMatrix <- function(
   expression.matrix,
@@ -91,7 +91,7 @@ preprocessExpressionMatrix <- function(
 #' expression.matrix <- as.matrix(read.csv(
 #'   system.file("extdata", "expression_matrix.csv", package = "bulkAnalyseR"), 
 #'   row.names = 1
-#' ))[1:500, 1:4]
+#' ))[1:10, 1:4]
 #' expression.matrix.denoised <- noisyr_counts_with_plot(expression.matrix)
 noisyr_counts_with_plot <- function(
   expression.matrix, 
@@ -109,24 +109,26 @@ noisyr_counts_with_plot <- function(
   }
   expression.summary <- noisyr::calculate_expression_similarity_counts(expression.matrix, ...)
   
-  plotlist <- noisyr::plot_expression_similarity(expression.summary = expression.summary)
-  plotdf.line <- tibble::tibble()
-  for(i in seq_len(ncol(expression.matrix))){
-    lineid <- i * 2 - 1
-    plotdf.line <- rbind(
-      plotdf.line, 
-      dplyr::mutate(plotlist[[lineid]]$data, Sample = colnames(expression.matrix)[i]))
+  if(output.plot){
+    plotlist <- noisyr::plot_expression_similarity(expression.summary = expression.summary)
+    plotdf.line <- tibble::tibble()
+    for(i in seq_len(ncol(expression.matrix))){
+      lineid <- i * 2 - 1
+      plotdf.line <- rbind(
+        plotdf.line, 
+        dplyr::mutate(plotlist[[lineid]]$data, Sample = colnames(expression.matrix)[i]))
+    }
+    p <- ggplot2::ggplot(plotdf.line) +
+      ggplot2::theme_minimal() + 
+      ggplot2::geom_line(ggplot2::aes(x = .data$x, y = .data$y, colour = .data$Sample)) +
+      ggplot2::geom_smooth(ggplot2::aes(x = .data$x, y = .data$y, colour = .data$Sample), 
+                           method = "loess", formula = .data$y ~ .data$x, span = 0.1) +
+      ggplot2::ylim(0, 1) +
+      ggplot2::xlab("log2(expression)") +
+      ggplot2::ylab("Similarity") +
+      ggplot2::geom_hline(yintercept = similarity.threshold, color = "black")
+    suppressWarnings(print(p))
   }
-  p <- ggplot2::ggplot(plotdf.line) +
-    ggplot2::theme_minimal() + 
-    ggplot2::geom_line(ggplot2::aes(x = .data$x, y = .data$y, colour = .data$Sample)) +
-    ggplot2::geom_smooth(ggplot2::aes(x = .data$x, y = .data$y, colour = .data$Sample), 
-                         method = "loess", formula = .data$y ~ .data$x, span = 0.1) +
-    ggplot2::ylim(0, 1) +
-    ggplot2::xlab("log2(expression)") +
-    ggplot2::ylab("Similarity") +
-    ggplot2::geom_hline(yintercept = similarity.threshold, color = "black")
-  suppressWarnings(print(p))
   
   if (base::length(similarity.threshold) > 1 | base::length(method.chosen) > 1) {
     base::message("Selecting parameters that minimise the coefficient of variation...")
