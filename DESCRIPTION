@@ -24,7 +24,6 @@ Depends:
     R (>= 4.0)
 Imports: 
     ggplot2,
-    shinythemes,
     shiny,
     gprofiler2,
     edgeR,
@@ -61,6 +60,7 @@ Imports:
 Suggests:
     rmarkdown,
     knitr,
+    shinythemes,
     BiocManager,
     AnnotationDbi,
     org.Hs.eg.db,
