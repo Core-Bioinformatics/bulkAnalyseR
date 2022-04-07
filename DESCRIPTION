@@ -7,7 +7,7 @@ Authors@R: c(
             person("Irina", "Mohorianu", , "iim22@cam.ac.uk", role = c("aut", "ctb"))
             )
 Maintainer: Ilias Moutsopoulos <im383@cam.ac.uk>
-Description: Given an expression matrix from a bulk RNA-Seq experiment,
+Description: Given an expression matrix from a bulk sequencing experiment,
         pre-processes it and creates a shiny app for interactive data 
         analysis and visualisation. The app contains quality checks,
         differential expression analysis, volcano and cross plots,
