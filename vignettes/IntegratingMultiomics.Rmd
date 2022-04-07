@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 As an example, we consider a subset of the mRNAseq and h3k4me3 ChIPseq data from an experiment included in [a 2019 paper by Yang et al](https://www.sciencedirect.com/science/article/pii/S2405471219301152). The preprocessed mRNAseq data is included in the *bulkAnalyseR* package and can be loaded by running:
 
 ```{r bulkAnalyseR, include=FALSE}
-devtools::load_all('../')
+library("bulkAnalyseR")
 ```
 
 ```{r load Yang 2019 mRNAseq}
