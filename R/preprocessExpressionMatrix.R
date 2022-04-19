@@ -15,14 +15,18 @@
 #' \describe{
 #'   \item{quantile}{Quantile normalisation using the \code{normalize.quantiles}
 #'   function from the \code{preprocessCore} package}
-#'   \item{rpm}{A version of RPM (reads per million) normalisation, where each
-#'   sample is scaled by the median expression in the sample divided by the 
-#'   total number of reads in that sample}
+#'   \item{rpm}{RPM (reads per million) normalisation, where each
+#'   sample is scaled by 1 (or more using the n_million parameter) million and
+#'   divided by the total number of reads in that sample}
 #'   \item{tmm}{Trimmed Mean of M values normalisation using the
 #'   \code{calcNormFactors} function from the \code{edgeR} package}
 #'   \item{deseq2}{Size factor normalisation using the 
 #'   \code{estimateSizeFactorsForMatrix} function from the \code{DESeq2} package}
+#'   \item{median}{Normalisation using the median, where each
+#'   sample is scaled by the median expression in the sample divided by the 
+#'   total number of reads in that sample}
 #' }
+#' @param n_million scaling factor for RPM normalisation; default is 1 million
 #' @param ... optional arguments passed on to \code{noisyr::noisyr_counts()}
 #' @return The denoised, normalised expression matrix; some rows (genes)
 #' may have been removed by noisyR.
@@ -37,7 +41,8 @@ preprocessExpressionMatrix <- function(
   expression.matrix,
   denoise = TRUE,
   output.plot = FALSE,
-  normalisation.method = c("quantile", "rpm", "tmm", "deseq2"),
+  normalisation.method = c("quantile", "rpm", "tmm", "deseq2", "median"),
+  n_million = 1,
   ...
 ){
   if(denoise){
@@ -56,7 +61,7 @@ preprocessExpressionMatrix <- function(
     expression.matrix <- sweep(
       x = expression.matrix, 
       MARGIN = 2, 
-      STATS = stats::median(csums) / csums,
+      STATS = n_million * 1000000 / csums,
       FUN = "*"
     )
   }else if(normalisation.method[1] == "tmm"){
@@ -71,6 +76,14 @@ preprocessExpressionMatrix <- function(
       x = expression.matrix, 
       MARGIN = 2, 
       STATS = DESeq2::estimateSizeFactorsForMatrix(expression.matrix),
+      FUN = "*"
+    )
+  }else if(normalisation.method[1] == "median"){
+    csums <- colSums(expression.matrix)
+    expression.matrix <- sweep(
+      x = expression.matrix, 
+      MARGIN = 2, 
+      STATS = stats::median(csums) / csums,
       FUN = "*"
     )
   }else{

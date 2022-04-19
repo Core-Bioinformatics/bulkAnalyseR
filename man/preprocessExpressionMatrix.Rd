@@ -8,7 +8,8 @@ preprocessExpressionMatrix(
   expression.matrix,
   denoise = TRUE,
   output.plot = FALSE,
-  normalisation.method = c("quantile", "rpm", "tmm", "deseq2"),
+  normalisation.method = c("quantile", "rpm", "tmm", "deseq2", "median"),
+  n_million = 1,
   ...
 )
 }
@@ -29,14 +30,19 @@ currently supported normalisation methods are:
 \describe{
 \item{quantile}{Quantile normalisation using the \code{normalize.quantiles}
 function from the \code{preprocessCore} package}
-\item{rpm}{A version of RPM (reads per million) normalisation, where each
-sample is scaled by the median expression in the sample divided by the
-total number of reads in that sample}
+\item{rpm}{RPM (reads per million) normalisation, where each
+sample is scaled by 1 (or more using the n_million parameter) million,
+divided by the total number of reads in that sample}
 \item{tmm}{Trimmed Mean of M values normalisation using the
 \code{calcNormFactors} function from the \code{edgeR} package}
 \item{deseq2}{Size factor normalisation using the
 \code{estimateSizeFactorsForMatrix} function from the \code{DESeq2} package}
+\item{median}{Normalisation using the median, where each
+sample is scaled by the median expression in the sample divided by the
+total number of reads in that sample}
 }}
+
+\item{n_million}{scaling factor for RPM normalisation; default is 1 million}
 
 \item{...}{optional arguments passed on to \code{noisyr::noisyr_counts()}}
 }
