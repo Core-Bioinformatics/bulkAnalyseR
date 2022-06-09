@@ -65,13 +65,15 @@ enrichmentPanelServer <- function(id, DEresults, organism, seed = 13){
                                   custom_bg = inputdata$DEtable$gene_id,
                                   sources = input[['gprofilerSources']],
                                   evcodes = TRUE)
-      gostres$result <- gostres$result %>%
-        dplyr::mutate(parents = sapply(.data$parents, toString),
-                      intersection_names = sapply(.data$intersection, function(x){
-                        ensids <- strsplit(x, split = ",")[[1]]
-                        names <- inputdata$DEtable$gene_name[match(ensids, inputdata$DEtable$gene_id)]
-                        paste(names, collapse = ",")
-                      }))
+      if(!is.null(gostres$result)){
+        gostres$result <- gostres$result %>%
+          dplyr::mutate(parents = sapply(.data$parents, toString),
+                        intersection_names = sapply(.data$intersection, function(x){
+                          ensids <- strsplit(x, split = ",")[[1]]
+                          names <- inputdata$DEtable$gene_name[match(ensids, inputdata$DEtable$gene_id)]
+                          paste(names, collapse = ",")
+                        }))
+      }
       shinyjs::enable("goEnrichment")
       return(gostres$result)
     }) %>%
