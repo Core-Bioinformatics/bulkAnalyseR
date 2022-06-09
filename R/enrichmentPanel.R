@@ -116,6 +116,7 @@ enrichmentPanelServer <- function(id, DEresults, organism, seed = 13){
     #Plot enrichment data
     plotenrichmentPlot <- reactive({
       plotdata <- getenrichmentPlot()
+      if(is.null(plotdata)) stop("No enriched terms found")
       myplot <- ggplot(plotdata) + 
         geom_point(aes(x = jitter, y = `-log10(pVal)`, colour = source)) + 
         theme_bw()+ 
