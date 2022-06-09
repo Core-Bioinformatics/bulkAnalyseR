@@ -82,14 +82,17 @@ enrichmentPanelServer <- function(id, DEresults, organism, seed = 13){
     
     returnableResult <- reactive({
       term_id <- term_name <- intersection <- intersection_names <- source <- NULL
-      gostres <- getenrichmentData() %>% 
-        dplyr::select(c(term_id, term_name, intersection, intersection_names, source)) %>% 
-        dplyr::filter(source %in% c('TF', 'MIRNA')) %>% 
-        dplyr::mutate(term_name = dplyr::case_when(source=='TF' ~ stringr::str_extract(term_name, "Factor[:punct:] .*[:punct:] motif") %>% substr(9,nchar(.)-7))) %>%
-        dplyr::mutate('term_id' = term_name) %>%
-        tidyr::separate_rows(c('intersection', 'intersection_names'), sep=',', convert = TRUE) %>%
-        dplyr::select(c('intersection', 'intersection_names', 'term_id', 'term_name', 'source'))
-      colnames(gostres) <- c('Reference_ID', 'Reference_Name', 'Comparison_ID', 'Comparison_Name', 'Category')
+      gostres <- getenrichmentData() 
+      if(!is.null(gostres)){
+        gostres <- gostres %>% 
+          dplyr::select(c(term_id, term_name, intersection, intersection_names, source)) %>% 
+          dplyr::filter(source %in% c('TF', 'MIRNA')) %>% 
+          dplyr::mutate(term_name = dplyr::case_when(source=='TF' ~ stringr::str_extract(term_name, "Factor[:punct:] .*[:punct:] motif") %>% substr(9,nchar(.)-7))) %>%
+          dplyr::mutate('term_id' = term_name) %>%
+          tidyr::separate_rows(c('intersection', 'intersection_names'), sep=',', convert = TRUE) %>%
+          dplyr::select(c('intersection', 'intersection_names', 'term_id', 'term_name', 'source'))
+        colnames(gostres) <- c('Reference_ID', 'Reference_Name', 'Comparison_ID', 'Comparison_Name', 'Category')
+      }
       return(gostres)
     })
     
