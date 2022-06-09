@@ -106,8 +106,10 @@ enrichmentPanelServer <- function(id, DEresults, organism, seed = 13){
       jitter.build <- ggplot_build(jitter.plot)
       x <- jitter.build$data[[1]]$x
       df <- getenrichmentData()
-      df$jitter <- x
-      df$`-log10(pVal)` <- -log10(df$p_value)
+      if(!is.null(df)){
+        df$jitter <- x
+        df$`-log10(pVal)` <- -log10(df$p_value)
+      }
       return(df)
     })
     
