@@ -50,6 +50,7 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata, modality = 
   })
   
   moduleServer(id, function(input, output, session){
+    
     # create a character vector of shiny inputs
     shinyInput = function(FUN, len, ID, value, ...) {
       if (length(value) == 1) value <- rep(value, len)
@@ -59,7 +60,6 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata, modality = 
       }
       inputs
     }
-    
     # obtain the values of inputs
     shinyValue = function(ID, len) {
       unlist(lapply(seq_len(len), function(i) {
@@ -96,6 +96,19 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata, modality = 
     }) %>%
       bindEvent(shinyValue('cb_', n), input[["condition"]])
     
+    observe({
+      if (input[['goSamples']] != 0){
+        if (!identical(colnames(expression.matrix[,shinyValue('cb_', n)]), colnames(filteredInputs()$expression.matrix))){
+          shinyjs::enable("goSamples")
+        }
+      } else {
+        if (!all(shinyValue('cb_', n))){
+          shinyjs::enable("goSamples")
+        }
+      }
+    }) %>%
+      bindEvent(shinyValue('cb_', n))
+    
     n <- nrow(metadata)
     df = cbind(
       data.frame(selected = shinyInput(checkboxInput, n, 'cb_', value = TRUE, width='1px')),
@@ -117,7 +130,6 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata, modality = 
       }
       df
     })
-    
     tbl <- DT::renderDataTable(
       isolate(loopData()),
       escape = FALSE, 
@@ -127,7 +139,6 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata, modality = 
         preDrawCallback = DT::JS('function() { Shiny.unbindAll(this.api().table().node()); }'),
         drawCallback = DT::JS('function() { Shiny.bindAll(this.api().table().node()); } ')
       ))
-    
     output[["tbl"]] = tbl
     
     proxy = DT::dataTableProxy('tbl')
@@ -137,6 +148,7 @@ sampleSelectPanelServer <- function(id, expression.matrix, metadata, modality = 
     })
     
     filteredInputs <- reactive({
+      shinyjs::disable("goSamples")
       list("expression.matrix" = expression.matrix[, shinyValue('cb_', n)],
            "metadata" = metadata[shinyValue('cb_', n), ])
     }) %>%

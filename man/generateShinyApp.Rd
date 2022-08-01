@@ -13,18 +13,18 @@ generateShinyApp(
   metadata,
   organism = NA,
   org.db = NA,
-  panels.default = c("Landing", "SampleSelect", "QC", "GRN", "DE", "DEplot",
-    "DEsummary", "Enrichment", "GRNenrichment", "Cross", "Patterns"),
+  panels.default = c("Landing", "SampleSelect", "QC", "GRN", "DE", "DEplot", "DEsummary",
+    "Enrichment", "GRNenrichment", "Cross", "Patterns"),
   panels.extra = tibble::tibble(name = NULL, UIfun = NULL, UIvars = NULL, serverFun =
     NULL, serverVars = NULL),
   data.extra = list(),
   packages.extra = c(),
-  cis.integration = tibble::tibble(reference.expression.matrix = NULL, reference.org.db
-    = NULL, reference.coord = NULL, comparison.coord = NULL, reference.table.name = NULL,
+  cis.integration = tibble::tibble(reference.expression.matrix = NULL, reference.org.db =
+    NULL, reference.coord = NULL, comparison.coord = NULL, reference.table.name = NULL,
     comparison.table.name = NULL),
-  trans.integration = tibble::tibble(reference.expression.matrix = NULL,
-    reference.org.db = NULL, comparison.expression.matrix = NULL, comparison.org.db =
-    NULL, reference.table.name = NULL, comparison.table.name = NULL),
+  trans.integration = tibble::tibble(reference.expression.matrix = NULL, reference.org.db
+    = NULL, comparison.expression.matrix = NULL, comparison.org.db = NULL,
+    reference.table.name = NULL, comparison.table.name = NULL),
   custom.integration = tibble::tibble(reference.expression.matrix = NULL,
     reference.org.db = NULL, comparison.table = NULL, reference.table.name = NULL,
     comparison.table.name = NULL)

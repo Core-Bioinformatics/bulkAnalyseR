@@ -31,7 +31,7 @@ currently supported normalisation methods are:
 \item{quantile}{Quantile normalisation using the \code{normalize.quantiles}
 function from the \code{preprocessCore} package}
 \item{rpm}{RPM (reads per million) normalisation, where each
-sample is scaled by 1 (or more using the n_million parameter) million,
+sample is scaled by 1 (or more using the n_million parameter) million and
 divided by the total number of reads in that sample}
 \item{tmm}{Trimmed Mean of M values normalisation using the
 \code{calcNormFactors} function from the \code{edgeR} package}

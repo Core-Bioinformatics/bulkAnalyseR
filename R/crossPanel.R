@@ -44,6 +44,8 @@ crossPanelUI <- function(id, metadata, show = TRUE){
                       min = 0, value = 0.05, max = 0.2, step = 0.005),
           
           actionButton(ns('goDE'), label = 'Start DE'),
+          textInput(ns('dataFileName'),'File name for download', value ='crossPlot.csv', placeholder = 'crossPlot.csv'),
+          downloadButton(ns('download_data'), 'Download Table')
         ),
         
         #Main panel for displaying table of DE genes
@@ -192,14 +194,22 @@ crossPanelServer <- function(id, expression.matrix, metadata, anno){
                 input[["pipeline2"]], input[["lfcThreshold"]], input[["pvalThreshold"]]) %>%
       bindEvent(input[["goDE"]])
     
-    cp <- reactive({
+    cp_table <- reactive({
       results <- DEresults()
-      cross_plot(
+      cross_plot_prep(
         DEtable1 = results$DEtable1,
         DEtable2 = results$DEtable2,
         DEtable1Subset = results$DEtable1Subset,
         DEtable2Subset = results$DEtable2Subset,
         lfc.threshold = results$lfcThreshold,
+      )
+    })
+    
+    cp <- reactive({
+      cp_table <- cp_table()
+      cross_plot(
+        df = cp_table,
+        lfc.threshold = input[["lfcThreshold"]],
         raster = TRUE,
         labels.per.region = ifelse(input[["autoLabel"]], 5, 0),
         add.labels.custom = length(input[["geneName"]]) > 0,
@@ -233,6 +243,16 @@ crossPanelServer <- function(id, expression.matrix, metadata, anno){
       filename = function() input[['plotFileName']],
       content = function(file) {
         ggsave(file, plot = cp(), dpi = 300)
+      }
+    )
+    
+    #DE data download
+    output[['download_data']] <- downloadHandler(
+      filename = function() {
+        paste(input[['dataFileName']])
+      },
+      content = function(file) {
+        utils::write.csv(x = cp_table(), file = file, row.names = FALSE)
       }
     )
   })

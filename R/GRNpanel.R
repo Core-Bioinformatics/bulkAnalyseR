@@ -121,6 +121,18 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
         session, "targets", server = TRUE,
         choices = anno$NAME[anno$ENSEMBL %in% rownames(expression.matrix.sub())]
       )
+      updateSelectInput(session, 'samples1', 
+                        choices = unique(metadata()[[input[["condition"]]]]), 
+                        selected = unique(metadata()[[input[["condition"]]]]))
+      updateSelectInput(session, 'samples2', 
+                        choices = unique(metadata()[[input[["condition"]]]]), 
+                        selected = unique(metadata()[[input[["condition"]]]]))
+      updateSelectInput(session, 'samples3', 
+                        choices = unique(metadata()[[input[["condition"]]]]), 
+                        selected = unique(metadata()[[input[["condition"]]]]))
+      updateSelectInput(session, 'samples4', 
+                        choices = unique(metadata()[[input[["condition"]]]]), 
+                        selected = unique(metadata()[[input[["condition"]]]]))
     })
     
     observe({
@@ -160,6 +172,8 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       }
       weightMat
     }) %>%
+      bindCache(utils::head(expression.matrix()), metadata(), input[["condition"]], 
+                input[['samples1']],input[['targets']]) %>%
       bindEvent(input[["goGRN"]])
     GRNresults2 <- reactive({
       shinyjs::disable("goGRN")
@@ -179,6 +193,8 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       }
       weightMat
     }) %>%
+      bindCache(utils::head(expression.matrix()), metadata(), input[["condition"]], 
+                input[['samples2']],input[['targets']]) %>% 
       bindEvent(input[["goGRN"]])
     GRNresults3 <- reactive({
       shinyjs::disable("goGRN")
@@ -198,6 +214,8 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       }
       weightMat
     }) %>%
+      bindCache(utils::head(expression.matrix()), metadata(), input[["condition"]], 
+                input[['samples3']],input[['targets']]) %>%
       bindEvent(input[["goGRN"]])
     GRNresults4 <- reactive({
       shinyjs::disable("goGRN")
@@ -217,6 +235,8 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
       }
       weightMat
     }) %>%
+      bindCache(utils::head(expression.matrix()), metadata(), input[["condition"]], 
+                input[['samples4']],input[['targets']]) %>%
       bindEvent(input[["goGRN"]])
     
     weightMatList <- reactive({

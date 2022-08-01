@@ -24,14 +24,7 @@ calculate_expression_similarity_counts(); default 10\% of the number of rows}
 \item{optimise.window.length.logical}{whether to call optimise_window_length to try and
 optimise the value of n.elements.per.window}
 
-\item{similarity.threshold}{parameters passed on to
-\code{\link[noisyr]{calculate_noise_threshold}}; they can be single values or vectors;
-if they are vectors optimal values are computed by calling
-\code{\link[noisyr]{calculate_noise_threshold_method_statistics}} and
-minimising the coefficient of variation across samples; all possible values for
-method.chosen can be viewed by \code{\link[noisyr]{get_methods_calculate_noise_threshold}}}
-
-\item{method.chosen}{parameters passed on to
+\item{similarity.threshold, method.chosen}{parameters passed on to
 \code{\link[noisyr]{calculate_noise_threshold}}; they can be single values or vectors;
 if they are vectors optimal values are computed by calling
 \code{\link[noisyr]{calculate_noise_threshold_method_statistics}} and
