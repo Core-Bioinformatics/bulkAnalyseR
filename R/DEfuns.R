@@ -80,7 +80,7 @@ DEanalysis_edger <- function(
     edger$tagwise.dispersion <- edger.noreps$tagwise.dispersion
   }
   edger.fit = edgeR::glmFit(y = edger, design = design)
-  if(var1 < var2) contrast <- c(-1, 1) else contrast <- c(1, -1)
+  if( which( condition == var1 )[1] < which( condition == var2 )[1] ) contrast <- c(-1, 1) else contrast <- c(1, -1)
   edger.lrt <- edgeR::glmLRT(edger.fit, contrast = contrast)
   edger.table <- edger.lrt$table
   
@@ -117,7 +117,7 @@ DEanalysis_deseq2 <- function(
   DESeq2::sizeFactors(deseq) <- stats::setNames(rep(1, ncol(expression.matrix)), 
                                                 colnames(expression.matrix))
   deseq <- DESeq2::DESeq(deseq)
-  if(var1 < var2) contrast <- c(-1, 1) else contrast <- c(1, -1)
+  if( which( condition == var1 )[1] < which( condition == var2 )[1] ) contrast <- c(-1, 1) else contrast <- c(1, -1)
   deseq.res <- DESeq2::results(deseq, contrast = contrast)
   
   gene_id <- NULL; pval <- NULL
