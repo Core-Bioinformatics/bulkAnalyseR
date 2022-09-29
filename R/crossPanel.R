@@ -48,7 +48,7 @@ crossPanelUI <- function(id, metadata, show = TRUE){
           downloadButton(ns('download_data'), 'Download Table')
         ),
         
-        #Main panel for displaying table of DE genes
+        #Main panel for displaying plots table of DE genes
         mainPanel(
           shinyWidgets::dropdownButton(
             shinyWidgets::switchInput(
@@ -81,6 +81,7 @@ crossPanelUI <- function(id, metadata, show = TRUE){
           ),
           
           plotOutput(ns('plot'), click = ns('plot_click')),
+          plotOutput(ns('venn')),
           tableOutput(ns('data')) 
         )
       )
@@ -217,7 +218,19 @@ crossPanelServer <- function(id, expression.matrix, metadata, anno){
       )
     })
     
+    venn <- reactive({
+      results <- DEresults()
+      ggVennDiagram::ggVennDiagram(
+        list(
+          "DE comparison 1" = results$DEtable1Subset$gene_id, 
+          "DE comparison 2" = results$DEtable2Subset$gene_id
+        ),
+        color = "white"
+      )
+    })
+    
     output[['plot']] <- renderPlot(cp())
+    output[['venn']] <- renderPlot(venn())
     
     output[['data']] <- renderTable({
       req(input[['plot_click']])

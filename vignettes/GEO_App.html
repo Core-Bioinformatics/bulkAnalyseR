@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>A beginner’s guide to creating a bulkAnalyseR app from a GEO dataset</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">A beginner’s guide to creating a
+bulkAnalyseR app from a GEO dataset</h1>
+
+
+
+<div style="text-align: justify">
+
+
+
+<p>In this short tutorial we showcase a simple pipeline to create a
+bulkAnalyseR app using a publicly available dataset from the <a href="https://www.ncbi.nlm.nih.gov/geo/">Gene Expression Omnibus
+(GEO)</a>. No pre-requisites are required, as the installation of
+bulkAnalyseR and download of the data are included.</p>
+<p>The example app described in this vignette can be found <a href="https://bioinf.stemcells.cam.ac.uk/shiny/bulkAnalyseR/GEO/">here</a>.</p>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>First, install the latest version of bulkAnalyseR, starting with the
+CRAN and Bioconductor dependencies:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>packages.cran <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;ggplot2&quot;</span>, <span class="st">&quot;shiny&quot;</span>, <span class="st">&quot;shinythemes&quot;</span>, <span class="st">&quot;gprofiler2&quot;</span>, <span class="st">&quot;stats&quot;</span>, <span class="st">&quot;ggrepel&quot;</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;utils&quot;</span>, <span class="st">&quot;RColorBrewer&quot;</span>, <span class="st">&quot;circlize&quot;</span>, <span class="st">&quot;shinyWidgets&quot;</span>, <span class="st">&quot;shinyjqui&quot;</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dplyr&quot;</span>, <span class="st">&quot;magrittr&quot;</span>, <span class="st">&quot;ggforce&quot;</span>, <span class="st">&quot;rlang&quot;</span>, <span class="st">&quot;glue&quot;</span>, <span class="st">&quot;matrixStats&quot;</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;noisyr&quot;</span>, <span class="st">&quot;tibble&quot;</span>, <span class="st">&quot;ggnewscale&quot;</span>, <span class="st">&quot;ggrastr&quot;</span>, <span class="st">&quot;visNetwork&quot;</span>, <span class="st">&quot;shinyLP&quot;</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;grid&quot;</span>, <span class="st">&quot;DT&quot;</span>, <span class="st">&quot;scales&quot;</span>, <span class="st">&quot;shinyjs&quot;</span>, <span class="st">&quot;tidyr&quot;</span>, <span class="st">&quot;UpSetR&quot;</span>, <span class="st">&quot;ggVennDiagram&quot;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>new.packages.cran <span class="ot">&lt;-</span> packages.cran[<span class="sc">!</span>(packages.cran <span class="sc">%in%</span> <span class="fu">installed.packages</span>()[, <span class="st">&quot;Package&quot;</span>])]</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">length</span>(new.packages.cran))</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(new.packages.cran)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>packages.bioc <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;edgeR&quot;</span>, <span class="st">&quot;DESeq2&quot;</span>, <span class="st">&quot;preprocessCore&quot;</span>, <span class="st">&quot;GENIE3&quot;</span>, <span class="st">&quot;ComplexHeatmap&quot;</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>new.packages.bioc <span class="ot">&lt;-</span> packages.bioc[<span class="sc">!</span>(packages.bioc <span class="sc">%in%</span> <span class="fu">installed.packages</span>()[,<span class="st">&quot;Package&quot;</span>])]</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">length</span>(new.packages.bioc)){</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">&quot;BiocManager&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">install.packages</span>(<span class="st">&quot;BiocManager&quot;</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  BiocManager<span class="sc">::</span><span class="fu">install</span>(new.packages.bioc)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;bulkAnalyseR&quot;</span>)</span></code></pre></div>
+</div>
+<div id="download-data-and-create-app" class="section level2">
+<h2>Download data and create app</h2>
+<div id="get-the-expression-matrix" class="section level3">
+<h3>Get the expression matrix</h3>
+<p>We start by downloading and reading in the expression matrix. Rows
+represent genes/features and columns represent samples (note you need an
+internet connection to run the code below). The matrix is from <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE178620">a
+2022 study</a> on the Stem Cell transcriptional response to
+Microglia-Conditioned Media. We only use a few samples in the study for
+illustrative purposes.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>download_path <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="fu">tempdir</span>(), <span class="st">&quot;expression_matrix.csv.gz&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE178620&amp;format=file&amp;file=GSE178620%5Fraw%5Fabundances%2Ecsv%2Egz&quot;</span>, </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  download_path</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>exp <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">read.csv</span>(download_path, <span class="at">row.names =</span> <span class="dv">1</span>))[, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">19</span>,<span class="dv">20</span>)]</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(exp)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;                 control_G322_G322_1 control_G322_G322_2 microglia_067MG_G322_1</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; ENSG00000223972                   0                   0                      0</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; ENSG00000227232                  51                  45                     25</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; ENSG00000278267                   6                   0                      0</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; ENSG00000243485                   0                   0                      0</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; ENSG00000284332                   0                   0                      0</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; ENSG00000237613                   0                   0                      0</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;                 microglia_067MG_G322_2</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; ENSG00000223972                      0</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; ENSG00000227232                     40</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; ENSG00000278267                      0</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; ENSG00000243485                      0</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; ENSG00000284332                      0</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; ENSG00000237613                      0</span></span></code></pre></div>
+</div>
+<div id="defining-metadata" class="section level3">
+<h3>Defining metadata</h3>
+<p>We use a very simple metadata table with just the main condition in
+the experiment. Detailed metadata is available for all GEO datasets and
+can be downloaded and used instead.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">colnames</span>(exp),</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">condition =</span> <span class="fu">sapply</span>(<span class="fu">colnames</span>(exp), <span class="at">USE.NAMES =</span> <span class="cn">FALSE</span>, <span class="cf">function</span>(nm){</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">strsplit</span>(nm, <span class="st">&quot;_&quot;</span>)[[<span class="dv">1</span>]][<span class="dv">1</span>]</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>meta</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;                     name condition</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; 1    control_G322_G322_1   control</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; 2    control_G322_G322_2   control</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; 3 microglia_067MG_G322_1 microglia</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; 4 microglia_067MG_G322_2 microglia</span></span></code></pre></div>
+</div>
+<div id="pre-processing" class="section level3">
+<h3>Pre-processing</h3>
+<p>We can now denoise and normalise the data using bulkAnalyseR</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>exp.proc <span class="ot">&lt;-</span> bulkAnalyseR<span class="sc">::</span><span class="fu">preprocessExpressionMatrix</span>(exp, <span class="at">output.plot =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; &gt;&gt;&gt; noisyR counts approach pipeline &lt;&lt;&lt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; The input matrix has 60671 rows and 4 cols</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;     number of genes: 60671</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;     number of samples: 4</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; Calculating the number of elements per window</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;     the number of elements per window is 6067</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;     the step size is 303</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;     the selected similarity metric is correlation_pearson</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;   Working with sample 1</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;   Working with sample 2</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;   Working with sample 3</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;   Working with sample 4</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; Calculating noise thresholds for 4 samples...</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;     similarity.threshold = 0.25</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;     method.chosen = Boxplot-IQR</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; Denoising expression matrix...</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;     removing noisy genes</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;     adjusting matrix</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; &gt;&gt;&gt; Done! &lt;&lt;&lt;</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; Performing quantile normalisation...</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; Done!</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="creating-the-shiny-app" class="section level3">
+<h3>Creating the shiny app</h3>
+<p>Finally, we can create a shiny app. This example app can be found <a href="https://bioinf.stemcells.cam.ac.uk/shiny/bulkAnalyseR/GEO/">here</a>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>bulkAnalyseR<span class="sc">::</span><span class="fu">generateShinyApp</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">shiny.dir =</span> <span class="st">&quot;shiny_GEO&quot;</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">app.title =</span> <span class="st">&quot;Shiny app for visualisation of GEO data&quot;</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">modality =</span> <span class="st">&quot;RNA&quot;</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">expression.matrix =</span> exp.proc,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">metadata =</span> meta,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">organism =</span> <span class="st">&quot;hsapiens&quot;</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">org.db =</span> <span class="st">&quot;org.Hs.eg.db&quot;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; R version 4.1.1 (2021-08-10)</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; Platform: x86_64-w64-mingw32/x64 (64-bit)</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; Running under: Windows 10 x64 (build 22000)</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; </span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; Matrix products: default</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; </span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; locale:</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [1] LC_COLLATE=C                           </span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [2] LC_CTYPE=English_United Kingdom.1252   </span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [3] LC_MONETARY=English_United Kingdom.1252</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [4] LC_NUMERIC=C                           </span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [5] LC_TIME=English_United Kingdom.1252    </span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; </span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; attached base packages:</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; </span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; other attached packages:</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [1] bulkAnalyseR_1.0.1</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; </span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; loaded via a namespace (and not attached):</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;   [1] circlize_0.4.15             plyr_1.8.7                 </span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;   [3] lazyeval_0.2.2              splines_4.1.1              </span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;   [5] shinyLP_1.1.2               GENIE3_1.14.0              </span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;   [7] BiocParallel_1.26.2         usethis_2.1.6              </span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;   [9] GenomeInfoDb_1.28.4         ggplot2_3.3.5              </span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [11] digest_0.6.29               foreach_1.5.2              </span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [13] htmltools_0.5.2             fansi_1.0.2                </span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [15] magrittr_2.0.2              memoise_2.0.1              </span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [17] cluster_2.1.2               doParallel_1.0.17          </span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [19] limma_3.48.3                remotes_2.4.2              </span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [21] ComplexHeatmap_2.8.0        Biostrings_2.60.2          </span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [23] annotate_1.70.0             matrixStats_0.61.0         </span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [25] prettyunits_1.1.1           RVenn_1.1.0                </span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [27] colorspace_2.0-3            blob_1.2.3                 </span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [29] ggrepel_0.9.1               xfun_0.29                  </span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [31] dplyr_1.0.8                 callr_3.7.2                </span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [33] crayon_1.5.1                RCurl_1.98-1.6             </span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [35] jsonlite_1.8.0              roxygen2_7.2.1             </span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [37] genefilter_1.74.1           survival_3.2-11            </span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [39] iterators_1.0.14            glue_1.6.2                 </span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [41] polyclip_1.10-0             gtable_0.3.1               </span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [43] zlibbioc_1.38.0             XVector_0.32.0             </span></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [45] UpSetR_1.4.0                GetoptLong_1.0.5           </span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [47] DelayedArray_0.18.0         pkgbuild_1.3.1             </span></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [49] shape_1.4.6                 BiocGenerics_0.38.0        </span></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [51] scales_1.2.1                DBI_1.1.3                  </span></span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [53] edgeR_3.34.1                miniUI_0.1.1.1             </span></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [55] Rcpp_1.0.8.3                viridisLite_0.4.1          </span></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [57] xtable_1.8-4                clue_0.3-60                </span></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [59] bit_4.0.4                   preprocessCore_1.54.0      </span></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [61] DT_0.25                     stats4_4.1.1               </span></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [63] profvis_0.3.7               htmlwidgets_1.5.4          </span></span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [65] shinyjqui_0.4.1             httr_1.4.4                 </span></span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [67] RColorBrewer_1.1-3          ellipsis_0.3.2             </span></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [69] farver_2.1.0                urlchecker_1.0.1           </span></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [71] pkgconfig_2.0.3             XML_3.99-0.8               </span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [73] sass_0.4.1                  noisyr_1.0.0               </span></span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [75] locfit_1.5-9.4              utf8_1.2.2                 </span></span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [77] labeling_0.4.2              tidyselect_1.1.2           </span></span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [79] rlang_1.0.6                 later_1.3.0                </span></span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [81] AnnotationDbi_1.54.1        visNetwork_2.1.0           </span></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [83] munsell_0.5.0               tools_4.1.1                </span></span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [85] cachem_1.0.6                cli_3.4.1                  </span></span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [87] ggVennDiagram_1.2.2         generics_0.1.3             </span></span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [89] RSQLite_2.2.8               devtools_2.4.4             </span></span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [91] evaluate_0.16               stringr_1.4.1              </span></span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [93] fastmap_1.1.0               yaml_2.3.5                 </span></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [95] processx_3.7.0              knitr_1.40                 </span></span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [97] bit64_4.0.5                 fs_1.5.2                   </span></span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt;  [99] purrr_0.3.4                 KEGGREST_1.32.0            </span></span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [101] gprofiler2_0.2.1            nlme_3.1-152               </span></span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [103] mime_0.12                   ggrastr_1.0.1              </span></span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [105] xml2_1.3.3                  compiler_4.1.1             </span></span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [107] rstudioapi_0.14             beeswarm_0.4.0             </span></span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [109] plotly_4.10.0               png_0.1-7                  </span></span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [111] tibble_3.1.6                tweenr_1.0.2               </span></span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [113] geneplotter_1.70.0          bslib_0.4.0                </span></span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [115] stringi_1.7.6               highr_0.9                  </span></span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [117] ps_1.6.0                    desc_1.4.2                 </span></span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [119] lattice_0.20-44             Matrix_1.5-1               </span></span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [121] commonmark_1.8.0            shinyjs_2.1.0              </span></span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [123] vctrs_0.3.8                 pillar_1.8.1               </span></span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [125] lifecycle_1.0.2             jquerylib_0.1.4            </span></span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [127] GlobalOptions_0.1.2         data.table_1.14.2          </span></span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [129] bitops_1.0-7                httpuv_1.6.3               </span></span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [131] GenomicRanges_1.44.0        R6_2.5.1                   </span></span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [133] promises_1.2.0.1            gridExtra_2.3              </span></span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [135] vipor_0.4.5                 IRanges_2.26.0             </span></span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [137] sessioninfo_1.2.2           codetools_0.2-18           </span></span>
+<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [139] philentropy_0.6.0           MASS_7.3-54                </span></span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [141] assertthat_0.2.1            pkgload_1.3.0              </span></span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [143] SummarizedExperiment_1.22.0 DESeq2_1.32.0              </span></span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [145] rprojroot_2.0.3             rjson_0.2.20               </span></span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [147] shinyWidgets_0.7.3          withr_2.5.0                </span></span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [149] S4Vectors_0.30.2            GenomeInfoDbData_1.2.6     </span></span>
+<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [151] mgcv_1.8-36                 parallel_4.1.1             </span></span>
+<span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [153] grid_4.1.1                  tidyr_1.2.0                </span></span>
+<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [155] rmarkdown_2.16              MatrixGenerics_1.4.3       </span></span>
+<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [157] Cairo_1.5-15                ggnewscale_0.4.7           </span></span>
+<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [159] ggforce_0.3.3               Biobase_2.52.0             </span></span>
+<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a><span class="do">##&gt; [161] shiny_1.7.1                 ggbeeswarm_0.6.0</span></span></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
