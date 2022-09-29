@@ -1,8 +1,9 @@
-pandoc: 2.11.4
-pkgdown: 2.0.2
+pandoc: 2.17.1.1
+pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   bulkAnalyseR: bulkAnalyseR.html
+  GEO_App: GEO_App.html
   IntegratingMultiomics: IntegratingMultiomics.html
-last_built: 2022-04-01T18:26Z
+last_built: 2022-09-29T13:57Z
 

@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="Given an expression matrix from a bulk RNA-Seq experiment,
+<meta name="description" content="Given an expression matrix from a bulk sequencing experiment,
         pre-processes it and creates a shiny app for interactive data 
         analysis and visualisation. The app contains quality checks,
         differential expression analysis, volcano and cross plots,
@@ -26,11 +26,11 @@
   }
 </script><title>Interactive Shiny App for Bulk Sequencing Data • bulkAnalyseR</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Interactive Shiny App for Bulk Sequencing Data">
-<meta property="og:description" content="Given an expression matrix from a bulk RNA-Seq experiment,
+<meta property="og:description" content="Given an expression matrix from a bulk sequencing experiment,
         pre-processes it and creates a shiny app for interactive data 
         analysis and visualisation. The app contains quality checks,
         differential expression analysis, volcano and cross plots,
@@ -54,7 +54,7 @@
     
     <a class="navbar-brand me-2" href="index.html">bulkAnalyseR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,6 +72,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="articles/GEO_App.html">A beginner's guide to creating a bulkAnalyseR app from a GEO dataset</a>
     <a class="dropdown-item" href="articles/IntegratingMultiomics.html">bulkAnalyseR: Integrating multi-omics or external data</a>
   </div>
 </li>
@@ -112,7 +113,7 @@
 <div style="text-align: justify">
 <p>Bulk sequencing experiments (e.g. mRNAseq, sRNAseq etc) are essential for exploring a wide range of biological questions. To bring the data analysis closer to its interpretation and facilitate both interactive, exploratory tasks and the sharing of (easily accessible) information, we present <em>bulkAnalyseR</em>, an R package that offers a seamless, customisable solution for most bulk sequencing datasets. By integrating state-of-the-art approaches without relying on extensive computational support, and replacing static images with interactive panels, our aim is to further support and strengthen the reusability of data. <em>bulkAnalyseR</em> enables standard analyses of bulk data, using an expression matrix as starting point. It presents the outputs of various steps in an interactive web-based interface, making it easy to generate, explore and verify hypotheses. Moreover, the app can be easily shared and published, incentivising research reproducibility and allowing others to explore the same processed data.</p>
 <p>Preprint: <a href="https://www.biorxiv.org/content/10.1101/2021.12.23.473982v1" class="external-link uri">https://www.biorxiv.org/content/10.1101/2021.12.23.473982v1</a></p>
-<p>Live app example: <a href="http://bioinf.stemcells.cam.ac.uk:3838/bulkAnalyseR/Yang2019/" class="external-link uri">http://bioinf.stemcells.cam.ac.uk:3838/bulkAnalyseR/Yang2019/</a></p>
+<p>Live app example: <a href="https://bioinf.stemcells.cam.ac.uk/shiny/bulkAnalyseR/Yang2019/" class="external-link uri">https://bioinf.stemcells.cam.ac.uk/shiny/bulkAnalyseR/Yang2019/</a></p>
 <p>If you are using components of this package in published research please cite the following papers along with the <em>bulkAnalyseR</em> manuscript:</p>
 <ul>
 <li>
@@ -136,7 +137,16 @@
 <p>The expression matrix is expected to have genes on the rows (with the Ensembl ID as the row name) and samples on the columns.</p>
 <p>The first column of the metadata table must match the column names of the expression matrix. The other columns of the metadata table contain other information about the samples e.g. time points, treatment groups, demographic information etc; the differential expression analysis may take into account a subset of these columns.</p>
 <p>We illustrate this on a case study from a 2019 paper by Yang et al (<a href="https://www.sciencedirect.com/science/article/pii/S2405471219301152" class="external-link uri">https://www.sciencedirect.com/science/article/pii/S2405471219301152</a>). Using three time points, each with two replicates, for some bulk mRNAseq samples, we obtain the following matrices:</p>
-<table class="table">
+<table style="width:100%;" class="table">
+<colgroup>
+<col width="14%">
+<col width="14%">
+<col width="14%">
+<col width="14%">
+<col width="14%">
+<col width="14%">
+<col width="14%">
+</colgroup>
 <thead><tr class="header">
 <th></th>
 <th>SRR7624365</th>
@@ -247,34 +257,34 @@
 <h2 id="quick-start-guide">Quick Start Guide<a class="anchor" aria-label="anchor" href="#quick-start-guide"></a>
 </h2>
 <p>A shiny app for the <a href="https://www.sciencedirect.com/science/article/pii/S2405471219301152" class="external-link">Yang et al 2019 data</a> can be generated using the following code:</p>
-<pre class="{r}"><code><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Core-Bioinformatics/bulkAnalyseR" class="external-link">bulkAnalyseR</a></span><span class="op">)</span> 
-
-<span class="co">#load expression matrix</span>
-<span class="va">expression.matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"expression_matrix.csv"</span>, package <span class="op">=</span> <span class="st">"bulkAnalyseR"</span><span class="op">)</span>, 
-  row.names <span class="op">=</span> <span class="fl">1</span>
-<span class="op">)</span><span class="op">)</span>
-
-<span class="co">#create metadata table</span>
-<span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>srr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">expression.matrix</span><span class="op">)</span>, 
-                   timepoint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"0h"</span>, <span class="st">"12h"</span>, <span class="st">"36h"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co">#run preprocessing</span>
-<span class="va">expression.matrix.preproc</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/preprocessExpressionMatrix.html">preprocessExpressionMatrix</a></span><span class="op">(</span><span class="va">expression.matrix</span><span class="op">)</span>
-
-<span class="co">#create shiny app</span>
-<span class="va">shiny.dir</span> <span class="op">&lt;-</span> <span class="st">"shiny_Yang2019"</span>
-<span class="fu"><a href="reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span>
-  expression.matrix <span class="op">=</span> <span class="va">expression.matrix.preproc</span>,
-  metadata <span class="op">=</span> <span class="va">metadata</span>,
-  shiny.dir <span class="op">=</span> <span class="va">shiny.dir</span>,
-  app.title <span class="op">=</span> <span class="st">"Shiny app for three timepoints from the Yang 2019 data"</span>,
-  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,
-  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span>
-<span class="op">)</span>
-
-<span class="co">#run shiny app</span>
-<span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html" class="external-link">runApp</a></span><span class="op">(</span><span class="va">shiny.dir</span><span class="op">)</span></code></pre>
+<pre class="{r}"><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Core-Bioinformatics/bulkAnalyseR" class="external-link">bulkAnalyseR</a></span><span class="op">)</span> </span>
+<span></span>
+<span><span class="co">#load expression matrix</span></span>
+<span><span class="va">expression.matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"expression_matrix.csv"</span>, package <span class="op">=</span> <span class="st">"bulkAnalyseR"</span><span class="op">)</span>, </span>
+<span>  row.names <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#create metadata table</span></span>
+<span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>srr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">expression.matrix</span><span class="op">)</span>, </span>
+<span>                   timepoint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"0h"</span>, <span class="st">"12h"</span>, <span class="st">"36h"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#run preprocessing</span></span>
+<span><span class="va">expression.matrix.preproc</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/preprocessExpressionMatrix.html">preprocessExpressionMatrix</a></span><span class="op">(</span><span class="va">expression.matrix</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#create shiny app</span></span>
+<span><span class="va">shiny.dir</span> <span class="op">&lt;-</span> <span class="st">"shiny_Yang2019"</span></span>
+<span><span class="fu"><a href="reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span></span>
+<span>  expression.matrix <span class="op">=</span> <span class="va">expression.matrix.preproc</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="va">metadata</span>,</span>
+<span>  shiny.dir <span class="op">=</span> <span class="va">shiny.dir</span>,</span>
+<span>  app.title <span class="op">=</span> <span class="st">"Shiny app for three timepoints from the Yang 2019 data"</span>,</span>
+<span>  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,</span>
+<span>  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#run shiny app</span></span>
+<span><span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html" class="external-link">runApp</a></span><span class="op">(</span><span class="va">shiny.dir</span><span class="op">)</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="installation-guide">Installation guide<a class="anchor" aria-label="anchor" href="#installation-guide"></a>
@@ -388,7 +398,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
   <p class="preferably">Using <a href="https://preferably.amirmasoudabdol.name/?source=footer" class="external-link">preferably</a> template.</p>
 </div>
 
