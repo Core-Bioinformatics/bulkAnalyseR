@@ -8,46 +8,21 @@ knitr::opts_chunk$set(
 knitr::include_graphics("figures/workflow.png") 
 
 ## ----cran_install, eval = FALSE-----------------------------------------------
-#  packages.cran <- c("ggplot2",
-#                     "shiny",
-#                     "shinythemes",
-#                     "gprofiler2",
-#                     "stats",
-#                     "ggrepel",
-#                     "utils",
-#                     "RColorBrewer",
-#                     "circlize",
-#                     "shinyWidgets",
-#                     "shinyjqui",
-#                     "dplyr",
-#                     "magrittr",
-#                     "ggforce",
-#                     "rlang",
-#                     "glue",
-#                     "matrixStats",
-#                     "noisyr",
-#                     "tibble",
-#                     "ggnewscale",
-#                     "ggrastr",
-#                     "visNetwork",
-#                     "shinyLP",
-#                     "grid",
-#                     "DT",
-#                     "scales",
-#                     "shinyjs",
-#                     "tidyr",
-#                     "UpSetR")
+#  packages.cran <- c(
+#    "ggplot2", "shiny", "shinythemes", "gprofiler2", "stats", "ggrepel",
+#    "utils", "RColorBrewer", "circlize", "shinyWidgets", "shinyjqui",
+#    "dplyr", "magrittr", "ggforce", "rlang", "glue", "matrixStats",
+#    "noisyr", "tibble", "ggnewscale", "ggrastr", "visNetwork", "shinyLP",
+#    "grid", "DT", "scales", "shinyjs", "tidyr", "UpSetR", "ggVennDiagram"
+#  )
 #  new.packages.cran <- packages.cran[!(packages.cran %in% installed.packages()[, "Package"])]
 #  if(length(new.packages.cran))
 #    install.packages(new.packages.cran)
 
 ## ----bioc_install, eval = FALSE-----------------------------------------------
-#  packages.bioc <- c("edgeR",
-#                     "DESeq2",
-#                     "preprocessCore",
-#                     "GENIE3",
-#                     "ComplexHeatmap")
-#  
+#  packages.bioc <- c(
+#    "edgeR", "DESeq2", "preprocessCore", "GENIE3", "ComplexHeatmap"
+#  )
 #  new.packages.bioc <- packages.bioc[!(packages.bioc %in% installed.packages()[,"Package"])]
 #  if(length(new.packages.bioc)){
 #    if (!requireNamespace("BiocManager", quietly = TRUE))
