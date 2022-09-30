@@ -193,7 +193,7 @@ plot_pca <- function(
   pca.plot
 }
 
-qc_ma_plot = function(expression.matrix, metadata, i, j, include.guidelines = TRUE){
+qc_ma_plot <- function(expression.matrix, metadata, i, j, include.guidelines = TRUE){
   # mask away the zeros
   zero.mask <- !(expression.matrix[, i] == 0 | expression.matrix[,j] == 0)
   l1 <- log2(expression.matrix[zero.mask, i])
@@ -218,5 +218,188 @@ qc_ma_plot = function(expression.matrix, metadata, i, j, include.guidelines = TR
       geom_hline(yintercept = 1, colour = 'gray60') +
       geom_hline(yintercept = -1, colour = 'gray60')
   }
+  p
+}
+
+#' Create a density plot of log2 expression across samples of an experiment
+#' @description This function creates a density plot between all samples in the
+#' expression matrix. Metadata columns are used to group samples.
+#' @inheritParams generateShinyApp
+#' @param annotation.id name of metadata column on which to group samples
+#' @return The density plot as a ggplot object.
+#' @export
+#' @examples
+#' expression.matrix.preproc <- as.matrix(read.csv(
+#'   system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
+#'   row.names = 1
+#' ))[1:500,]
+#' 
+#' metadata <- data.frame(
+#'   srr = colnames(expression.matrix.preproc), 
+#'   timepoint = rep(c("0h", "12h", "36h"), each = 2)
+#' )
+#' print(qc_density_plot(expression.matrix.preproc, metadata, 'timepoint'))
+#' 
+qc_density_plot <- function(expression.matrix,
+                            metadata,
+                            annotation.id){
+
+  log.expression.matrix <- log2(expression.matrix + 1)
+  melted.expression.matrix <- tidyr::pivot_longer(as.data.frame(log.expression.matrix),
+                                                  cols=colnames(log.expression.matrix))
+  melted.expression.matrix$colour <- metadata[,annotation.id][ match(melted.expression.matrix$name,metadata[,1]) ]
+  p  <- ggplot(melted.expression.matrix, aes(x = .data$value, 
+                                             group = .data$name, 
+                                             color = .data$colour)) + 
+           geom_density() + 
+           theme_minimal() + 
+           xlab('log2 expression')
+  p
+}
+
+#' Create a violin/box plot of expression across samples of an experiment
+#' @description This function creates a combined violin and box plot between 
+#' all samples in the expression matrix. Metadata columns are used to colour samples.
+#' @inheritParams generateShinyApp
+#' @param annotation.id name of metadata column on which to group samples
+#' @param log.transformation whether expression should be shown on log (default) or 
+#' linear scale
+#' @return The violin/box plot as a ggplot object.
+#' @export
+#' @examples
+#' expression.matrix.preproc <- as.matrix(read.csv(
+#'   system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
+#'   row.names = 1
+#' ))[1:500,]
+#' 
+#' metadata <- data.frame(
+#'   srr = colnames(expression.matrix.preproc), 
+#'   timepoint = rep(c("0h", "12h", "36h"), each = 2)
+#' )
+#' print(qc_violin_plot(expression.matrix.preproc, metadata, 'timepoint'))
+#' 
+qc_violin_plot = function(expression.matrix,
+                          metadata,
+                          annotation.id,
+                          log.transformation = TRUE){
+  # mask away the zeros
+  if (log.transformation){
+    log.expression.matrix <- log2(expression.matrix + 1)
+  } else {log.expression.matrix <- expression.matrix}
+  
+  melted.expression.matrix <- tidyr::pivot_longer(as.data.frame(log.expression.matrix),
+                                                  cols = colnames(log.expression.matrix))
+  melted.expression.matrix$colour <- metadata[,annotation.id][ match(melted.expression.matrix$name,metadata[,1]) ]
+  
+  p  <- ggplot(melted.expression.matrix, 
+               aes(y = .data$value, 
+                   x = .data$name, 
+                   color = .data$colour)) + 
+          geom_violin() + 
+          geom_boxplot(width = 0.1) +
+          theme_minimal() +
+          scale_color_discrete(name = annotation.id)
+  p
+}
+
+#' Create a bar plot of expression for selected genes across samples in an experiment
+#' @description This function creates a clustered bar plot between all samples in the 
+#' expression matrix for the selection of genes.
+#' @param sub.expression.matrix subset of the expression matrix containing only selected 
+#' genes
+#' @param log.transformation whether expression should be shown on log (default) or 
+#' linear scale
+#' @return The bar plot as a ggplot object.
+#' @export
+#' @examples
+#' expression.matrix.preproc <- as.matrix(read.csv(
+#'   system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
+#'   row.names = 1
+#' ))[1:500,]
+#' 
+#' print(genes_barplot(head(expression.matrix.preproc,5), metadata, 'timepoint'))
+#' 
+genes_barplot <- function(sub.expression.matrix,
+                          log.transformation = TRUE){
+  if (log.transformation){
+    log.expression.matrix <- data.frame(log2(as.matrix(sub.expression.matrix) + 1))
+  } else {
+    log.expression.matrix <- sub.expression.matrix
+    }
+  log.expression.matrix$gene <- rownames(log.expression.matrix)
+  melted.expression.matrix <- tidyr::pivot_longer(log.expression.matrix,
+                                                  cols = colnames(log.expression.matrix)[1:(ncol(log.expression.matrix)-1)])
+  
+  p <- ggplot(melted.expression.matrix, aes(x = .data$name, 
+                                            y = .data$value, 
+                                            fill = .data$gene)) +
+                geom_bar(stat='identity',position='dodge') +
+                theme_minimal() + 
+                ylab(ifelse(log.transformation,'log2 expression','expression')) +
+                theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+  p
+}
+
+#' Create a scatter plot of expression between two samples of an experiment
+#' @description This function creates a scatter plot between two samples.
+#' @inheritParams generateShinyApp
+#' @param sub.expression.matrix subset of the expression matrix containing only the two
+#' selected samples
+#' @param log.transformation whether expression should be shown on log (default) or 
+#' linear scale
+#' @return The scatter plot as a ggplot object.
+#' @export
+#' @examples
+#' expression.matrix.preproc <- as.matrix(read.csv(
+#'   system.file("extdata", "expression_matrix_preprocessed.csv", package = "bulkAnalyseR"), 
+#'   row.names = 1
+#' ))[,1:2]
+#' 
+#' print(scatter_plot(expression.matrix.preproc, c()))
+#' 
+scatter_plot <- function(sub.expression.matrix,
+                         anno,
+                         genes.to.highlight = c(),
+                         log.transformation = TRUE){
+  
+  if (log.transformation){
+    log.expression.matrix <- data.frame(log2(as.matrix(sub.expression.matrix) + 1))
+  } else {
+    log.expression.matrix <- sub.expression.matrix
+  }
+  
+  x.name <- colnames(log.expression.matrix)[1]
+  y.name <- colnames(log.expression.matrix)[2]
+  
+  colnames(log.expression.matrix) <- c('x_var','y_var')
+  
+  p <- ggplot(log.expression.matrix, aes(x = .data$x_var, 
+                                         y = .data$y_var)) +
+    geom_point(stat = 'identity',
+               position = 'dodge',
+               alpha = 0.1,
+               aes(fill = 'red', color = 'red')) +
+    geom_abline(slope = 1,
+                intercept = 0) +
+    theme_minimal() + 
+    theme(legend.position = "none") +
+    ylab(paste0(ifelse(log.transformation,'log2 expression ','expression '), y.name)) +
+    xlab(paste0(ifelse(log.transformation,'log2 expression ','expression '), x.name))
+  
+  if (length(genes.to.highlight)){
+    label.expression.matrix <- log.expression.matrix[ anno$ENSEMBL[ match(genes.to.highlight,anno$NAME) ], ]
+    label.expression.matrix$name <- genes.to.highlight
+    
+    p <- p + ggrepel::geom_label_repel(
+                data = label.expression.matrix, 
+                mapping = aes(x = .data$x_var, 
+                              y = .data$y_var, 
+                              label = .data$name),
+                max.overlaps = Inf,
+                force = 1,
+                point.size = NA
+              )
+  }
+  
   p
 }
