@@ -56,7 +56,8 @@ Imports:
     tidyr,
     shinyLP,
     UpSetR,
-    stringr
+    stringr,
+    ggVennDiagram
 Suggests:
     rmarkdown,
     knitr,

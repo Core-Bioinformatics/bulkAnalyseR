@@ -64,6 +64,9 @@ ggrepel::geom_label_repel if labels are present}
 \item{label.force}{passed to the force argument of ggrepel::geom_label_repel;
 higher values make labels overlap less (at the cost of them being further
 away from the points they are labelling)}
+
+\item{pval.threshold}{the log2(fold-change)
+threshold to determine whether a gene is DE}
 }
 \value{
 The cross plot as a ggplot object.

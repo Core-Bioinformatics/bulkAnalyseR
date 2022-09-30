@@ -21,8 +21,8 @@
   }
 </script><title>bulkAnalyseR: Integrating multi-omics or external data • bulkAnalyseR</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="bulkAnalyseR: Integrating multi-omics or external data">
 <meta property="og:description" content="bulkAnalyseR">
@@ -44,7 +44,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">bulkAnalyseR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,6 +62,7 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/GEO_App.html">A beginner's guide to creating a bulkAnalyseR app from a GEO dataset</a>
     <a class="dropdown-item" href="../articles/IntegratingMultiomics.html">bulkAnalyseR: Integrating multi-omics or external data</a>
   </div>
 </li>
@@ -98,7 +99,7 @@
 
 
 <div class="row">
-  <main id="main"><div class="page-header">
+  <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>bulkAnalyseR: Integrating multi-omics or external data</h1>
             
       
@@ -115,180 +116,215 @@
 <div class="section level2">
 <h2 id="cis-regulatory-integration">Cis-regulatory integration<a class="anchor" aria-label="anchor" href="#cis-regulatory-integration"></a>
 </h2>
-<p><em>bulkAnalyseR</em> enables the integration of information involving cis-regulatory elements. A reference expression matrix is chosen, which may or may not be the central expression matrix for one of the full modality panels. A GRN is created on this expression matrix (see <a href="https://core-bioinformatics.github.io/bulkAnalyseR/articles/bulkAnalyseR.html" class="external-link">here</a> for more information about GRN inference). Elements in the GRN are compared against elements from a second table which are located in proximity (e.g. 1kb, user-defined parameter); the elements in proximity are used to augment the focal GRN.</p>
-<p>As an example, we consider a subset of the mRNAseq and h3k4me3 ChIPseq data from an experiment included in <a href="https://www.sciencedirect.com/science/article/pii/S2405471219301152" class="external-link">a 2019 paper by Yang et al</a>. The preprocessed mRNAseq data is included in the <em>bulkAnalyseR</em> package and can be loaded by running:</p>
+<p><em>bulkAnalyseR</em> enables the integration of information
+involving cis-regulatory elements. A reference expression matrix is
+chosen, which may or may not be the central expression matrix for one of
+the full modality panels. A GRN is created on this expression matrix
+(see <a href="https://core-bioinformatics.github.io/bulkAnalyseR/articles/bulkAnalyseR.html" class="external-link">here</a>
+for more information about GRN inference). Elements in the GRN are
+compared against elements from a second table which are located in
+proximity (e.g. 1kb, user-defined parameter); the elements in proximity
+are used to augment the focal GRN.</p>
+<p>As an example, we consider a subset of the mRNAseq and h3k4me3
+ChIPseq data from an experiment included in <a href="https://www.sciencedirect.com/science/article/pii/S2405471219301152" class="external-link">a
+2019 paper by Yang et al</a>. The preprocessed mRNAseq data is included
+in the <em>bulkAnalyseR</em> package and can be loaded by running:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">exp.yang</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"expression_matrix_preprocessed.csv"</span>, package <span class="op">=</span> <span class="st">"bulkAnalyseR"</span><span class="op">)</span>,
-  row.names <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="va">as.matrix</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">exp.yang</span><span class="op">)</span>
-<span class="co">##&gt;                    SRR7624365  SRR7624366  SRR7624371  SRR7624372  SRR7624375</span>
-<span class="co">##&gt; ENSMUSG00000025902   116.8333    95.33333    51.83333    69.83333    55.50000</span>
-<span class="co">##&gt; ENSMUSG00000098104   101.6667    89.91667    85.00000    87.16667    81.16667</span>
-<span class="co">##&gt; ENSMUSG00000103922   283.3333   277.83333   342.00000   410.50000   333.00000</span>
-<span class="co">##&gt; ENSMUSG00000033845 11528.1667 10208.00000 14889.33333 15431.66667 14718.33333</span>
-<span class="co">##&gt; ENSMUSG00000102275   136.5000   119.50000   165.66667   156.00000   173.00000</span>
-<span class="co">##&gt; ENSMUSG00000025903  3870.8333  3391.50000  4770.83333  5288.83333  4151.50000</span>
-<span class="co">##&gt;                     SRR7624376</span>
-<span class="co">##&gt; ENSMUSG00000025902    64.83333</span>
-<span class="co">##&gt; ENSMUSG00000098104    74.83333</span>
-<span class="co">##&gt; ENSMUSG00000103922   296.50000</span>
-<span class="co">##&gt; ENSMUSG00000033845 13848.16667</span>
-<span class="co">##&gt; ENSMUSG00000102275   183.00000</span>
-<span class="co">##&gt; ENSMUSG00000025903  3671.33333</span></code></pre></div>
-<p>We define a default full modality app for the RNAseq data with an additional column relating to cis-integration so we also need to define a metadata table for the RNAseq data (our reference expression matrix):</p>
+<code class="sourceCode R"><span><span class="va">exp.yang</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"expression_matrix_preprocessed.csv"</span>, package <span class="op">=</span> <span class="st">"bulkAnalyseR"</span><span class="op">)</span>,</span>
+<span>  row.names <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="va">as.matrix</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">exp.yang</span><span class="op">)</span></span>
+<span><span class="co">##&gt;                    SRR7624365  SRR7624366  SRR7624371  SRR7624372  SRR7624375</span></span>
+<span><span class="co">##&gt; ENSMUSG00000025902   116.8333    95.33333    51.83333    69.83333    55.50000</span></span>
+<span><span class="co">##&gt; ENSMUSG00000098104   101.6667    89.91667    85.00000    87.16667    81.16667</span></span>
+<span><span class="co">##&gt; ENSMUSG00000103922   283.3333   277.83333   342.00000   410.50000   333.00000</span></span>
+<span><span class="co">##&gt; ENSMUSG00000033845 11528.1667 10208.00000 14889.33333 15431.66667 14718.33333</span></span>
+<span><span class="co">##&gt; ENSMUSG00000102275   136.5000   119.50000   165.66667   156.00000   173.00000</span></span>
+<span><span class="co">##&gt; ENSMUSG00000025903  3870.8333  3391.50000  4770.83333  5288.83333  4151.50000</span></span>
+<span><span class="co">##&gt;                     SRR7624376</span></span>
+<span><span class="co">##&gt; ENSMUSG00000025902    64.83333</span></span>
+<span><span class="co">##&gt; ENSMUSG00000098104    74.83333</span></span>
+<span><span class="co">##&gt; ENSMUSG00000103922   296.50000</span></span>
+<span><span class="co">##&gt; ENSMUSG00000033845 13848.16667</span></span>
+<span><span class="co">##&gt; ENSMUSG00000102275   183.00000</span></span>
+<span><span class="co">##&gt; ENSMUSG00000025903  3671.33333</span></span></code></pre></div>
+<p>We define a default full modality app for the RNAseq data with an
+additional column relating to cis-integration so we also need to define
+a metadata table for the RNAseq data (our reference expression
+matrix):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>
-  srr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">exp.yang</span><span class="op">)</span>, 
-  timepoint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"0h"</span>, <span class="st">"12h"</span>, <span class="st">"36h"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
-<p>Our reference inputs for the RNAseq data have the following structure:</p>
+<code class="sourceCode R"><span><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  srr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">exp.yang</span><span class="op">)</span>, </span>
+<span>  timepoint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"0h"</span>, <span class="st">"12h"</span>, <span class="st">"36h"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Our reference inputs for the RNAseq data have the following
+structure:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">exp.yang</span><span class="op">)</span>
-<span class="co">##&gt;  num [1:19163, 1:6] 117 102 283 11528 136 ...</span>
-<span class="co">##&gt;  - attr(*, "dimnames")=List of 2</span>
-<span class="co">##&gt;   ..$ : chr [1:19163] "ENSMUSG00000025902" "ENSMUSG00000098104" "ENSMUSG00000103922" "ENSMUSG00000033845" ...</span>
-<span class="co">##&gt;   ..$ : chr [1:6] "SRR7624365" "SRR7624366" "SRR7624371" "SRR7624372" ...</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">meta</span><span class="op">)</span>
-<span class="co">##&gt; 'data.frame':   6 obs. of  2 variables:</span>
-<span class="co">##&gt;  $ srr      : chr  "SRR7624365" "SRR7624366" "SRR7624371" "SRR7624372" ...</span>
-<span class="co">##&gt;  $ timepoint: chr  "0h" "0h" "12h" "12h" ...</span></code></pre></div>
-<p>To identify elements in proximity to genes in this dataset, we also need a table with chromosome, start and stop coordinates for genes. The data needed for the integration step can be found <a href="https://github.com/Core-Bioinformatics/bulkAnalyseR/tree/main/exampledata/Yang2019_ChIP" class="external-link">here</a>.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">exp.yang</span><span class="op">)</span></span>
+<span><span class="co">##&gt;  num [1:19163, 1:6] 117 102 283 11528 136 ...</span></span>
+<span><span class="co">##&gt;  - attr(*, "dimnames")=List of 2</span></span>
+<span><span class="co">##&gt;   ..$ : chr [1:19163] "ENSMUSG00000025902" "ENSMUSG00000098104" "ENSMUSG00000103922" "ENSMUSG00000033845" ...</span></span>
+<span><span class="co">##&gt;   ..$ : chr [1:6] "SRR7624365" "SRR7624366" "SRR7624371" "SRR7624372" ...</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">meta</span><span class="op">)</span></span>
+<span><span class="co">##&gt; 'data.frame':   6 obs. of  2 variables:</span></span>
+<span><span class="co">##&gt;  $ srr      : chr  "SRR7624365" "SRR7624366" "SRR7624371" "SRR7624372" ...</span></span>
+<span><span class="co">##&gt;  $ timepoint: chr  "0h" "0h" "12h" "12h" ...</span></span></code></pre></div>
+<p>To identify elements in proximity to genes in this dataset, we also
+need a table with chromosome, start and stop coordinates for genes. The
+data needed for the integration step can be found <a href="https://github.com/Core-Bioinformatics/bulkAnalyseR/tree/main/exampledata/Yang2019_ChIP" class="external-link">here</a>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">gene.coord.table</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">url</a></span><span class="op">(</span><span class="st">'https://raw.githubusercontent.com/Core-Bioinformatics/bulkAnalyseR/master/exampledata/Yang2019_ChIP/gene_coords_GRCm38.p6.csv'</span><span class="op">)</span>,
-  row.names <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">gene.coord.table</span><span class="op">)</span>
-<span class="co">##&gt; 'data.frame':   19163 obs. of  6 variables:</span>
-<span class="co">##&gt;  $ ID    : chr  "ENSMUSG00000025902" "ENSMUSG00000098104" "ENSMUSG00000103922" "ENSMUSG00000033845" ...</span>
-<span class="co">##&gt;  $ Chrom : chr  "chr1" "chr1" "chr1" "chr1" ...</span>
-<span class="co">##&gt;  $ Start : int  4490931 4687934 4771131 4773206 4778063 4807788 4857814 4909576 4970857 5070018 ...</span>
-<span class="co">##&gt;  $ Stop  : int  4497354 4689403 4772199 4785739 4779212 4848410 4897909 5070285 4976820 5162529 ...</span>
-<span class="co">##&gt;  $ Strand: chr  "-" "-" "+" "-" ...</span>
-<span class="co">##&gt;  $ Name  : chr  "Sox17" "Gm6085" "Gm6123" "Mrpl15" ...</span></code></pre></div>
-<p>For RNAseq, such a table can be produced from the reference gtf. We also need to supply the organism database, here “org.Mm.eg.db” (see <a href="https://core-bioinformatics.github.io/bulkAnalyseR/articles/bulkAnalyseR.html" class="external-link">here</a> for more information).</p>
-<p>Finally, we need information about the ChIPseq peak coordinates to compare against RNAseq gene coordinates. These can come, for example, from MACS2 peak calling output (narrowPeak files).</p>
+<code class="sourceCode R"><span><span class="va">gene.coord.table</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">url</a></span><span class="op">(</span><span class="st">'https://raw.githubusercontent.com/Core-Bioinformatics/bulkAnalyseR/master/exampledata/Yang2019_ChIP/gene_coords_GRCm38.p6.csv'</span><span class="op">)</span>,</span>
+<span>  row.names <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">gene.coord.table</span><span class="op">)</span></span>
+<span><span class="co">##&gt; 'data.frame':   19163 obs. of  6 variables:</span></span>
+<span><span class="co">##&gt;  $ ID    : chr  "ENSMUSG00000025902" "ENSMUSG00000098104" "ENSMUSG00000103922" "ENSMUSG00000033845" ...</span></span>
+<span><span class="co">##&gt;  $ Chrom : chr  "chr1" "chr1" "chr1" "chr1" ...</span></span>
+<span><span class="co">##&gt;  $ Start : int  4490931 4687934 4771131 4773206 4778063 4807788 4857814 4909576 4970857 5070018 ...</span></span>
+<span><span class="co">##&gt;  $ Stop  : int  4497354 4689403 4772199 4785739 4779212 4848410 4897909 5070285 4976820 5162529 ...</span></span>
+<span><span class="co">##&gt;  $ Strand: chr  "-" "-" "+" "-" ...</span></span>
+<span><span class="co">##&gt;  $ Name  : chr  "Sox17" "Gm6085" "Gm6123" "Mrpl15" ...</span></span></code></pre></div>
+<p>For RNAseq, such a table can be produced from the reference gtf. We
+also need to supply the organism database, here “org.Mm.eg.db” (see <a href="https://core-bioinformatics.github.io/bulkAnalyseR/articles/bulkAnalyseR.html" class="external-link">here</a>
+for more information).</p>
+<p>Finally, we need information about the ChIPseq peak coordinates to
+compare against RNAseq gene coordinates. These can come, for example,
+from MACS2 peak calling output (narrowPeak files).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">chip.coord.table</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">url</a></span><span class="op">(</span><span class="st">'https://raw.githubusercontent.com/Core-Bioinformatics/bulkAnalyseR/master/exampledata/Yang2019_ChIP/ChIP_peak_coords.csv'</span><span class="op">)</span>,
-  row.names <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">chip.coord.table</span><span class="op">)</span>
-<span class="co">##&gt; 'data.frame':   94023 obs. of  6 variables:</span>
-<span class="co">##&gt;  $ ID    : chr  "chr1:3020816-3021086" "chr1:3027145-3027567" "chr1:3037113-3037712" "chr1:3149858-3150088" ...</span>
-<span class="co">##&gt;  $ Chrom : chr  "chr1" "chr1" "chr1" "chr1" ...</span>
-<span class="co">##&gt;  $ Start : int  3020816 3027145 3037113 3149858 3343863 3531507 3621959 3670554 3671137 3671661 ...</span>
-<span class="co">##&gt;  $ Stop  : int  3021086 3027567 3037712 3150088 3344120 3532081 3622503 3671576 3671526 3672619 ...</span>
-<span class="co">##&gt;  $ Strand: chr  "+" "+" "+" "+" ...</span>
-<span class="co">##&gt;  $ Name  : chr  "chr1:3020816-3021086" "chr1:3027145-3027567" "chr1:3037113-3037712" "chr1:3149858-3150088" ...</span></code></pre></div>
-<p>The two coordinate tables should always have this structure and chromosome names must match between tables.</p>
-<p>To create the integration tab, we need to define the following tibble:</p>
+<code class="sourceCode R"><span><span class="va">chip.coord.table</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">url</a></span><span class="op">(</span><span class="st">'https://raw.githubusercontent.com/Core-Bioinformatics/bulkAnalyseR/master/exampledata/Yang2019_ChIP/ChIP_peak_coords.csv'</span><span class="op">)</span>,</span>
+<span>  row.names <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">chip.coord.table</span><span class="op">)</span></span>
+<span><span class="co">##&gt; 'data.frame':   94023 obs. of  6 variables:</span></span>
+<span><span class="co">##&gt;  $ ID    : chr  "chr1:3020816-3021086" "chr1:3027145-3027567" "chr1:3037113-3037712" "chr1:3149858-3150088" ...</span></span>
+<span><span class="co">##&gt;  $ Chrom : chr  "chr1" "chr1" "chr1" "chr1" ...</span></span>
+<span><span class="co">##&gt;  $ Start : int  3020816 3027145 3037113 3149858 3343863 3531507 3621959 3670554 3671137 3671661 ...</span></span>
+<span><span class="co">##&gt;  $ Stop  : int  3021086 3027567 3037712 3150088 3344120 3532081 3622503 3671576 3671526 3672619 ...</span></span>
+<span><span class="co">##&gt;  $ Strand: chr  "+" "+" "+" "+" ...</span></span>
+<span><span class="co">##&gt;  $ Name  : chr  "chr1:3020816-3021086" "chr1:3027145-3027567" "chr1:3037113-3037712" "chr1:3149858-3150088" ...</span></span></code></pre></div>
+<p>The two coordinate tables should always have this structure and
+chromosome names must match between tables.</p>
+<p>To create the integration tab, we need to define the following
+tibble:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cis.integration</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>
-  reference.expression.matrix <span class="op">=</span> <span class="st">'exp.yang'</span>,
-  reference.org.db <span class="op">=</span> <span class="st">'org.Mm.eg.db'</span>,
-  reference.coord <span class="op">=</span> <span class="st">'gene.coord.table'</span>,
-  comparison.coord <span class="op">=</span> <span class="st">'chip.coord.table'</span>,
-  reference.table.name <span class="op">=</span> <span class="st">'mRNAseq'</span>,
-  comparison.table.name <span class="op">=</span> <span class="st">'ChIPseq'</span>
-<span class="op">)</span></code></pre></div>
-<p>Note that in this table, the names of all tables should be enclosed in quotation marks.</p>
-<p>To create the app itself, we use the same call to <em>generateShinyApp</em> as <a href="https://core-bioinformatics.github.io/bulkAnalyseR/articles/bulkAnalyseR.html" class="external-link">here</a> but we add the <em>cis.integration</em> argument with this tibble.</p>
+<code class="sourceCode R"><span><span class="va">cis.integration</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
+<span>  reference.expression.matrix <span class="op">=</span> <span class="st">'exp.yang'</span>,</span>
+<span>  reference.org.db <span class="op">=</span> <span class="st">'org.Mm.eg.db'</span>,</span>
+<span>  reference.coord <span class="op">=</span> <span class="st">'gene.coord.table'</span>,</span>
+<span>  comparison.coord <span class="op">=</span> <span class="st">'chip.coord.table'</span>,</span>
+<span>  reference.table.name <span class="op">=</span> <span class="st">'mRNAseq'</span>,</span>
+<span>  comparison.table.name <span class="op">=</span> <span class="st">'ChIPseq'</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Note that in this table, the names of all tables should be enclosed
+in quotation marks.</p>
+<p>To create the app itself, we use the same call to
+<em>generateShinyApp</em> as <a href="https://core-bioinformatics.github.io/bulkAnalyseR/articles/bulkAnalyseR.html" class="external-link">here</a>
+but we add the <em>cis.integration</em> argument with this tibble.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span>
-  expression.matrix <span class="op">=</span> <span class="va">exp.yang</span>,
-  metadata <span class="op">=</span> <span class="va">meta</span>,
-  modality <span class="op">=</span> <span class="st">"RNA"</span>,
-  shiny.dir <span class="op">=</span> <span class="st">"shiny_Yang2019_CisIntegration"</span>,
-  app.title <span class="op">=</span> <span class="st">"Shiny app for visualisation of three timepoints from the Yang 2019 data"</span>,
-  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,
-  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span>,
-  cis.integration <span class="op">=</span> <span class="va">cis.integration</span>
-<span class="op">)</span>
-<span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html" class="external-link">runApp</a></span><span class="op">(</span><span class="st">'shiny_Yang2019_CisIntegration'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span></span>
+<span>  expression.matrix <span class="op">=</span> <span class="va">exp.yang</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="va">meta</span>,</span>
+<span>  modality <span class="op">=</span> <span class="st">"RNA"</span>,</span>
+<span>  shiny.dir <span class="op">=</span> <span class="st">"shiny_Yang2019_CisIntegration"</span>,</span>
+<span>  app.title <span class="op">=</span> <span class="st">"Shiny app for visualisation of three timepoints from the Yang 2019 data"</span>,</span>
+<span>  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,</span>
+<span>  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span>,</span>
+<span>  cis.integration <span class="op">=</span> <span class="va">cis.integration</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html" class="external-link">runApp</a></span><span class="op">(</span><span class="st">'shiny_Yang2019_CisIntegration'</span><span class="op">)</span></span></code></pre></div>
 <p>The cis-integration tab will look like this:</p>
 <p><img src="figures/CisIntegrationExample.png" width="80%"></p>
-<p>We could instead create an app with two modality tabs, including the ChIPseq expression matrix and cis integration with each of the mRNAseq and ChIPseq as the reference expression matrix like follows:</p>
+<p>We could instead create an app with two modality tabs, including the
+ChIPseq expression matrix and cis integration with each of the mRNAseq
+and ChIPseq as the reference expression matrix like follows:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">exp.chip</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">url</a></span><span class="op">(</span><span class="st">'https://raw.githubusercontent.com/Core-Bioinformatics/bulkAnalyseR/master/exampledata/Yang2019_ChIP/ChIP_expression_matrix_preprocessed.csv'</span><span class="op">)</span>,
-  row.names <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="va">as.matrix</span>
-<span class="va">meta.chip</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>
-  id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">exp.chip</span><span class="op">)</span>,
-  timepoint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'0h'</span>,<span class="st">'12h'</span>,<span class="st">'36h'</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="va">cis.integration.2</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>
-  reference.expression.matrix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'exp.yang'</span>,<span class="st">'exp.chip'</span><span class="op">)</span>,
-  reference.org.db <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'org.Mm.eg.db'</span>,<span class="st">'NULL'</span><span class="op">)</span>,
-  reference.coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'gene.coord.table'</span>,<span class="st">'chip.coord.table'</span><span class="op">)</span>,
-  comparison.coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'chip.coord.table'</span>,<span class="st">'gene.coord.table'</span><span class="op">)</span>,
-  reference.table.name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'mRNAseq'</span>,<span class="st">'ChIPseq'</span><span class="op">)</span>,
-  comparison.table.name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'ChIPseq'</span>,<span class="st">'mRNAseq'</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="fu"><a href="../reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span>
-  expression.matrix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">exp.yang</span>,<span class="va">exp.chip</span><span class="op">)</span>,
-  metadata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">meta</span>,<span class="va">meta.chip</span><span class="op">)</span>,
-  modality <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'RNA'</span>,<span class="st">'ChIP'</span><span class="op">)</span>,
-  shiny.dir <span class="op">=</span> <span class="st">"shiny_Yang2019_CisIntegration2"</span>,
-  app.title <span class="op">=</span> <span class="st">"Shiny app for visualisation of three timepoints from the Yang 2019 data"</span>,
-  organism <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"mmusculus"</span>,<span class="cn">NA</span><span class="op">)</span>,
-  org.db <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"org.Mm.eg.db"</span>,<span class="cn">NA</span><span class="op">)</span>,
-  cis.integration <span class="op">=</span> <span class="va">cis.integration.2</span>
-<span class="op">)</span>
-<span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html" class="external-link">runApp</a></span><span class="op">(</span><span class="st">'shiny_Yang2019_CisIntegration2'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">exp.chip</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">url</a></span><span class="op">(</span><span class="st">'https://raw.githubusercontent.com/Core-Bioinformatics/bulkAnalyseR/master/exampledata/Yang2019_ChIP/ChIP_expression_matrix_preprocessed.csv'</span><span class="op">)</span>,</span>
+<span>  row.names <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="va">as.matrix</span></span>
+<span><span class="va">meta.chip</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">exp.chip</span><span class="op">)</span>,</span>
+<span>  timepoint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'0h'</span>,<span class="st">'12h'</span>,<span class="st">'36h'</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">cis.integration.2</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
+<span>  reference.expression.matrix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'exp.yang'</span>,<span class="st">'exp.chip'</span><span class="op">)</span>,</span>
+<span>  reference.org.db <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'org.Mm.eg.db'</span>,<span class="st">'NULL'</span><span class="op">)</span>,</span>
+<span>  reference.coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'gene.coord.table'</span>,<span class="st">'chip.coord.table'</span><span class="op">)</span>,</span>
+<span>  comparison.coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'chip.coord.table'</span>,<span class="st">'gene.coord.table'</span><span class="op">)</span>,</span>
+<span>  reference.table.name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'mRNAseq'</span>,<span class="st">'ChIPseq'</span><span class="op">)</span>,</span>
+<span>  comparison.table.name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'ChIPseq'</span>,<span class="st">'mRNAseq'</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span></span>
+<span>  expression.matrix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">exp.yang</span>,<span class="va">exp.chip</span><span class="op">)</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">meta</span>,<span class="va">meta.chip</span><span class="op">)</span>,</span>
+<span>  modality <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'RNA'</span>,<span class="st">'ChIP'</span><span class="op">)</span>,</span>
+<span>  shiny.dir <span class="op">=</span> <span class="st">"shiny_Yang2019_CisIntegration2"</span>,</span>
+<span>  app.title <span class="op">=</span> <span class="st">"Shiny app for visualisation of three timepoints from the Yang 2019 data"</span>,</span>
+<span>  organism <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"mmusculus"</span>,<span class="cn">NA</span><span class="op">)</span>,</span>
+<span>  org.db <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"org.Mm.eg.db"</span>,<span class="cn">NA</span><span class="op">)</span>,</span>
+<span>  cis.integration <span class="op">=</span> <span class="va">cis.integration.2</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html" class="external-link">runApp</a></span><span class="op">(</span><span class="st">'shiny_Yang2019_CisIntegration2'</span><span class="op">)</span></span></code></pre></div>
 <p>An example app with cis-integration can be found <a href="http://bioinf.stemcells.cam.ac.uk:3838/bulkAnalyseR/Yang2019_Integration/" class="external-link">here</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="trans-regulatory-elements">Trans-regulatory elements<a class="anchor" aria-label="anchor" href="#trans-regulatory-elements"></a>
 </h2>
-<p><em>bulkAnalyseR</em> also offers the opportunity to analyse multiple elements which are not related necessarily by proximity but by correlation. For this component, two expression matrices are required, on the same columns. A joint GRN is then calculated on the combined expression matrices and targets can be chosen from either table.</p>
-<p>To show this functionality, we focus on the mRNA and miRNA data from <a href="https://www.tandfonline.com/doi/full/10.1080/21655979.2021.1899533" class="external-link">a 2021 paper by Li et al</a>. The data needed for this example can be found <a href="https://github.com/Core-Bioinformatics/bulkAnalyseR/tree/main/exampledata/Li2021_miRNA_mRNA" class="external-link">here</a>.</p>
+<p><em>bulkAnalyseR</em> also offers the opportunity to analyse multiple
+elements which are not related necessarily by proximity but by
+correlation. For this component, two expression matrices are required,
+on the same columns. A joint GRN is then calculated on the combined
+expression matrices and targets can be chosen from either table.</p>
+<p>To show this functionality, we focus on the mRNA and miRNA data from
+<a href="https://www.tandfonline.com/doi/full/10.1080/21655979.2021.1899533" class="external-link">a
+2021 paper by Li et al</a>. The data needed for this example can be
+found <a href="https://github.com/Core-Bioinformatics/bulkAnalyseR/tree/main/exampledata/Li2021_miRNA_mRNA" class="external-link">here</a>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">exp.mirna</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">url</a></span><span class="op">(</span><span class="st">'https://raw.githubusercontent.com/Core-Bioinformatics/bulkAnalyseR/master/exampledata/Li2021_miRNA_mRNA/expression_matrix_miRNA_preprocessed.csv'</span><span class="op">)</span>,
-  row.names <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="va">as.matrix</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">exp.mirna</span><span class="op">)</span>
-<span class="co">##&gt;  num [1:555, 1:6] 222 472 239290 462 88611 ...</span>
-<span class="co">##&gt;  - attr(*, "dimnames")=List of 2</span>
-<span class="co">##&gt;   ..$ : chr [1:555] "hsa-let-7a-2-3p " "hsa-let-7a-3p " "hsa-let-7a-5p " "hsa-let-7b-3p " ...</span>
-<span class="co">##&gt;   ..$ : chr [1:6] "control_1" "control_2" "control_3" "IDD_1" ...</span>
-<span class="va">exp.mrna</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">url</a></span><span class="op">(</span><span class="st">'https://raw.githubusercontent.com/Core-Bioinformatics/bulkAnalyseR/master/exampledata/Li2021_miRNA_mRNA/expression_matrix_mRNA_preprocessed.csv'</span><span class="op">)</span>,
-  row.names <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="va">as.matrix</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">exp.mrna</span><span class="op">)</span>
-<span class="co">##&gt;  num [1:20609, 1:6] 132.7 78.3 123.8 89 153.7 ...</span>
-<span class="co">##&gt;  - attr(*, "dimnames")=List of 2</span>
-<span class="co">##&gt;   ..$ : chr [1:20609] "ENSG00000227232" "ENSG00000241860" "ENSG00000279457" "ENSG00000237094" ...</span>
-<span class="co">##&gt;   ..$ : chr [1:6] "control_1" "control_2" "control_3" "IDD_1" ...</span>
-<span class="va">meta.trans</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'control_'</span>,<span class="st">'IDD_'</span><span class="op">)</span>,each <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>,
-                        rep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">2</span><span class="op">)</span>,
-                        type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'control'</span>,<span class="st">'IDD'</span><span class="op">)</span>,each <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span>
-<span class="va">meta.trans</span>
-<span class="co">##&gt;          id rep    type</span>
-<span class="co">##&gt; 1 control_1   1 control</span>
-<span class="co">##&gt; 2 control_2   2 control</span>
-<span class="co">##&gt; 3 control_3   3 control</span>
-<span class="co">##&gt; 4     IDD_1   1     IDD</span>
-<span class="co">##&gt; 5     IDD_2   2     IDD</span>
-<span class="co">##&gt; 6     IDD_3   3     IDD</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">exp.mirna</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">url</a></span><span class="op">(</span><span class="st">'https://raw.githubusercontent.com/Core-Bioinformatics/bulkAnalyseR/master/exampledata/Li2021_miRNA_mRNA/expression_matrix_miRNA_preprocessed.csv'</span><span class="op">)</span>,</span>
+<span>  row.names <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="va">as.matrix</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">exp.mirna</span><span class="op">)</span></span>
+<span><span class="co">##&gt;  num [1:555, 1:6] 222 472 239290 462 88611 ...</span></span>
+<span><span class="co">##&gt;  - attr(*, "dimnames")=List of 2</span></span>
+<span><span class="co">##&gt;   ..$ : chr [1:555] "hsa-let-7a-2-3p " "hsa-let-7a-3p " "hsa-let-7a-5p " "hsa-let-7b-3p " ...</span></span>
+<span><span class="co">##&gt;   ..$ : chr [1:6] "control_1" "control_2" "control_3" "IDD_1" ...</span></span>
+<span><span class="va">exp.mrna</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">url</a></span><span class="op">(</span><span class="st">'https://raw.githubusercontent.com/Core-Bioinformatics/bulkAnalyseR/master/exampledata/Li2021_miRNA_mRNA/expression_matrix_mRNA_preprocessed.csv'</span><span class="op">)</span>,</span>
+<span>  row.names <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="va">as.matrix</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">exp.mrna</span><span class="op">)</span></span>
+<span><span class="co">##&gt;  num [1:20609, 1:6] 132.7 78.3 123.8 89 153.7 ...</span></span>
+<span><span class="co">##&gt;  - attr(*, "dimnames")=List of 2</span></span>
+<span><span class="co">##&gt;   ..$ : chr [1:20609] "ENSG00000227232" "ENSG00000241860" "ENSG00000279457" "ENSG00000237094" ...</span></span>
+<span><span class="co">##&gt;   ..$ : chr [1:6] "control_1" "control_2" "control_3" "IDD_1" ...</span></span>
+<span><span class="va">meta.trans</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'control_'</span>,<span class="st">'IDD_'</span><span class="op">)</span>,each <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>,</span>
+<span>                        rep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">2</span><span class="op">)</span>,</span>
+<span>                        type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'control'</span>,<span class="st">'IDD'</span><span class="op">)</span>,each <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">meta.trans</span></span>
+<span><span class="co">##&gt;          id rep    type</span></span>
+<span><span class="co">##&gt; 1 control_1   1 control</span></span>
+<span><span class="co">##&gt; 2 control_2   2 control</span></span>
+<span><span class="co">##&gt; 3 control_3   3 control</span></span>
+<span><span class="co">##&gt; 4     IDD_1   1     IDD</span></span>
+<span><span class="co">##&gt; 5     IDD_2   2     IDD</span></span>
+<span><span class="co">##&gt; 6     IDD_3   3     IDD</span></span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span>
-  shiny.dir <span class="op">=</span> <span class="st">'shiny_Li_2021'</span>,
-  app.title <span class="op">=</span> <span class="st">'Li 2021 Trans Regulatory Example'</span>,
-  modality<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">'mRNA'</span>,<span class="st">'miRNA'</span><span class="op">)</span>,
-  metadata <span class="op">=</span> <span class="va">meta.trans</span>,
-  expression.matrix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">exp.mrna</span>,<span class="va">exp.mirna</span><span class="op">)</span>,
-  org.db <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">'org.Hs.eg.db'</span>,<span class="cn">NA</span><span class="op">)</span>,
-  organism<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">'hsapiens'</span>,<span class="cn">NA</span><span class="op">)</span>,
-  trans.integration <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>
-    reference.expression.matrix<span class="op">=</span><span class="st">'exp.mrna'</span>,
-    reference.org.db<span class="op">=</span><span class="st">'org.Hs.eg.db'</span>,
-    comparison.expression.matrix<span class="op">=</span><span class="st">'exp.mirna'</span>,
-    comparison.org.db<span class="op">=</span><span class="st">'NULL'</span>,
-    reference.table.name<span class="op">=</span><span class="st">'mRNA'</span>,
-    comparison.table.name<span class="op">=</span><span class="st">'miRNA'</span>
-  <span class="op">)</span>
-<span class="op">)</span>
-<span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html" class="external-link">runApp</a></span><span class="op">(</span><span class="st">'shiny_Li_2021'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span></span>
+<span>  shiny.dir <span class="op">=</span> <span class="st">'shiny_Li_2021'</span>,</span>
+<span>  app.title <span class="op">=</span> <span class="st">'Li 2021 Trans Regulatory Example'</span>,</span>
+<span>  modality<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">'mRNA'</span>,<span class="st">'miRNA'</span><span class="op">)</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="va">meta.trans</span>,</span>
+<span>  expression.matrix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">exp.mrna</span>,<span class="va">exp.mirna</span><span class="op">)</span>,</span>
+<span>  org.db <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">'org.Hs.eg.db'</span>,<span class="cn">NA</span><span class="op">)</span>,</span>
+<span>  organism<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">'hsapiens'</span>,<span class="cn">NA</span><span class="op">)</span>,</span>
+<span>  trans.integration <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
+<span>    reference.expression.matrix<span class="op">=</span><span class="st">'exp.mrna'</span>,</span>
+<span>    reference.org.db<span class="op">=</span><span class="st">'org.Hs.eg.db'</span>,</span>
+<span>    comparison.expression.matrix<span class="op">=</span><span class="st">'exp.mirna'</span>,</span>
+<span>    comparison.org.db<span class="op">=</span><span class="st">'NULL'</span>,</span>
+<span>    reference.table.name<span class="op">=</span><span class="st">'mRNA'</span>,</span>
+<span>    comparison.table.name<span class="op">=</span><span class="st">'miRNA'</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html" class="external-link">runApp</a></span><span class="op">(</span><span class="st">'shiny_Li_2021'</span><span class="op">)</span></span></code></pre></div>
 <p>The trans integration tab for the Li 2021 data could look like:</p>
 <p><img src="figures/TransIntegrationExample.png" width="80%"></p>
 <p>An example app with trans-integration can be found <a href="https://github.com/Core-Bioinformatics/bulkAnalyseR/tree/main/exampledata/Li2021_miRNA_mRNA" class="external-link">here</a>.</p>
@@ -296,151 +332,100 @@
 <div class="section level2">
 <h2 id="custom-integration">Custom integration<a class="anchor" aria-label="anchor" href="#custom-integration"></a>
 </h2>
-<p><em>bulkAnalyseR</em> further offers the option to include custom integration relating to your reference expression matrix. This could include known miRNA-mRNA target interations or known transcription factors.</p>
-<p>To integration miRNA-mRNA target interaction information, you can use the following function to create a custom comparison table:</p>
+<p><em>bulkAnalyseR</em> further offers the option to include custom
+integration relating to your reference expression matrix. This could
+include known miRNA-mRNA target interations or known transcription
+factors.</p>
+<p>To integration miRNA-mRNA target interaction information, you can use
+the following function to create a custom comparison table:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mirtarbase.comparison.table</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/preprocess_miRTarBase.html">preprocess_miRTarBase</a></span><span class="op">(</span>organism.code <span class="op">=</span> <span class="st">'mmu'</span>, org.db <span class="op">=</span> <span class="st">'org.Mm.eg.db'</span><span class="op">)</span></code></pre></div>
-<p>To view the available filtering options for Support Type and Experiments (validation type), run the function with the extra <em>print</em> arguments:</p>
+<code class="sourceCode R"><span><span class="va">mirtarbase.comparison.table</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/preprocess_miRTarBase.html">preprocess_miRTarBase</a></span><span class="op">(</span>organism.code <span class="op">=</span> <span class="st">'mmu'</span>, org.db <span class="op">=</span> <span class="st">'org.Mm.eg.db'</span><span class="op">)</span></span></code></pre></div>
+<p>To view the available filtering options for Support Type and
+Experiments (validation type), run the function with the extra
+<em>print</em> arguments:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mirtarbase.comparison.table</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/preprocess_miRTarBase.html">preprocess_miRTarBase</a></span><span class="op">(</span>
-  organism.code <span class="op">=</span> <span class="st">'mmu'</span>,
-  org.db <span class="op">=</span> <span class="st">'org.Mm.eg.db'</span>,
-  print.support.types <span class="op">=</span> <span class="cn">TRUE</span>, 
-  print.validation.methods <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
-<p>Any comparison table supplied for custom integration should have these 5 columns. Reference_ID and Reference_Name should match the reference expression matrix. The final Category column allows the selection of more specific category of integration information.</p>
-<p>To define the full app, we again use the typical Yang 2019 call to <em>generateShinyApp</em> but add the <em>custom.integration</em> parameter.</p>
+<code class="sourceCode R"><span><span class="va">mirtarbase.comparison.table</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/preprocess_miRTarBase.html">preprocess_miRTarBase</a></span><span class="op">(</span></span>
+<span>  organism.code <span class="op">=</span> <span class="st">'mmu'</span>,</span>
+<span>  org.db <span class="op">=</span> <span class="st">'org.Mm.eg.db'</span>,</span>
+<span>  print.support.types <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>  print.validation.methods <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Any comparison table supplied for custom integration should have
+these 5 columns. Reference_ID and Reference_Name should match the
+reference expression matrix. The final Category column allows the
+selection of more specific category of integration information.</p>
+<p>To define the full app, we again use the typical Yang 2019 call to
+<em>generateShinyApp</em> but add the <em>custom.integration</em>
+parameter.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">custom.integration</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>
-  reference.expression.matrix <span class="op">=</span> <span class="st">'exp.yang'</span>,
-  reference.org.db <span class="op">=</span> <span class="st">'org.Mm.eg.db'</span>,
-  comparison.table <span class="op">=</span> <span class="st">'mirtarbase.comparison.table'</span>,
-  reference.table.name <span class="op">=</span> <span class="st">'RNA'</span>,
-  comparison.table.name <span class="op">=</span> <span class="st">'miRTarBase'</span>
-<span class="op">)</span>
-<span class="fu"><a href="../reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span>
-  expression.matrix <span class="op">=</span> <span class="va">exp.yang</span>,
-  metadata <span class="op">=</span> <span class="va">meta</span>,
-  modality <span class="op">=</span> <span class="st">"RNA"</span>,
-  shiny.dir <span class="op">=</span> <span class="st">"shiny_Yang2019_CustomIntegration"</span>,
-  app.title <span class="op">=</span> <span class="st">"Shiny app for visualisation of three timepoints from the Yang 2019 data"</span>,
-  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,
-  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span>,
-  custom.integration <span class="op">=</span> <span class="va">custom.integration</span>
-<span class="op">)</span>
-<span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html" class="external-link">runApp</a></span><span class="op">(</span><span class="st">'shiny_Yang2019_CustomIntegration'</span><span class="op">)</span></code></pre></div>
-<p>The custom integration panel for the Yang 2019 data, combined with miRTarBase information looks like:</p>
+<code class="sourceCode R"><span><span class="va">custom.integration</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
+<span>  reference.expression.matrix <span class="op">=</span> <span class="st">'exp.yang'</span>,</span>
+<span>  reference.org.db <span class="op">=</span> <span class="st">'org.Mm.eg.db'</span>,</span>
+<span>  comparison.table <span class="op">=</span> <span class="st">'mirtarbase.comparison.table'</span>,</span>
+<span>  reference.table.name <span class="op">=</span> <span class="st">'RNA'</span>,</span>
+<span>  comparison.table.name <span class="op">=</span> <span class="st">'miRTarBase'</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span></span>
+<span>  expression.matrix <span class="op">=</span> <span class="va">exp.yang</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="va">meta</span>,</span>
+<span>  modality <span class="op">=</span> <span class="st">"RNA"</span>,</span>
+<span>  shiny.dir <span class="op">=</span> <span class="st">"shiny_Yang2019_CustomIntegration"</span>,</span>
+<span>  app.title <span class="op">=</span> <span class="st">"Shiny app for visualisation of three timepoints from the Yang 2019 data"</span>,</span>
+<span>  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,</span>
+<span>  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span>,</span>
+<span>  custom.integration <span class="op">=</span> <span class="va">custom.integration</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runApp.html" class="external-link">runApp</a></span><span class="op">(</span><span class="st">'shiny_Yang2019_CustomIntegration'</span><span class="op">)</span></span></code></pre></div>
+<p>The custom integration panel for the Yang 2019 data, combined with
+miRTarBase information looks like:</p>
 <p><img src="figures/CustomIntegrationExample.png" width="80%"></p>
 <p>An example app with custom integration can be found <a href="http://bioinf.stemcells.cam.ac.uk:3838/bulkAnalyseR/Yang2019_Integration/" class="external-link">here</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="integrating-enrichment-information">Integrating enrichment information<a class="anchor" aria-label="anchor" href="#integrating-enrichment-information"></a>
 </h2>
-<p><em>bulkAnalyseR</em> also facilitates the integration of miRNA and transcription factor information in the DE &amp; enrichment GRN tab:</p>
+<p><em>bulkAnalyseR</em> also facilitates the integration of miRNA and
+transcription factor information in the DE &amp; enrichment GRN tab:</p>
 <p><img src="figures/EnrichmentIntegrationExample.png" width="80%"></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">##&gt; R version 4.1.1 (2021-08-10)</span>
-<span class="co">##&gt; Platform: x86_64-w64-mingw32/x64 (64-bit)</span>
-<span class="co">##&gt; Running under: Windows 10 x64 (build 19042)</span>
-<span class="co">##&gt; </span>
-<span class="co">##&gt; Matrix products: default</span>
-<span class="co">##&gt; </span>
-<span class="co">##&gt; locale:</span>
-<span class="co">##&gt; [1] LC_COLLATE=English_United Kingdom.1252 </span>
-<span class="co">##&gt; [2] LC_CTYPE=English_United Kingdom.1252   </span>
-<span class="co">##&gt; [3] LC_MONETARY=English_United Kingdom.1252</span>
-<span class="co">##&gt; [4] LC_NUMERIC=C                           </span>
-<span class="co">##&gt; [5] LC_TIME=English_United Kingdom.1252    </span>
-<span class="co">##&gt; </span>
-<span class="co">##&gt; attached base packages:</span>
-<span class="co">##&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
-<span class="co">##&gt; </span>
-<span class="co">##&gt; other attached packages:</span>
-<span class="co">##&gt; [1] bulkAnalyseR_0.2.0 testthat_3.1.0    </span>
-<span class="co">##&gt; </span>
-<span class="co">##&gt; loaded via a namespace (and not attached):</span>
-<span class="co">##&gt;   [1] circlize_0.4.14             systemfonts_1.0.3          </span>
-<span class="co">##&gt;   [3] plyr_1.8.6                  lazyeval_0.2.2             </span>
-<span class="co">##&gt;   [5] splines_4.1.1               shinyLP_1.1.2              </span>
-<span class="co">##&gt;   [7] GENIE3_1.14.0               BiocParallel_1.26.2        </span>
-<span class="co">##&gt;   [9] usethis_2.1.3               GenomeInfoDb_1.28.4        </span>
-<span class="co">##&gt;  [11] ggplot2_3.3.5               digest_0.6.29              </span>
-<span class="co">##&gt;  [13] foreach_1.5.2               htmltools_0.5.2            </span>
-<span class="co">##&gt;  [15] fansi_1.0.2                 magrittr_2.0.2             </span>
-<span class="co">##&gt;  [17] memoise_2.0.1               cluster_2.1.2              </span>
-<span class="co">##&gt;  [19] doParallel_1.0.17           limma_3.48.3               </span>
-<span class="co">##&gt;  [21] remotes_2.4.1               ComplexHeatmap_2.8.0       </span>
-<span class="co">##&gt;  [23] Biostrings_2.60.2           annotate_1.70.0            </span>
-<span class="co">##&gt;  [25] matrixStats_0.61.0          pkgdown_2.0.2              </span>
-<span class="co">##&gt;  [27] prettyunits_1.1.1           colorspace_2.0-3           </span>
-<span class="co">##&gt;  [29] blob_1.2.2                  ggrepel_0.9.1              </span>
-<span class="co">##&gt;  [31] textshaping_0.3.6           xfun_0.29                  </span>
-<span class="co">##&gt;  [33] dplyr_1.0.8                 callr_3.7.0                </span>
-<span class="co">##&gt;  [35] crayon_1.5.0                RCurl_1.98-1.6             </span>
-<span class="co">##&gt;  [37] jsonlite_1.8.0              genefilter_1.74.1          </span>
-<span class="co">##&gt;  [39] survival_3.2-11             iterators_1.0.14           </span>
-<span class="co">##&gt;  [41] glue_1.6.2                  polyclip_1.10-0            </span>
-<span class="co">##&gt;  [43] gtable_0.3.0                zlibbioc_1.38.0            </span>
-<span class="co">##&gt;  [45] XVector_0.32.0              UpSetR_1.4.0               </span>
-<span class="co">##&gt;  [47] GetoptLong_1.0.5            DelayedArray_0.18.0        </span>
-<span class="co">##&gt;  [49] pkgbuild_1.2.0              shape_1.4.6                </span>
-<span class="co">##&gt;  [51] BiocGenerics_0.38.0         scales_1.1.1               </span>
-<span class="co">##&gt;  [53] DBI_1.1.2                   edgeR_3.34.1               </span>
-<span class="co">##&gt;  [55] Rcpp_1.0.8                  viridisLite_0.4.0          </span>
-<span class="co">##&gt;  [57] xtable_1.8-4                clue_0.3-60                </span>
-<span class="co">##&gt;  [59] bit_4.0.4                   preprocessCore_1.54.0      </span>
-<span class="co">##&gt;  [61] DT_0.21                     stats4_4.1.1               </span>
-<span class="co">##&gt;  [63] htmlwidgets_1.5.4           shinyjqui_0.4.0            </span>
-<span class="co">##&gt;  [65] httr_1.4.2                  RColorBrewer_1.1-2         </span>
-<span class="co">##&gt;  [67] ellipsis_0.3.2              farver_2.1.0               </span>
-<span class="co">##&gt;  [69] pkgconfig_2.0.3             XML_3.99-0.8               </span>
-<span class="co">##&gt;  [71] sass_0.4.0                  noisyr_1.0.0               </span>
-<span class="co">##&gt;  [73] locfit_1.5-9.4              utf8_1.2.2                 </span>
-<span class="co">##&gt;  [75] tidyselect_1.1.2            rlang_1.0.1                </span>
-<span class="co">##&gt;  [77] later_1.3.0                 AnnotationDbi_1.54.1       </span>
-<span class="co">##&gt;  [79] visNetwork_2.1.0            munsell_0.5.0              </span>
-<span class="co">##&gt;  [81] tools_4.1.1                 cachem_1.0.6               </span>
-<span class="co">##&gt;  [83] cli_3.2.0                   generics_0.1.2             </span>
-<span class="co">##&gt;  [85] RSQLite_2.2.8               devtools_2.4.2             </span>
-<span class="co">##&gt;  [87] evaluate_0.15               stringr_1.4.0              </span>
-<span class="co">##&gt;  [89] fastmap_1.1.0               yaml_2.3.5                 </span>
-<span class="co">##&gt;  [91] ragg_1.2.0                  processx_3.5.2             </span>
-<span class="co">##&gt;  [93] knitr_1.37                  bit64_4.0.5                </span>
-<span class="co">##&gt;  [95] fs_1.5.0                    purrr_0.3.4                </span>
-<span class="co">##&gt;  [97] KEGGREST_1.32.0             gprofiler2_0.2.1           </span>
-<span class="co">##&gt;  [99] mime_0.12                   ggrastr_1.0.0              </span>
-<span class="co">##&gt; [101] compiler_4.1.1              shinythemes_1.2.0          </span>
-<span class="co">##&gt; [103] rstudioapi_0.13             beeswarm_0.4.0             </span>
-<span class="co">##&gt; [105] plotly_4.10.0               png_0.1-7                  </span>
-<span class="co">##&gt; [107] tweenr_1.0.2                tibble_3.1.6               </span>
-<span class="co">##&gt; [109] geneplotter_1.70.0          bslib_0.3.1                </span>
-<span class="co">##&gt; [111] stringi_1.7.6               highr_0.9                  </span>
-<span class="co">##&gt; [113] ps_1.6.0                    desc_1.4.0                 </span>
-<span class="co">##&gt; [115] lattice_0.20-44             Matrix_1.3-4               </span>
-<span class="co">##&gt; [117] shinyjs_2.1.0               vctrs_0.3.8                </span>
-<span class="co">##&gt; [119] pillar_1.7.0                lifecycle_1.0.1            </span>
-<span class="co">##&gt; [121] jquerylib_0.1.4             GlobalOptions_0.1.2        </span>
-<span class="co">##&gt; [123] data.table_1.14.2           bitops_1.0-7               </span>
-<span class="co">##&gt; [125] httpuv_1.6.3                GenomicRanges_1.44.0       </span>
-<span class="co">##&gt; [127] R6_2.5.1                    promises_1.2.0.1           </span>
-<span class="co">##&gt; [129] gridExtra_2.3               vipor_0.4.5                </span>
-<span class="co">##&gt; [131] IRanges_2.26.0              sessioninfo_1.1.1          </span>
-<span class="co">##&gt; [133] codetools_0.2-18            MASS_7.3-54                </span>
-<span class="co">##&gt; [135] assertthat_0.2.1            pkgload_1.2.4              </span>
-<span class="co">##&gt; [137] SummarizedExperiment_1.22.0 DESeq2_1.32.0              </span>
-<span class="co">##&gt; [139] rprojroot_2.0.2             rjson_0.2.20               </span>
-<span class="co">##&gt; [141] shinyWidgets_0.6.2          withr_2.4.3                </span>
-<span class="co">##&gt; [143] S4Vectors_0.30.2            GenomeInfoDbData_1.2.6     </span>
-<span class="co">##&gt; [145] parallel_4.1.1              grid_4.1.1                 </span>
-<span class="co">##&gt; [147] tidyr_1.2.0                 rmarkdown_2.11             </span>
-<span class="co">##&gt; [149] MatrixGenerics_1.4.3        Cairo_1.5-12.2             </span>
-<span class="co">##&gt; [151] ggnewscale_0.4.6            ggforce_0.3.3              </span>
-<span class="co">##&gt; [153] Biobase_2.52.0              shiny_1.7.1                </span>
-<span class="co">##&gt; [155] ggbeeswarm_0.6.0</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">##&gt; R version 4.1.1 (2021-08-10)</span></span>
+<span><span class="co">##&gt; Platform: x86_64-w64-mingw32/x64 (64-bit)</span></span>
+<span><span class="co">##&gt; Running under: Windows 10 x64 (build 22000)</span></span>
+<span><span class="co">##&gt; </span></span>
+<span><span class="co">##&gt; Matrix products: default</span></span>
+<span><span class="co">##&gt; </span></span>
+<span><span class="co">##&gt; locale:</span></span>
+<span><span class="co">##&gt; [1] LC_COLLATE=English_United Kingdom.1252 </span></span>
+<span><span class="co">##&gt; [2] LC_CTYPE=English_United Kingdom.1252   </span></span>
+<span><span class="co">##&gt; [3] LC_MONETARY=English_United Kingdom.1252</span></span>
+<span><span class="co">##&gt; [4] LC_NUMERIC=C                           </span></span>
+<span><span class="co">##&gt; [5] LC_TIME=English_United Kingdom.1252    </span></span>
+<span><span class="co">##&gt; </span></span>
+<span><span class="co">##&gt; attached base packages:</span></span>
+<span><span class="co">##&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
+<span><span class="co">##&gt; </span></span>
+<span><span class="co">##&gt; other attached packages:</span></span>
+<span><span class="co">##&gt; [1] bulkAnalyseR_1.0.0</span></span>
+<span><span class="co">##&gt; </span></span>
+<span><span class="co">##&gt; loaded via a namespace (and not attached):</span></span>
+<span><span class="co">##&gt;  [1] tidyselect_1.1.2  xfun_0.29         bslib_0.4.0       purrr_0.3.4      </span></span>
+<span><span class="co">##&gt;  [5] colorspace_2.0-3  vctrs_0.3.8       generics_0.1.3    htmltools_0.5.2  </span></span>
+<span><span class="co">##&gt;  [9] yaml_2.3.5        utf8_1.2.2        rlang_1.0.6       pkgdown_2.0.6    </span></span>
+<span><span class="co">##&gt; [13] jquerylib_0.1.4   pillar_1.8.1      later_1.3.0       glue_1.6.2       </span></span>
+<span><span class="co">##&gt; [17] DBI_1.1.3         lifecycle_1.0.2   stringr_1.4.1     munsell_0.5.0    </span></span>
+<span><span class="co">##&gt; [21] gtable_0.3.1      ragg_1.2.2        memoise_2.0.1     evaluate_0.16    </span></span>
+<span><span class="co">##&gt; [25] knitr_1.40        fastmap_1.1.0     httpuv_1.6.3      fansi_1.0.2      </span></span>
+<span><span class="co">##&gt; [29] highr_0.9         Rcpp_1.0.8.3      xtable_1.8-4      scales_1.2.1     </span></span>
+<span><span class="co">##&gt; [33] promises_1.2.0.1  cachem_1.0.6      desc_1.4.2        jsonlite_1.8.0   </span></span>
+<span><span class="co">##&gt; [37] mime_0.12         systemfonts_1.0.4 fs_1.5.2          textshaping_0.3.6</span></span>
+<span><span class="co">##&gt; [41] ggplot2_3.3.5     digest_0.6.29     stringi_1.7.6     dplyr_1.0.8      </span></span>
+<span><span class="co">##&gt; [45] shiny_1.7.1       grid_4.1.1        rprojroot_2.0.3   cli_3.4.1        </span></span>
+<span><span class="co">##&gt; [49] tools_4.1.1       magrittr_2.0.2    sass_0.4.1        tibble_3.1.6     </span></span>
+<span><span class="co">##&gt; [53] pkgconfig_2.0.3   ellipsis_0.3.2    assertthat_0.2.1  rmarkdown_2.16   </span></span>
+<span><span class="co">##&gt; [57] rstudioapi_0.14   R6_2.5.1          compiler_4.1.1</span></span></code></pre></div>
 </div>
-  
-   <aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  <aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -453,7 +438,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
   <p class="preferably">Using <a href="https://preferably.amirmasoudabdol.name/?source=footer" class="external-link">preferably</a> template.</p>
 </div>
 

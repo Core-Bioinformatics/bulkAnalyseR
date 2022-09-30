@@ -54,6 +54,16 @@ QCpanelUI <- function(id, metadata, show = TRUE){
         checkboxInput(ns("ma.show.guidelines"), label = "Show guidelines", value = TRUE),
         selectInput(ns('ma.sample1'), 'Sample 1', choices = metadata[, 1], selected = metadata[1, 1]),
         selectInput(ns('ma.sample2'), 'Sample 2', choices = metadata[, 1], selected = metadata[2, 1]),
+        shinyWidgets::switchInput(
+          inputId = ns('autoLabel'),
+          label = "Auto labels", 
+          labelWidth = "80px",
+          onLabel = 'On',
+          offLabel = 'Off',
+          value = FALSE,
+          onStatus = FALSE
+        ),
+        selectInput(ns("geneName"), "Other genes to highlight:", multiple = TRUE, choices = character(0)),
         textInput(ns('plotMAFileName'), 'File name for MA plot download', value = 'MAPlot.png'),
         downloadButton(ns('downloadMAPlot'), 'Download MA Plot'),
         
@@ -152,6 +162,10 @@ QCpanelServer <- function(id, expression.matrix, metadata, anno){
       } else {items = colnames(metadata())[2:ncol(metadata())]}
       shinyjqui::updateOrderInput(session, "jaccard.annotations", items = items)
     })
+    
+    #Set up server-side search for gene names
+    updateSelectizeInput(session, "geneName", choices = anno$NAME, server = TRUE)
+    
     jaccard.plot <- reactive({
       meta <- lapply(metadata(), function(x) factor(x, levels = unique(x))) %>% 
         as.data.frame() %>%
@@ -202,6 +216,7 @@ QCpanelServer <- function(id, expression.matrix, metadata, anno){
         pvalAdj = 1
       )  %>%
         dplyr::filter(exp1 != 0, exp2 != 0)
+      highlightGenes <- input[["geneName"]]
       myplot <- ma_plot(
         genes.de.results = df,
         alpha = 0.05,
@@ -210,8 +225,9 @@ QCpanelServer <- function(id, expression.matrix, metadata, anno){
         add.expression.colour.gradient = FALSE,
         add.guide.lines = input[['ma.show.guidelines']],
         guide.line.colours = rep("gray60", 2),
-        add.labels.auto = FALSE,
-        add.labels.custom = TRUE,
+        add.labels.auto = input[["autoLabel"]],
+        n.labels.auto = c(5, 5, 5),
+        add.labels.custom = length(highlightGenes) > 0,
         genes.to.label = highlightGenes
       )
       myplot

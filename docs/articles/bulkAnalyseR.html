@@ -21,8 +21,8 @@
   }
 </script><title>bulkAnalyseR: An accessible, interactive pipeline for analysing and sharing bulk sequencing results • bulkAnalyseR</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="bulkAnalyseR: An accessible, interactive pipeline for analysing and sharing bulk sequencing results">
 <meta property="og:description" content="bulkAnalyseR">
@@ -44,7 +44,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">bulkAnalyseR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,6 +62,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/GEO_App.html">A beginner's guide to creating a bulkAnalyseR app from a GEO dataset</a>
     <a class="dropdown-item" href="../articles/IntegratingMultiomics.html">bulkAnalyseR: Integrating multi-omics or external data</a>
   </div>
 </li>
@@ -98,7 +99,7 @@
 
 
 <div class="row">
-  <main id="main"><div class="page-header">
+  <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>bulkAnalyseR: An accessible, interactive pipeline for analysing and sharing bulk sequencing results</h1>
             
       
@@ -112,536 +113,713 @@
 
 
 
-<p>Bulk sequencing experiments are essential for exploring a wide range of biological questions. To bring the data analysis closer to its interpretation and facilitate both interactive, exploratory tasks and the sharing of (easily accessible) information, we present <em>bulkAnalyseR</em> an R package that offers a seamless, customisable solution for most bulk sequencing datasets. By integrating state-of-the-art approaches without relying on extensive computational support, and replacing static images with interactive panels, our aim is to further support and strengthen the reusability of data.</p>
-<p><em>bulkAnalyseR</em> enables standard analyses of bulk data, using an expression matrix as starting point. It presents the outputs of various steps in an interactive web-based interface, making it easy to generate, explore and verify hypotheses. The plots and tables generated can be easily downloaded and presented elsewhere. Moreover, the app can be easily shared and published, incentivising research reproducibility and allowing others to explore the same processed data and enhance the biological conclusions.</p>
-<p>The example app described in this vignette can be found <a href="http://bioinf.stemcells.cam.ac.uk:3838/bulkAnalyseR/Yang2019/" class="external-link">here</a></p>
+<p>Bulk sequencing experiments are essential for exploring a wide range
+of biological questions. To bring the data analysis closer to its
+interpretation and facilitate both interactive, exploratory tasks and
+the sharing of (easily accessible) information, we present
+<em>bulkAnalyseR</em> an R package that offers a seamless, customisable
+solution for most bulk sequencing datasets. By integrating
+state-of-the-art approaches without relying on extensive computational
+support, and replacing static images with interactive panels, our aim is
+to further support and strengthen the reusability of data.</p>
+<p><em>bulkAnalyseR</em> enables standard analyses of bulk data, using
+an expression matrix as starting point. It presents the outputs of
+various steps in an interactive web-based interface, making it easy to
+generate, explore and verify hypotheses. The plots and tables generated
+can be easily downloaded and presented elsewhere. Moreover, the app can
+be easily shared and published, incentivising research reproducibility
+and allowing others to explore the same processed data and enhance the
+biological conclusions.</p>
+<p>The example app described in this vignette can be found <a href="https://bioinf.stemcells.cam.ac.uk/shiny/bulkAnalyseR/Yang2019/" class="external-link">here</a></p>
 <p><img src="figures/workflow.png" width="80%"></p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>To install the package, first install all CRAN dependencies:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">packages.cran</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ggplot2"</span>,
-                   <span class="st">"shiny"</span>,
-                   <span class="st">"shinythemes"</span>,
-                   <span class="st">"gprofiler2"</span>,
-                   <span class="st">"stats"</span>,
-                   <span class="st">"ggrepel"</span>,
-                   <span class="st">"utils"</span>,
-                   <span class="st">"RColorBrewer"</span>,
-                   <span class="st">"circlize"</span>,
-                   <span class="st">"shinyWidgets"</span>,
-                   <span class="st">"shinyjqui"</span>,
-                   <span class="st">"dplyr"</span>,
-                   <span class="st">"magrittr"</span>,
-                   <span class="st">"ggforce"</span>,
-                   <span class="st">"rlang"</span>,
-                   <span class="st">"glue"</span>,
-                   <span class="st">"matrixStats"</span>,
-                   <span class="st">"noisyr"</span>,
-                   <span class="st">"tibble"</span>,
-                   <span class="st">"ggnewscale"</span>,
-                   <span class="st">"ggrastr"</span>,
-                   <span class="st">"visNetwork"</span>,
-                   <span class="st">"shinyLP"</span>,
-                   <span class="st">"grid"</span>,
-                   <span class="st">"DT"</span>,
-                   <span class="st">"scales"</span>,
-                   <span class="st">"shinyjs"</span>,
-                   <span class="st">"tidyr"</span>,
-                   <span class="st">"UpSetR"</span><span class="op">)</span>
-<span class="va">new.packages.cran</span> <span class="op">&lt;-</span> <span class="va">packages.cran</span><span class="op">[</span><span class="op">!</span><span class="op">(</span><span class="va">packages.cran</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html" class="external-link">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span>, <span class="st">"Package"</span><span class="op">]</span><span class="op">)</span><span class="op">]</span>
-<span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">new.packages.cran</span><span class="op">)</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="va">new.packages.cran</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">packages.cran</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"ggplot2"</span>, <span class="st">"shiny"</span>, <span class="st">"shinythemes"</span>, <span class="st">"gprofiler2"</span>, <span class="st">"stats"</span>, <span class="st">"ggrepel"</span>,</span>
+<span>  <span class="st">"utils"</span>, <span class="st">"RColorBrewer"</span>, <span class="st">"circlize"</span>, <span class="st">"shinyWidgets"</span>, <span class="st">"shinyjqui"</span>,</span>
+<span>  <span class="st">"dplyr"</span>, <span class="st">"magrittr"</span>, <span class="st">"ggforce"</span>, <span class="st">"rlang"</span>, <span class="st">"glue"</span>, <span class="st">"matrixStats"</span>,</span>
+<span>  <span class="st">"noisyr"</span>, <span class="st">"tibble"</span>, <span class="st">"ggnewscale"</span>, <span class="st">"ggrastr"</span>, <span class="st">"visNetwork"</span>, <span class="st">"shinyLP"</span>,</span>
+<span>  <span class="st">"grid"</span>, <span class="st">"DT"</span>, <span class="st">"scales"</span>, <span class="st">"shinyjs"</span>, <span class="st">"tidyr"</span>, <span class="st">"UpSetR"</span>, <span class="st">"ggVennDiagram"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">new.packages.cran</span> <span class="op">&lt;-</span> <span class="va">packages.cran</span><span class="op">[</span><span class="op">!</span><span class="op">(</span><span class="va">packages.cran</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html" class="external-link">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span>, <span class="st">"Package"</span><span class="op">]</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">new.packages.cran</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="va">new.packages.cran</span><span class="op">)</span></span></code></pre></div>
 <p>Then install bioconductor dependencies:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">packages.bioc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"edgeR"</span>, 
-                   <span class="st">"DESeq2"</span>,
-                   <span class="st">"preprocessCore"</span>,
-                   <span class="st">"GENIE3"</span>,
-                   <span class="st">"ComplexHeatmap"</span><span class="op">)</span>
-
-<span class="va">new.packages.bioc</span> <span class="op">&lt;-</span> <span class="va">packages.bioc</span><span class="op">[</span><span class="op">!</span><span class="op">(</span><span class="va">packages.bioc</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html" class="external-link">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span>,<span class="st">"Package"</span><span class="op">]</span><span class="op">)</span><span class="op">]</span>
-<span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">new.packages.bioc</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
-  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span>
-  <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="va">new.packages.bioc</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
-<p>Finally, you can install the package from CRAN, or install the latest stable version of <em>bulkAnalyseR</em> from GitHub:</p>
+<code class="sourceCode R"><span><span class="va">packages.bioc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"edgeR"</span>, <span class="st">"DESeq2"</span>, <span class="st">"preprocessCore"</span>, <span class="st">"GENIE3"</span>, <span class="st">"ComplexHeatmap"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">new.packages.bioc</span> <span class="op">&lt;-</span> <span class="va">packages.bioc</span><span class="op">[</span><span class="op">!</span><span class="op">(</span><span class="va">packages.bioc</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html" class="external-link">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span>,<span class="st">"Package"</span><span class="op">]</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">new.packages.bioc</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
+<span>  <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="va">new.packages.bioc</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Finally, you can install the package from CRAN, or install the latest
+stable version of <em>bulkAnalyseR</em> from GitHub:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"bulkAnalyseR"</span><span class="op">)</span>
-
-<span class="co">### OR</span>
-
-<span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"devtools"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/remote-reexports.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"Core-Bioinformatics/bulkAnalyseR"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"bulkAnalyseR"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">### OR</span></span>
+<span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"devtools"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"Core-Bioinformatics/bulkAnalyseR"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="preprocessing">Preprocessing<a class="anchor" aria-label="anchor" href="#preprocessing"></a>
 </h2>
-<p>First, load <em>bulkAnalyseR</em> (plus dplyr and ggplot2 for convenience):</p>
+<p>First, load <em>bulkAnalyseR</em> (plus dplyr and ggplot2 for
+convenience):</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Core-Bioinformatics/bulkAnalyseR" class="external-link">bulkAnalyseR</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
-<span class="co">##&gt; Warning: package 'dplyr' was built under R version 4.1.2</span>
-<span class="co">##&gt; </span>
-<span class="co">##&gt; Attaching package: 'dplyr'</span>
-<span class="co">##&gt; The following objects are masked from 'package:stats':</span>
-<span class="co">##&gt; </span>
-<span class="co">##&gt;     filter, lag</span>
-<span class="co">##&gt; The following objects are masked from 'package:base':</span>
-<span class="co">##&gt; </span>
-<span class="co">##&gt;     intersect, setdiff, setequal, union</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Core-Bioinformatics/bulkAnalyseR" class="external-link">bulkAnalyseR</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="co">##&gt; Warning: package 'dplyr' was built under R version 4.1.2</span></span>
+<span><span class="co">##&gt; </span></span>
+<span><span class="co">##&gt; Attaching package: 'dplyr'</span></span>
+<span><span class="co">##&gt; The following objects are masked from 'package:stats':</span></span>
+<span><span class="co">##&gt; </span></span>
+<span><span class="co">##&gt;     filter, lag</span></span>
+<span><span class="co">##&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">##&gt; </span></span>
+<span><span class="co">##&gt;     intersect, setdiff, setequal, union</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="loading-an-expression-matrix">Loading an expression matrix<a class="anchor" aria-label="anchor" href="#loading-an-expression-matrix"></a>
 </h3>
-<p>For this vignette we are using a subset of the count matrix for an experiment included in <a href="https://www.sciencedirect.com/science/article/pii/S2405471219301152" class="external-link">a 2019 paper by Yang et al</a>. Rows represent genes/features and columns represent samples:</p>
+<p>For this vignette we are using a subset of the count matrix for an
+experiment included in <a href="https://www.sciencedirect.com/science/article/pii/S2405471219301152" class="external-link">a
+2019 paper by Yang et al</a>. Rows represent genes/features and columns
+represent samples:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">counts.in</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"expression_matrix.csv"</span>, package <span class="op">=</span> <span class="st">"bulkAnalyseR"</span><span class="op">)</span>
-<span class="va">exp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">counts.in</span>, row.names <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">exp</span><span class="op">)</span>
-<span class="co">##&gt;                    SRR7624365 SRR7624366 SRR7624371 SRR7624372 SRR7624375</span>
-<span class="co">##&gt; ENSMUSG00000102693          2          0          0          0          0</span>
-<span class="co">##&gt; ENSMUSG00000051951          6          4          2          0         47</span>
-<span class="co">##&gt; ENSMUSG00000102851          0          0          0          0          0</span>
-<span class="co">##&gt; ENSMUSG00000103377          0          0          2          0          8</span>
-<span class="co">##&gt; ENSMUSG00000104017          0          0          0          2          0</span>
-<span class="co">##&gt; ENSMUSG00000103025          0          0          0          0          0</span>
-<span class="co">##&gt;                    SRR7624376</span>
-<span class="co">##&gt; ENSMUSG00000102693          0</span>
-<span class="co">##&gt; ENSMUSG00000051951         37</span>
-<span class="co">##&gt; ENSMUSG00000102851          1</span>
-<span class="co">##&gt; ENSMUSG00000103377          6</span>
-<span class="co">##&gt; ENSMUSG00000104017          2</span>
-<span class="co">##&gt; ENSMUSG00000103025          3</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">counts.in</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"expression_matrix.csv"</span>, package <span class="op">=</span> <span class="st">"bulkAnalyseR"</span><span class="op">)</span></span>
+<span><span class="va">exp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">counts.in</span>, row.names <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">exp</span><span class="op">)</span></span>
+<span><span class="co">##&gt;                    SRR7624365 SRR7624366 SRR7624371 SRR7624372 SRR7624375</span></span>
+<span><span class="co">##&gt; ENSMUSG00000102693          2          0          0          0          0</span></span>
+<span><span class="co">##&gt; ENSMUSG00000051951          6          4          2          0         47</span></span>
+<span><span class="co">##&gt; ENSMUSG00000102851          0          0          0          0          0</span></span>
+<span><span class="co">##&gt; ENSMUSG00000103377          0          0          2          0          8</span></span>
+<span><span class="co">##&gt; ENSMUSG00000104017          0          0          0          2          0</span></span>
+<span><span class="co">##&gt; ENSMUSG00000103025          0          0          0          0          0</span></span>
+<span><span class="co">##&gt;                    SRR7624376</span></span>
+<span><span class="co">##&gt; ENSMUSG00000102693          0</span></span>
+<span><span class="co">##&gt; ENSMUSG00000051951         37</span></span>
+<span><span class="co">##&gt; ENSMUSG00000102851          1</span></span>
+<span><span class="co">##&gt; ENSMUSG00000103377          6</span></span>
+<span><span class="co">##&gt; ENSMUSG00000104017          2</span></span>
+<span><span class="co">##&gt; ENSMUSG00000103025          3</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="defining-metadata">Defining metadata<a class="anchor" aria-label="anchor" href="#defining-metadata"></a>
 </h3>
-<p>The subset of the dataset we are using has samples from 3 timepoints: 0h, 12h and 36h, each with 2 biological replicates. We define a metadata table detailing which sample correspond to which timepoint:</p>
+<p>The subset of the dataset we are using has samples from 3 timepoints:
+0h, 12h and 36h, each with 2 biological replicates. We define a metadata
+table detailing which sample correspond to which timepoint:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>
-  srr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">exp</span><span class="op">)</span>, 
-  timepoint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"0h"</span>, <span class="st">"12h"</span>, <span class="st">"36h"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="va">meta</span>
-<span class="co">##&gt;          srr timepoint</span>
-<span class="co">##&gt; 1 SRR7624365        0h</span>
-<span class="co">##&gt; 2 SRR7624366        0h</span>
-<span class="co">##&gt; 3 SRR7624371       12h</span>
-<span class="co">##&gt; 4 SRR7624372       12h</span>
-<span class="co">##&gt; 5 SRR7624375       36h</span>
-<span class="co">##&gt; 6 SRR7624376       36h</span></code></pre></div>
-<p>This metadata table should be a data frame containing at minimum two columns: the first column must contain the column names of the expression.matrix, while the last column is assumed to contain the experimental conditions that will be tested for differential expression.</p>
+<code class="sourceCode R"><span><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  srr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">exp</span><span class="op">)</span>, </span>
+<span>  timepoint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"0h"</span>, <span class="st">"12h"</span>, <span class="st">"36h"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">meta</span></span>
+<span><span class="co">##&gt;          srr timepoint</span></span>
+<span><span class="co">##&gt; 1 SRR7624365        0h</span></span>
+<span><span class="co">##&gt; 2 SRR7624366        0h</span></span>
+<span><span class="co">##&gt; 3 SRR7624371       12h</span></span>
+<span><span class="co">##&gt; 4 SRR7624372       12h</span></span>
+<span><span class="co">##&gt; 5 SRR7624375       36h</span></span>
+<span><span class="co">##&gt; 6 SRR7624376       36h</span></span></code></pre></div>
+<p>This metadata table should be a data frame containing at minimum two
+columns: the first column must contain the column names of the
+expression.matrix, while the last column is assumed to contain the
+experimental conditions that will be tested for differential
+expression.</p>
 </div>
 <div class="section level3">
 <h3 id="denoising-and-normalisation">Denoising and normalisation<a class="anchor" aria-label="anchor" href="#denoising-and-normalisation"></a>
 </h3>
-<p>Before using the expression matrix to create our shiny app, some preprocessing should be performed. <em>bulkAnalyseR</em> contains the function <strong>preprocessExpressionMatrix</strong> which takes the expression matrix as input then denoises the data using <a href="https://github.com/Core-Bioinformatics/noisyR" class="external-link"><em>noisyR</em></a> and normalises it (quantile normalisation by default, other methods can bespecified using the <em>normalisation.method</em> parameter). By specifying <em>output.plot = TRUE</em>, you can also print the expression-similarity line plots from <em>noisyR</em> to console and you can specify further parameters from the noisyR <a href="https://core-bioinformatics.github.io/noisyR/reference/noisyr_counts.html" class="external-link"><em>noisyr_counts</em></a>.</p>
+<p>Before using the expression matrix to create our shiny app, some
+preprocessing should be performed. <em>bulkAnalyseR</em> contains the
+function <strong>preprocessExpressionMatrix</strong> which takes the
+expression matrix as input then denoises the data using <a href="https://github.com/Core-Bioinformatics/noisyR" class="external-link"><em>noisyR</em></a>
+and normalises it (quantile normalisation by default, other methods can
+bespecified using the <em>normalisation.method</em> parameter). By
+specifying <em>output.plot = TRUE</em>, you can also print the
+expression-similarity line plots from <em>noisyR</em> to console and you
+can specify further parameters from the noisyR <a href="https://core-bioinformatics.github.io/noisyR/reference/noisyr_counts.html" class="external-link"><em>noisyr_counts</em></a>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">exp.proc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/preprocessExpressionMatrix.html">preprocessExpressionMatrix</a></span><span class="op">(</span><span class="va">exp</span>, output.plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">##&gt; &gt;&gt;&gt; noisyR counts approach pipeline &lt;&lt;&lt;</span>
-<span class="co">##&gt; The input matrix has 38705 rows and 6 cols</span>
-<span class="co">##&gt;     number of genes: 38705</span>
-<span class="co">##&gt;     number of samples: 6</span>
-<span class="co">##&gt; Calculating the number of elements per window</span>
-<span class="co">##&gt;     the number of elements per window is 3870</span>
-<span class="co">##&gt;     the step size is 193</span>
-<span class="co">##&gt;     the selected similarity metric is correlation_pearson</span>
-<span class="co">##&gt;   Working with sample 1</span>
-<span class="co">##&gt;   Working with sample 2</span>
-<span class="co">##&gt;   Working with sample 3</span>
-<span class="co">##&gt;   Working with sample 4</span>
-<span class="co">##&gt;   Working with sample 5</span>
-<span class="co">##&gt;   Working with sample 6</span>
-<span class="co">##&gt; Calculating noise thresholds for 6 samples...</span>
-<span class="co">##&gt;     similarity.threshold = 0.25</span>
-<span class="co">##&gt;     method.chosen = Boxplot-IQR</span>
-<span class="co">##&gt; Denoising expression matrix...</span>
-<span class="co">##&gt;     removing noisy genes</span>
-<span class="co">##&gt;     adjusting matrix</span>
-<span class="co">##&gt; &gt;&gt;&gt; Done! &lt;&lt;&lt;</span>
-<span class="co">##&gt; Performing quantile normalisation...</span>
-<span class="co">##&gt; Done!</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">exp.proc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/preprocessExpressionMatrix.html">preprocessExpressionMatrix</a></span><span class="op">(</span><span class="va">exp</span>, output.plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">##&gt; &gt;&gt;&gt; noisyR counts approach pipeline &lt;&lt;&lt;</span></span>
+<span><span class="co">##&gt; The input matrix has 38705 rows and 6 cols</span></span>
+<span><span class="co">##&gt;     number of genes: 38705</span></span>
+<span><span class="co">##&gt;     number of samples: 6</span></span>
+<span><span class="co">##&gt; Calculating the number of elements per window</span></span>
+<span><span class="co">##&gt;     the number of elements per window is 3870</span></span>
+<span><span class="co">##&gt;     the step size is 193</span></span>
+<span><span class="co">##&gt;     the selected similarity metric is correlation_pearson</span></span>
+<span><span class="co">##&gt;   Working with sample 1</span></span>
+<span><span class="co">##&gt;   Working with sample 2</span></span>
+<span><span class="co">##&gt;   Working with sample 3</span></span>
+<span><span class="co">##&gt;   Working with sample 4</span></span>
+<span><span class="co">##&gt;   Working with sample 5</span></span>
+<span><span class="co">##&gt;   Working with sample 6</span></span>
+<span><span class="co">##&gt; Calculating noise thresholds for 6 samples...</span></span>
+<span><span class="co">##&gt;     similarity.threshold = 0.25</span></span>
+<span><span class="co">##&gt;     method.chosen = Boxplot-IQR</span></span>
+<span><span class="co">##&gt; Denoising expression matrix...</span></span>
+<span><span class="co">##&gt;     removing noisy genes</span></span>
+<span><span class="co">##&gt;     adjusting matrix</span></span>
+<span><span class="co">##&gt; &gt;&gt;&gt; Done! &lt;&lt;&lt;</span></span>
+<span><span class="co">##&gt; Performing quantile normalisation...</span></span>
+<span><span class="co">##&gt; Done!</span></span></code></pre></div>
 <p><img src="bulkAnalyseR_files/figure-html/preprocess-1.png" width="672"></p>
-<p>It is not recommended to use data which has not been denoised and normalised as input to <em>generateShinyApp</em>. You can also perform your own preprocessing outside <em>preprocessExpressionMatrix</em>.</p>
+<p>It is not recommended to use data which has not been denoised and
+normalised as input to <em>generateShinyApp</em>. You can also perform
+your own preprocessing outside <em>preprocessExpressionMatrix</em>.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="creating-a-shiny-app">Creating a shiny app<a class="anchor" aria-label="anchor" href="#creating-a-shiny-app"></a>
 </h2>
-<p>The example app for the Yang 2019 data can be found <a href="http://bioinf.stemcells.cam.ac.uk:3838/bulkAnalyseR/Yang2019/" class="external-link">here</a>. Readers are encouraged to try out the different features described below in the live version of the app to familiarise themselves with the different features.</p>
-<p>The central function in <em>bulkAnalyseR</em> is <strong>generateShinyApp</strong>. This function creates an app.R file and all required objects to run the app in .rda format in the target directory. The key inputs to <strong>generateShinyApp</strong> are <em>expression.matrix</em> (after being processed using <em>preprocessExpressionMatrix</em>) and <em>metadata</em>. You can also specify the title of the app (which will appear in the navigation bar at the top of the app) with <em>app.title</em>, the modality (RNA by default) that will be displayed as the name of the main tab, the directory where the app should be saved with <em>shiny.dir</em> and the shiny theme you wish to use (‘flatly’ is the default, you can find the other options <a href="https://rstudio.github.io/shinythemes/" class="external-link">here</a>). It is also recommended that you specify the organism on which your data was generated, firstly using the <em>organism</em> parameter using the <em>gprofiler2</em> naming convention e.g. ‘hsapiens’,‘mmusculus’ (see <a href="https://biit.cs.ut.ee/gprofiler/page/organism-list" class="external-link">here</a> for the full list of organisms and IDs), and secondly specifying the database for annotations to convert ENSEMBL IDs to gene names e.g. org.Hs.eg.db - the full list of bioconductor packaged databases can be seen using this command:</p>
+<p>The example app for the Yang 2019 data can be found <a href="https://bioinf.stemcells.cam.ac.uk/shiny/bulkAnalyseR/Yang2019/" class="external-link">here</a>.
+Readers are encouraged to try out the different features described below
+in the live version of the app to familiarise themselves with the
+different features.</p>
+<p>The central function in <em>bulkAnalyseR</em> is
+<strong>generateShinyApp</strong>. This function creates an app.R file
+and all required objects to run the app in .rda format in the target
+directory. The key inputs to <strong>generateShinyApp</strong> are
+<em>expression.matrix</em> (after being processed using
+<em>preprocessExpressionMatrix</em>) and <em>metadata</em>. You can also
+specify the title of the app (which will appear in the navigation bar at
+the top of the app) with <em>app.title</em>, the modality (RNA by
+default) that will be displayed as the name of the main tab, the
+directory where the app should be saved with <em>shiny.dir</em> and the
+shiny theme you wish to use (‘flatly’ is the default, you can find the
+other options <a href="https://rstudio.github.io/shinythemes/" class="external-link">here</a>). It is also
+recommended that you specify the organism on which your data was
+generated, firstly using the <em>organism</em> parameter using the
+<em>gprofiler2</em> naming convention e.g. ‘hsapiens’,‘mmusculus’ (see
+<a href="https://biit.cs.ut.ee/gprofiler/page/organism-list" class="external-link">here</a>
+for the full list of organisms and IDs), and secondly specifying the
+database for annotations to convert ENSEMBL IDs to gene names
+e.g. org.Hs.eg.db - the full list of bioconductor packaged databases can
+be seen using this command:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/available.html" class="external-link">available</a></span><span class="op">(</span><span class="st">"^org\\."</span><span class="op">)</span></code></pre></div>
-<p>The dataset in this example was generated on <em>M. musculus</em> so we would generate the app using this function call (note that the org.Mm.eg.db needs to be installed):</p>
+<code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/available.html" class="external-link">available</a></span><span class="op">(</span><span class="st">"^org\\."</span><span class="op">)</span></span></code></pre></div>
+<p>The dataset in this example was generated on <em>M. musculus</em> so
+we would generate the app using this function call (note that the
+org.Mm.eg.db needs to be installed):</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span>
-  shiny.dir <span class="op">=</span> <span class="st">"shiny_Yang2019"</span>,
-  app.title <span class="op">=</span> <span class="st">"Shiny app for visualisation of three timepoints from the Yang 2019 data"</span>,
-  modality <span class="op">=</span> <span class="st">"RNA"</span>,
-  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span>,
-  metadata <span class="op">=</span> <span class="va">meta</span>,
-  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,
-  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span>
-<span class="op">)</span></code></pre></div>
-<p>If no organism is specified for g:profiler then the enrichment tab will be automatically excluded. If no model organism database is specified then the row names of the expression matrix will be used throughout. It is recommended to use ENSEMBL ids as the row names and supply the model organism through the org.db parameter if your organism is among the ones provided, to ensure compatibility.</p>
-<p>This will create a folder called <em>shiny_Yang2019</em> in which there will be 2 data files <em>expression_matrix.rda</em> and <em>metadata.rda</em> and <em>app.R</em> which defines the app. To see the app, you can call <em>shiny::runApp(‘shiny_Yang2019’)</em> and the app will start. The app generated is standalone and can be shared with collaborators or published online through a platform like . This provides an easy way for anyone to explore the data and verify the conclusions, increasing access and promoting reproducibility of the bioinformatics analysis.</p>
-<p>By default, the app will have 10 panels: Home, Sample select, Quality checks, Differential expression, Volcano and MA plots, DE summary, Enrichment, Expression patterns, Cross plot, GRN inference. You can choose to remove one or more panels using the <em>panels.default</em> parameter.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span></span>
+<span>  shiny.dir <span class="op">=</span> <span class="st">"shiny_Yang2019"</span>,</span>
+<span>  app.title <span class="op">=</span> <span class="st">"Shiny app for visualisation of three timepoints from the Yang 2019 data"</span>,</span>
+<span>  modality <span class="op">=</span> <span class="st">"RNA"</span>,</span>
+<span>  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="va">meta</span>,</span>
+<span>  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,</span>
+<span>  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>If no organism is specified for g:profiler then the enrichment tab
+will be automatically excluded. If no model organism database is
+specified then the row names of the expression matrix will be used
+throughout. It is recommended to use ENSEMBL ids as the row names and
+supply the model organism through the org.db parameter if your organism
+is among the ones provided, to ensure compatibility.</p>
+<p>This will create a folder called <em>shiny_Yang2019</em> in which
+there will be 2 data files <em>expression_matrix.rda</em> and
+<em>metadata.rda</em> and <em>app.R</em> which defines the app. To see
+the app, you can call <em>shiny::runApp(‘shiny_Yang2019’)</em> and the
+app will start. The app generated is standalone and can be shared with
+collaborators or published online through a platform like . This
+provides an easy way for anyone to explore the data and verify the
+conclusions, increasing access and promoting reproducibility of the
+bioinformatics analysis.</p>
+<p>By default, the app will have 10 panels: Home, Sample select, Quality
+checks, Differential expression, Volcano and MA plots, DE summary,
+Enrichment, Expression patterns, Cross plot, GRN inference. You can
+choose to remove one or more panels using the <em>panels.default</em>
+parameter.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span>
-  shiny.dir <span class="op">=</span> <span class="st">"shiny_Yang2019_onlyQC_DE"</span>,
-  app.title <span class="op">=</span> <span class="st">"Shiny app for visualisation of three timepoints from the Yang 2019 data"</span>,
-  modality <span class="op">=</span> <span class="st">"RNA"</span>,
-  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span>,
-  metadata <span class="op">=</span> <span class="va">meta</span>,
-  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,
-  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span>,
-  panels.default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'QC'</span>,<span class="st">'DE'</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
-<p>An app that contains multiple modalities, different datasets, or different subsets of the same dataset can also be generated. The modality, expression.matrix, metadata, organism, org.db, and panels.default parameters are all vectorised and accept multiple arguments (a vector or a list if the original argument was more complex). Note that all these parameters must be the same length (or length 1) to avoid errors. An example of creating an app with two different versions of the original app created above is presented below:</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span></span>
+<span>  shiny.dir <span class="op">=</span> <span class="st">"shiny_Yang2019_onlyQC_DE"</span>,</span>
+<span>  app.title <span class="op">=</span> <span class="st">"Shiny app for visualisation of three timepoints from the Yang 2019 data"</span>,</span>
+<span>  modality <span class="op">=</span> <span class="st">"RNA"</span>,</span>
+<span>  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="va">meta</span>,</span>
+<span>  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,</span>
+<span>  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span>,</span>
+<span>  panels.default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'QC'</span>,<span class="st">'DE'</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>An app that contains multiple modalities, different datasets, or
+different subsets of the same dataset can also be generated. The
+modality, expression.matrix, metadata, organism, org.db, and
+panels.default parameters are all vectorised and accept multiple
+arguments (a vector or a list if the original argument was more
+complex). Note that all these parameters must be the same length (or
+length 1) to avoid errors. An example of creating an app with two
+different versions of the original app created above is presented
+below:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span>
-  shiny.dir <span class="op">=</span> <span class="st">"shiny_Yang2019_two_modalities"</span>,
-  app.title <span class="op">=</span> <span class="st">"Shiny app for visualisation of three timepoints from the Yang 2019 data"</span>,
-  modality <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"RNA 1"</span>, <span class="st">"RNA 2"</span><span class="op">)</span>,
-  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span>,
-  metadata <span class="op">=</span> <span class="va">meta</span>,
-  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,
-  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span>,
-  panels.default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Landing"</span>, <span class="st">"SampleSelect"</span>, <span class="st">"QC"</span>, <span class="st">"DE"</span>, <span class="st">"DEplot"</span>, <span class="st">"DEsummary"</span>, 
-      <span class="st">"Enrichment"</span>, <span class="st">"Patterns"</span>, <span class="st">"Cross"</span>, <span class="st">"GRN"</span><span class="op">)</span>,
-    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'QC'</span>,<span class="st">'DE'</span><span class="op">)</span>
-  <span class="op">)</span>
-<span class="op">)</span></code></pre></div>
-<p>See the following sections for more details about the default panels. For each panel, you can also find example code of how you could generate similar results or plots to the ones displayed in the panel without using the app.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span></span>
+<span>  shiny.dir <span class="op">=</span> <span class="st">"shiny_Yang2019_two_modalities"</span>,</span>
+<span>  app.title <span class="op">=</span> <span class="st">"Shiny app for visualisation of three timepoints from the Yang 2019 data"</span>,</span>
+<span>  modality <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"RNA 1"</span>, <span class="st">"RNA 2"</span><span class="op">)</span>,</span>
+<span>  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="va">meta</span>,</span>
+<span>  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,</span>
+<span>  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span>,</span>
+<span>  panels.default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Landing"</span>, <span class="st">"SampleSelect"</span>, <span class="st">"QC"</span>, <span class="st">"DE"</span>, <span class="st">"DEplot"</span>, <span class="st">"DEsummary"</span>, </span>
+<span>      <span class="st">"Enrichment"</span>, <span class="st">"Patterns"</span>, <span class="st">"Cross"</span>, <span class="st">"GRN"</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'QC'</span>,<span class="st">'DE'</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>See the following sections for more details about the default panels.
+For each panel, you can also find example code of how you could generate
+similar results or plots to the ones displayed in the panel without
+using the app.</p>
 <div class="section level3">
 <h3 id="home">Home<a class="anchor" aria-label="anchor" href="#home"></a>
 </h3>
-<p>This tab contains some useful links (including this vignette!) to get you started with <strong>bulkAnalyseR</strong>.</p>
+<p>This tab contains some useful links (including this vignette!) to get
+you started with <strong>bulkAnalyseR</strong>.</p>
 </div>
 <div class="section level3">
 <h3 id="sample-select">Sample Select<a class="anchor" aria-label="anchor" href="#sample-select"></a>
 </h3>
-<p>This tab allows you to select a subset of samples to use for the analysis. In particular this allows you to exclude low quality samples (which you could discover using QC tab) or focus on particular parts of the data. Once you have selected the samples you want, make sure to press the ‘Use the selected sample!’ button to confirm your choice. If you do not use this button or select samples then all samples will be used.</p>
+<p>This tab allows you to select a subset of samples to use for the
+analysis. In particular this allows you to exclude low quality samples
+(which you could discover using QC tab) or focus on particular parts of
+the data. Once you have selected the samples you want, make sure to
+press the ‘Use the selected sample!’ button to confirm your choice. If
+you do not use this button or select samples then all samples will be
+used.</p>
 <p><img src="figures/SampleSelect.png" width="80%"></p>
 </div>
 <div class="section level3">
 <h3 id="quality-check-qc">Quality check (QC)<a class="anchor" aria-label="anchor" href="#quality-check-qc"></a>
 </h3>
-<p>The Quality Check (QC) tab includes a Jaccard Similarity Index (JSI) heatmap, and a PCA dimensionality reduction, with groups based on the metadata information. This enables a high-level overview of the similarity across samples, usually reflecting the experimental design quite closely and serving as a sanity check. Within this panel, there is also the option to show the MA plot between any 2 columns - this can be used to further investigate any sample similarity or differences found through the JSI and PCA plots.</p>
+<p>The Quality Check (QC) tab includes a Jaccard Similarity Index (JSI)
+heatmap, and a PCA dimensionality reduction, with groups based on the
+metadata information. This enables a high-level overview of the
+similarity across samples, usually reflecting the experimental design
+quite closely and serving as a sanity check. Within this panel, there is
+also the option to show the MA plot between any 2 columns - this can be
+used to further investigate any sample similarity or differences found
+through the JSI and PCA plots.</p>
 <div class="section level4">
 <h4 id="jaccard-similarity-index">Jaccard Similarity Index<a class="anchor" aria-label="anchor" href="#jaccard-similarity-index"></a>
 </h4>
-<p>Within the JSI plot, you can change the order of samples using an ordering of metadata columns as well as specifying the number of top abundance genes that should be used to calculate the JSI. Finally, you can choose whether JSI values should be shown on the heatmap.</p>
+<p>Within the JSI plot, you can change the order of samples using an
+ordering of metadata columns as well as specifying the number of top
+abundance genes that should be used to calculate the JSI. Finally, you
+can choose whether JSI values should be shown on the heatmap.</p>
 <p><img src="figures/JSI.png" width="80%"></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/jaccard_heatmap.html">jaccard_heatmap</a></span><span class="op">(</span>
-  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span>,
-  metadata <span class="op">=</span> <span class="va">meta</span>,
-  top.annotation.ids <span class="op">=</span> <span class="fl">2</span>,
-  n.abundant <span class="op">=</span> <span class="fl">500</span>, 
-  show.values <span class="op">=</span> <span class="cn">FALSE</span>,
-  show.row.column.names <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">meta</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="fl">20</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/jaccard_heatmap.html">jaccard_heatmap</a></span><span class="op">(</span></span>
+<span>  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="va">meta</span>,</span>
+<span>  top.annotation.ids <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  n.abundant <span class="op">=</span> <span class="fl">500</span>, </span>
+<span>  show.values <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show.row.column.names <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">meta</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="fl">20</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="pca">PCA<a class="anchor" aria-label="anchor" href="#pca"></a>
 </h4>
-<p>The PCA plot can be created for a chosen number of top abundance genes and coloured by the metadata attribute selected. The sample labels and ellipses around groups can also be included or removed.</p>
+<p>The PCA plot can be created for a chosen number of top abundance
+genes and coloured by the metadata attribute selected. The sample labels
+and ellipses around groups can also be included or removed.</p>
 <p><img src="figures/PCA.png" width="80%"></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_pca.html">plot_pca</a></span><span class="op">(</span>
-  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span>,
-  metadata <span class="op">=</span> <span class="va">meta</span>,
-  annotation.id <span class="op">=</span> <span class="fl">2</span>,
-  n.abundant <span class="op">=</span> <span class="fl">500</span>,
-  show.labels <span class="op">=</span> <span class="cn">TRUE</span>,
-  show.ellipses <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_pca.html">plot_pca</a></span><span class="op">(</span></span>
+<span>  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="va">meta</span>,</span>
+<span>  annotation.id <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  n.abundant <span class="op">=</span> <span class="fl">500</span>,</span>
+<span>  show.labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show.ellipses <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="ma-plots">MA plots<a class="anchor" aria-label="anchor" href="#ma-plots"></a>
 </h4>
-<p>The third part of the QC tab allows you to create MA plots comparing any two samples. You could, for example, use these plots to compare replicates - these would be expected to show a close funneling shape.</p>
+<p>The third part of the QC tab allows you to create MA plots comparing
+any two samples. You could, for example, use these plots to compare
+replicates - these would be expected to show a close funneling
+shape.</p>
 <p><img src="figures/MA_QC.png" width="80%"></p>
 </div>
 </div>
 <div class="section level3">
 <h3 id="differential-expression-de">Differential expression (DE)<a class="anchor" aria-label="anchor" href="#differential-expression-de"></a>
 </h3>
-<p>The differential expression (DE) tab can be used to compare any of the conditions from the columns of the metadata table using the edgeR or DESeq2 packages with customisable parameters (log2 fold change and adjusted p-value threshold). The output is a list of differentially expressed genes along with log2 fold changes and adjusted p-values. Within the app, the differentially expressed genes can be explored using an interactive table (sorted by absolute log2 fold change) and this can also be saved as a comma-separated file.</p>
+<p>The differential expression (DE) tab can be used to compare any of
+the conditions from the columns of the metadata table using the edgeR or
+DESeq2 packages with customisable parameters (log2 fold change and
+adjusted p-value threshold). The output is a list of differentially
+expressed genes along with log2 fold changes and adjusted p-values.
+Within the app, the differentially expressed genes can be explored using
+an interactive table (sorted by absolute log2 fold change) and this can
+also be saved as a comma-separated file.</p>
 <p><img src="figures/DE.png" width="80%"></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># first create annotation table</span>
-<span class="va">anno</span> <span class="op">&lt;-</span> <span class="fu">AnnotationDbi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html" class="external-link">select</a></span><span class="op">(</span>
-  <span class="fu">org.Mm.eg.db</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/org.Mm.eg.db/man/org.Mm.egBASE.html" class="external-link">org.Mm.eg.db</a></span>,
-  keys <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">exp.proc</span><span class="op">)</span>,
-  keytype <span class="op">=</span> <span class="st">'ENSEMBL'</span>,
-  columns <span class="op">=</span> <span class="st">'SYMBOL'</span>
-<span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">ENSEMBL</span>, .keep_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>NAME <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">SYMBOL</span><span class="op">)</span>, <span class="va">ENSEMBL</span>, <span class="va">SYMBOL</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">DEtable</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/DEanalysis.html">DEanalysis_edger</a></span><span class="op">(</span>
-  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>,
-  condition <span class="op">=</span> <span class="va">meta</span><span class="op">$</span><span class="va">timepoint</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>,
-  var1 <span class="op">=</span> <span class="st">"0h"</span>,
-  var2 <span class="op">=</span> <span class="st">"12h"</span>,
-  anno <span class="op">=</span> <span class="va">anno</span>
-<span class="op">)</span>
-<span class="va">DEtable_deseq</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/DEanalysis.html">DEanalysis_deseq2</a></span><span class="op">(</span>
-  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>,
-  condition <span class="op">=</span> <span class="va">meta</span><span class="op">$</span><span class="va">timepoint</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>,
-  var1 <span class="op">=</span> <span class="st">"0h"</span>,
-  var2 <span class="op">=</span> <span class="st">"12h"</span>,
-  anno <span class="op">=</span> <span class="va">anno</span>
-<span class="op">)</span></code></pre></div>
-<p>In this tab, you can also select genes of interest by clicking on the table, which can be used in the DE summary and Volcano/MA tabs. There is also a button to choose the top 50 DE genes (by absolute log2 fold change) or reset the selection.</p>
+<code class="sourceCode R"><span><span class="co"># first create annotation table</span></span>
+<span><span class="va">anno</span> <span class="op">&lt;-</span> <span class="fu">AnnotationDbi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html" class="external-link">select</a></span><span class="op">(</span></span>
+<span>  <span class="fu">org.Mm.eg.db</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/org.Mm.eg.db/man/org.Mm.egBASE.html" class="external-link">org.Mm.eg.db</a></span>,</span>
+<span>  keys <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">exp.proc</span><span class="op">)</span>,</span>
+<span>  keytype <span class="op">=</span> <span class="st">'ENSEMBL'</span>,</span>
+<span>  columns <span class="op">=</span> <span class="st">'SYMBOL'</span></span>
+<span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">ENSEMBL</span>, .keep_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>NAME <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">SYMBOL</span><span class="op">)</span>, <span class="va">ENSEMBL</span>, <span class="va">SYMBOL</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">DEtable</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/DEanalysis.html">DEanalysis_edger</a></span><span class="op">(</span></span>
+<span>  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>,</span>
+<span>  condition <span class="op">=</span> <span class="va">meta</span><span class="op">$</span><span class="va">timepoint</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>,</span>
+<span>  var1 <span class="op">=</span> <span class="st">"0h"</span>,</span>
+<span>  var2 <span class="op">=</span> <span class="st">"12h"</span>,</span>
+<span>  anno <span class="op">=</span> <span class="va">anno</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">DEtable_deseq</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/DEanalysis.html">DEanalysis_deseq2</a></span><span class="op">(</span></span>
+<span>  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>,</span>
+<span>  condition <span class="op">=</span> <span class="va">meta</span><span class="op">$</span><span class="va">timepoint</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>,</span>
+<span>  var1 <span class="op">=</span> <span class="st">"0h"</span>,</span>
+<span>  var2 <span class="op">=</span> <span class="st">"12h"</span>,</span>
+<span>  anno <span class="op">=</span> <span class="va">anno</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>In this tab, you can also select genes of interest by clicking on the
+table, which can be used in the DE summary and Volcano/MA tabs. There is
+also a button to choose the top 50 DE genes (by absolute log2 fold
+change) or reset the selection.</p>
 </div>
 <div class="section level3">
 <h3 id="volcanoma-plots">Volcano/MA plots<a class="anchor" aria-label="anchor" href="#volcanoma-plots"></a>
 </h3>
-<p>Assuming differential expression has been performed, the Volcano/MA panel then visualises the DE genes, allowing interactive exploration of the data by searching for specific genes of interest or using the selected top DE genes and clicking on genes on the plot itself to gain more information and generate hypotheses.</p>
+<p>Assuming differential expression has been performed, the Volcano/MA
+panel then visualises the DE genes, allowing interactive exploration of
+the data by searching for specific genes of interest or using the
+selected top DE genes and clicking on genes on the plot itself to gain
+more information and generate hypotheses.</p>
 <div class="section level4">
 <h4 id="volcano-plots">Volcano plots<a class="anchor" aria-label="anchor" href="#volcano-plots"></a>
 </h4>
-<p>Volcano plots show log2 fold change against log10 BH-adjusted p-value. The DE points are shown in blue with their colour proportional to the log2 expression of the gene. Green and blue guide lines show the DE thresholds and twice the DE thresholds respectively.</p>
+<p>Volcano plots show log2 fold change against log10 BH-adjusted
+p-value. The DE points are shown in blue with their colour proportional
+to the log2 expression of the gene. Green and blue guide lines show the
+DE thresholds and twice the DE thresholds respectively.</p>
 <p><img src="figures/VolcanoPlot.png" width="80%"></p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/volcano_plot.html">volcano_plot</a></span><span class="op">(</span>
-  genes.de.results <span class="op">=</span> <span class="va">DEtable</span>,
-  pval.threshold <span class="op">=</span> <span class="fl">0.05</span>, 
-  lfc.threshold <span class="op">=</span> <span class="fl">1</span>,
-  log10pval.cap <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/volcano_plot.html">volcano_plot</a></span><span class="op">(</span></span>
+<span>  genes.de.results <span class="op">=</span> <span class="va">DEtable</span>,</span>
+<span>  pval.threshold <span class="op">=</span> <span class="fl">0.05</span>, </span>
+<span>  lfc.threshold <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  log10pval.cap <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="ma-plots-1">MA plots<a class="anchor" aria-label="anchor" href="#ma-plots-1"></a>
 </h4>
-<p>The DE MA plots show log2 expression levels against log2 fold change for each gene. The DE points are shown in blue with their colour proportional to the log2 expression of the gene. Green and blue guide lines show the DE thresholds and twice the DE thresholds respectively.</p>
+<p>The DE MA plots show log2 expression levels against log2 fold change
+for each gene. The DE points are shown in blue with their colour
+proportional to the log2 expression of the gene. Green and blue guide
+lines show the DE thresholds and twice the DE thresholds
+respectively.</p>
 <p><img src="figures/MAPlot.png" width="80%"></p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/ma_plot.html">ma_plot</a></span><span class="op">(</span>
-  genes.de.results <span class="op">=</span> <span class="va">DEtable</span>,
-  pval.threshold <span class="op">=</span> <span class="fl">0.05</span>, 
-  lfc.threshold <span class="op">=</span> <span class="fl">1</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/ma_plot.html">ma_plot</a></span><span class="op">(</span></span>
+<span>  genes.de.results <span class="op">=</span> <span class="va">DEtable</span>,</span>
+<span>  pval.threshold <span class="op">=</span> <span class="fl">0.05</span>, </span>
+<span>  lfc.threshold <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
 <h3 id="de-summary">DE summary<a class="anchor" aria-label="anchor" href="#de-summary"></a>
 </h3>
-<p>The DE summary panel allows further visualisation using the genes called DE or selected by the user in the DE panel.</p>
+<p>The DE summary panel allows further visualisation using the genes
+called DE or selected by the user in the DE panel.</p>
 <div class="section level4">
 <h4 id="expression-heatmap">Expression heatmap<a class="anchor" aria-label="anchor" href="#expression-heatmap"></a>
 </h4>
-<p>Secondly, we can create heatmaps for expression levels (raw expression level, log2 expression level or Z-score) of selected genes. By default the top 50 DE genes are used, but if users select genes in the DE panel then these are used instead. Also, further genes can be added by name in the Additional genes box. As in the JSI, you can change the order of samples using an ordering of metadata columns.</p>
+<p>Secondly, we can create heatmaps for expression levels (raw
+expression level, log2 expression level or Z-score) of selected genes.
+By default the top 50 DE genes are used, but if users select genes in
+the DE panel then these are used instead. Also, further genes can be
+added by name in the Additional genes box. As in the JSI, you can change
+the order of samples using an ordering of metadata columns.</p>
 <p><img src="figures/ExpressionHeatmap.png" width="80%"></p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">genes_heatmap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">DEtable</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">log2FC</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, <span class="va">pvalAdj</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span><span class="op">$</span><span class="va">gene_id</span>
-<span class="fu"><a href="../reference/expression_heatmap.html">expression_heatmap</a></span><span class="op">(</span>
-  expression.matrix.subset <span class="op">=</span> <span class="va">exp.proc</span><span class="op">[</span><span class="va">genes_heatmap</span>, <span class="op">]</span>,
-  top.annotation.ids <span class="op">=</span> <span class="fl">2</span>,
-  metadata <span class="op">=</span> <span class="va">meta</span>,
-  type <span class="op">=</span> <span class="st">"Z-score"</span>,
-  show.column.names <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">meta</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="fl">20</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">genes_heatmap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">DEtable</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">log2FC</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, <span class="va">pvalAdj</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span><span class="op">$</span><span class="va">gene_id</span></span>
+<span><span class="fu"><a href="../reference/expression_heatmap.html">expression_heatmap</a></span><span class="op">(</span></span>
+<span>  expression.matrix.subset <span class="op">=</span> <span class="va">exp.proc</span><span class="op">[</span><span class="va">genes_heatmap</span>, <span class="op">]</span>,</span>
+<span>  top.annotation.ids <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="va">meta</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"Z-score"</span>,</span>
+<span>  show.column.names <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">meta</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="fl">20</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="post-differential-expression-pca">Post-differential expression PCA<a class="anchor" aria-label="anchor" href="#post-differential-expression-pca"></a>
 </h4>
-<p>Firstly, we can create a PCA using only the DE genes or using the selected genes from the DE panel. You can also create the PCA on only the user-selected DE genes by deselecting the ‘Use all DE?’ option. As in the QC PCA plot, you can colour points by your chosen metadata columns and add/remove sample labels and group ellipses.</p>
+<p>Firstly, we can create a PCA using only the DE genes or using the
+selected genes from the DE panel. You can also create the PCA on only
+the user-selected DE genes by deselecting the ‘Use all DE?’ option. As
+in the QC PCA plot, you can colour points by your chosen metadata
+columns and add/remove sample labels and group ellipses.</p>
 <p><img src="figures/PCA_DE.png" width="80%"></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">genes_de</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">DEtable</span>, <span class="va">pvalAdj</span> <span class="op">&lt;</span> <span class="fl">0.05</span>, <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">log2FC</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span><span class="op">$</span><span class="va">gene_id</span>
-<span class="fu"><a href="../reference/plot_pca.html">plot_pca</a></span><span class="op">(</span>
-  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span><span class="op">[</span><span class="va">genes_de</span>, <span class="op">]</span>,
-  metadata <span class="op">=</span> <span class="va">meta</span>,
-  annotation.id <span class="op">=</span> <span class="fl">2</span>,
-  n.abundant <span class="op">=</span> <span class="cn">NULL</span>,
-  show.labels <span class="op">=</span> <span class="cn">TRUE</span>,
-  show.ellipses <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">genes_de</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">DEtable</span>, <span class="va">pvalAdj</span> <span class="op">&lt;</span> <span class="fl">0.05</span>, <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">log2FC</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span><span class="op">$</span><span class="va">gene_id</span></span>
+<span><span class="fu"><a href="../reference/plot_pca.html">plot_pca</a></span><span class="op">(</span></span>
+<span>  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span><span class="op">[</span><span class="va">genes_de</span>, <span class="op">]</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="va">meta</span>,</span>
+<span>  annotation.id <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  n.abundant <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show.labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show.ellipses <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
 <h3 id="enrichment">Enrichment<a class="anchor" aria-label="anchor" href="#enrichment"></a>
 </h3>
-<p>The enrichment tab uses the differentially expressed genes to run an enrichment analysis using g:profiler with a user selected output of the standard GO terms, the KEGG and reactome pathway databases, and miRNA and transcription factor lists. The plot shows the log10 BH-corrected p-value for each term, separated by category. The background set used is all the genes in the expression matrix - if noisyR preprocessing is used then this will be all the genes above the s/n threshold.</p>
-<p>The output is both the results table from g:profiler which can be downloaded as well as a jitter plot which can be clicked to identify the most significant terms.</p>
+<p>The enrichment tab uses the differentially expressed genes to run an
+enrichment analysis using g:profiler with a user selected output of the
+standard GO terms, the KEGG and reactome pathway databases, and miRNA
+and transcription factor lists. The plot shows the log10 BH-corrected
+p-value for each term, separated by category. The background set used is
+all the genes in the expression matrix - if noisyR preprocessing is used
+then this will be all the genes above the s/n threshold.</p>
+<p>The output is both the results table from g:profiler which can be
+downloaded as well as a jitter plot which can be clicked to identify the
+most significant terms.</p>
 <p><img src="figures/Enrichment.png" width="80%"></p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">gostres</span> <span class="op">&lt;-</span> <span class="fu">gprofiler2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gprofiler2/man/gost.html" class="external-link">gost</a></span><span class="op">(</span>
-  query <span class="op">=</span> <span class="va">genes_de</span>,
-  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,
-  correction_method <span class="op">=</span> <span class="st">'fdr'</span>,
-  custom_bg <span class="op">=</span> <span class="va">DEtable</span><span class="op">$</span><span class="va">gene_id</span>,
-  evcodes <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span>
-<span class="va">gostres</span><span class="op">$</span><span class="va">result</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>
-  <span class="va">gostres</span><span class="op">$</span><span class="va">result</span>,
-  parents <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">parents</span>, <span class="va">toString</span><span class="op">)</span>,
-  intersection_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">intersection</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span>
-    <span class="va">ensids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">x</span>, split <span class="op">=</span> <span class="st">","</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
-    <span class="va">names</span> <span class="op">&lt;-</span> <span class="va">DEtable</span><span class="op">$</span><span class="va">gene_name</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">ensids</span>, <span class="va">DEtable</span><span class="op">$</span><span class="va">gene_id</span><span class="op">)</span><span class="op">]</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">names</span>, collapse <span class="op">=</span> <span class="st">","</span><span class="op">)</span>
-  <span class="op">}</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">gostres</span> <span class="op">&lt;-</span> <span class="fu">gprofiler2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gprofiler2/man/gost.html" class="external-link">gost</a></span><span class="op">(</span></span>
+<span>  query <span class="op">=</span> <span class="va">genes_de</span>,</span>
+<span>  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,</span>
+<span>  correction_method <span class="op">=</span> <span class="st">'fdr'</span>,</span>
+<span>  custom_bg <span class="op">=</span> <span class="va">DEtable</span><span class="op">$</span><span class="va">gene_id</span>,</span>
+<span>  evcodes <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">gostres</span><span class="op">$</span><span class="va">result</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>  <span class="va">gostres</span><span class="op">$</span><span class="va">result</span>,</span>
+<span>  parents <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">parents</span>, <span class="va">toString</span><span class="op">)</span>,</span>
+<span>  intersection_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">intersection</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="va">ensids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">x</span>, split <span class="op">=</span> <span class="st">","</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<span>    <span class="va">names</span> <span class="op">&lt;-</span> <span class="va">DEtable</span><span class="op">$</span><span class="va">gene_name</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">ensids</span>, <span class="va">DEtable</span><span class="op">$</span><span class="va">gene_id</span><span class="op">)</span><span class="op">]</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">names</span>, collapse <span class="op">=</span> <span class="st">","</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="expression-patterns">Expression patterns<a class="anchor" aria-label="anchor" href="#expression-patterns"></a>
 </h3>
-<p>The expression pattern tab allows the creation of expression patterns to identify potential genes of interest across a variety of conditions. The most common application of this is a time series, but it could be suitable for another logical progression between conditions. To define the series, the user must select a column of the metadata and drag states into the “Series of states to use” area.</p>
-<p>The pattern identification is done by calculating a confidence interval for each gene in each condition, using all samples in that condition and the number of standard deviations away from the mean provided. The pattern between two consecutive conditions is defined as straight (S) if the intervals overlap and up (U) or down (D) if they don’t. The full expression pattern is the concatenation of individual patterns (for example, “UUS” for 4 conditions).</p>
-<p>The grouped expression matrix can then be downloaded, showing which pattern each gene was assigned to. Plots are also created for the genes in the selected pattern (“Pattern to plot”).</p>
+<p>The expression pattern tab allows the creation of expression patterns
+to identify potential genes of interest across a variety of conditions.
+The most common application of this is a time series, but it could be
+suitable for another logical progression between conditions. To define
+the series, the user must select a column of the metadata and drag
+states into the “Series of states to use” area.</p>
+<p>The pattern identification is done by calculating a confidence
+interval for each gene in each condition, using all samples in that
+condition and the number of standard deviations away from the mean
+provided. The pattern between two consecutive conditions is defined as
+straight (S) if the intervals overlap and up (U) or down (D) if they
+don’t. The full expression pattern is the concatenation of individual
+patterns (for example, “UUS” for 4 conditions).</p>
+<p>The grouped expression matrix can then be downloaded, showing which
+pattern each gene was assigned to. Plots are also created for the genes
+in the selected pattern (“Pattern to plot”).</p>
 <p><img src="figures/ExpressionPatterns.png" width="30%"></p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">condition</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">meta</span><span class="op">$</span><span class="va">timepoint</span><span class="op">)</span>
-<span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_condition_mean_sd_per_gene.html">calculate_condition_mean_sd_per_gene</a></span><span class="op">(</span><span class="va">exp.proc</span>, <span class="va">condition</span><span class="op">)</span>
-<span class="va">patterns</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_pattern_matrix.html">make_pattern_matrix</a></span><span class="op">(</span><span class="va">tbl</span>, n_sd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">[</span>, <span class="st">"pattern"</span><span class="op">]</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">condition</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">meta</span><span class="op">$</span><span class="va">timepoint</span><span class="op">)</span></span>
+<span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_condition_mean_sd_per_gene.html">calculate_condition_mean_sd_per_gene</a></span><span class="op">(</span><span class="va">exp.proc</span>, <span class="va">condition</span><span class="op">)</span></span>
+<span><span class="va">patterns</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_pattern_matrix.html">make_pattern_matrix</a></span><span class="op">(</span><span class="va">tbl</span>, n_sd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">[</span>, <span class="st">"pattern"</span><span class="op">]</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="pattern-line-plot">Pattern line plot<a class="anchor" aria-label="anchor" href="#pattern-line-plot"></a>
 </h4>
-<p>A line plot is shown with the mean expression of the genes assigned to the chosen pattern in each condition. The expression values are mean-scaled by default. A legend is shown if less than 10 genes are present.</p>
+<p>A line plot is shown with the mean expression of the genes assigned
+to the chosen pattern in each condition. The expression values are
+mean-scaled by default. A legend is shown if less than 10 genes are
+present.</p>
 <p><img src="figures/ExpressionPatternsLinePlot.png" width="80%"></p>
 </div>
 <div class="section level4">
 <h4 id="pattern-expression-heatmap">Pattern expression heatmap<a class="anchor" aria-label="anchor" href="#pattern-expression-heatmap"></a>
 </h4>
-<p>A heatmap is shown with the mean expression of the genes assigned to the chosen pattern in each condition. The expression values are z-score transformed by default. Gene names are shown if less than 50 genes are present.</p>
+<p>A heatmap is shown with the mean expression of the genes assigned to
+the chosen pattern in each condition. The expression values are z-score
+transformed by default. Gene names are shown if less than 50 genes are
+present.</p>
 <p><img src="figures/ExpressionPatternsHeatmap.png" width="80%"></p>
 </div>
 </div>
 <div class="section level3">
 <h3 id="cross-plots">Cross plots<a class="anchor" aria-label="anchor" href="#cross-plots"></a>
 </h3>
-<p>The cross plot tab allows you to compare two differential expression analyses against each other, for example two comparisons of interest or the same comparison using edgeR and DESeq2. The plot shows the log2 fold change of the two differential expression calls on each axis. Genes which are DE in both comparisons are coloured purple, in comparison 1 but not comparison 2 in blue and in comparison 2 but not comparison 1 in red. You can label selected genes and click on genes on the plot itself to gain more information and generate hypotheses.</p>
+<p>The cross plot tab allows you to compare two differential expression
+analyses against each other, for example two comparisons of interest or
+the same comparison using edgeR and DESeq2. The plot shows the log2 fold
+change of the two differential expression calls on each axis. Genes
+which are DE in both comparisons are coloured purple, in comparison 1
+but not comparison 2 in blue and in comparison 2 but not comparison 1 in
+red. You can label selected genes and click on genes on the plot itself
+to gain more information and generate hypotheses.</p>
 <p><img src="figures/CrossPlot.png" width="80%"></p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/cross_plot.html">cross_plot</a></span><span class="op">(</span>
-  DEtable1 <span class="op">=</span> <span class="va">DEtable</span>,
-  DEtable2 <span class="op">=</span> <span class="va">DEtable_deseq</span>,
-  DEtable1Subset <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">DEtable</span>, <span class="va">pvalAdj</span> <span class="op">&lt;</span> <span class="fl">0.05</span>, <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">log2FC</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span>,
-  DEtable2Subset <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">DEtable_deseq</span>, <span class="va">pvalAdj</span> <span class="op">&lt;</span> <span class="fl">0.05</span>, <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">log2FC</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span>,
-  lfc.threshold <span class="op">=</span> <span class="fl">1</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cross_plot.html">cross_plot</a></span><span class="op">(</span></span>
+<span>  DEtable1 <span class="op">=</span> <span class="va">DEtable</span>,</span>
+<span>  DEtable2 <span class="op">=</span> <span class="va">DEtable_deseq</span>,</span>
+<span>  DEtable1Subset <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">DEtable</span>, <span class="va">pvalAdj</span> <span class="op">&lt;</span> <span class="fl">0.05</span>, <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">log2FC</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  DEtable2Subset <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">DEtable_deseq</span>, <span class="va">pvalAdj</span> <span class="op">&lt;</span> <span class="fl">0.05</span>, <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">log2FC</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  lfc.threshold <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="gene-regulatory-networks-grn">Gene regulatory networks (GRN)<a class="anchor" aria-label="anchor" href="#gene-regulatory-networks-grn"></a>
 </h3>
-<p><em>bulkAnalyseR</em> enables the creation of small gene regulatory networks (GRNs) to facilitate further exploration and hypothesis generation based on genes of interest. Target genes can be selected and a small network with them as targets can be generated by clicking the “Start GRN inference” button. Within a <em>bulkAnalyseR</em> app, there are 2 separate tabs where inferred GRNs can be calculated and examined. Firstly, in GRN inference, up to four different GRNs can be inferred at once, to investigate differences between experimental conditions. If more than one GRN is generated, regulators in common are coloured differently and an UpSet plot is shown, summarising the commonalities of edges between the networks. Secondly, in the DE &amp; enrichment GRN tab, a GRN can be inferred using only differentially expressed genes (using the comparison selected in the DE tab) and additional information relating these genes to transcription factors and/or miRNAs using results from the enrichment tab can be appended to the resulting network. In both cases, the number of regulators can then be adjusted and the network plots downloaded in interactive html format. Note that target genes can also regulate each other if the selected genes are functionally similar.</p>
+<p><em>bulkAnalyseR</em> enables the creation of small gene regulatory
+networks (GRNs) to facilitate further exploration and hypothesis
+generation based on genes of interest. Target genes can be selected and
+a small network with them as targets can be generated by clicking the
+“Start GRN inference” button. Within a <em>bulkAnalyseR</em> app, there
+are 2 separate tabs where inferred GRNs can be calculated and examined.
+Firstly, in GRN inference, up to four different GRNs can be inferred at
+once, to investigate differences between experimental conditions. If
+more than one GRN is generated, regulators in common are coloured
+differently and an UpSet plot is shown, summarising the commonalities of
+edges between the networks. Secondly, in the DE &amp; enrichment GRN
+tab, a GRN can be inferred using only differentially expressed genes
+(using the comparison selected in the DE tab) and additional information
+relating these genes to transcription factors and/or miRNAs using
+results from the enrichment tab can be appended to the resulting
+network. In both cases, the number of regulators can then be adjusted
+and the network plots downloaded in interactive html format. Note that
+target genes can also regulate each other if the selected genes are
+functionally similar.</p>
 <p><img src="figures/GRN.png" width="80%"></p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/infer_GRN.html">infer_GRN</a></span><span class="op">(</span>
-  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span>, 
-  metadata <span class="op">=</span> <span class="va">meta</span>, 
-  anno <span class="op">=</span> <span class="va">anno</span>,
-  seed <span class="op">=</span> <span class="fl">13</span>,
-  targets <span class="op">=</span> <span class="st">"Trpm1"</span>, 
-  condition <span class="op">=</span> <span class="st">"timepoint"</span>, 
-  samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"0h"</span>, <span class="st">"12h"</span><span class="op">)</span>, 
-  inference_method <span class="op">=</span> <span class="st">"GENIE3"</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/infer_GRN.html">infer_GRN</a></span><span class="op">(</span></span>
+<span>  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span>, </span>
+<span>  metadata <span class="op">=</span> <span class="va">meta</span>, </span>
+<span>  anno <span class="op">=</span> <span class="va">anno</span>,</span>
+<span>  seed <span class="op">=</span> <span class="fl">13</span>,</span>
+<span>  targets <span class="op">=</span> <span class="st">"Trpm1"</span>, </span>
+<span>  condition <span class="op">=</span> <span class="st">"timepoint"</span>, </span>
+<span>  samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"0h"</span>, <span class="st">"12h"</span><span class="op">)</span>, </span>
+<span>  inference_method <span class="op">=</span> <span class="st">"GENIE3"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="adding-extra-panels">Adding extra panels<a class="anchor" aria-label="anchor" href="#adding-extra-panels"></a>
 </h3>
-<p>Alongside the default panels, you can also define your own panels and add them to the app. As an example, we could add an extra QC panel (in this case it will be exactly the same). Note that extra panels appear at the top level, and all parameters are converted to lists by <strong>generateShinyApp</strong> and thus need to be supplied as such. It might be useful to explore the app.R file generated by the command below to understand the structure:</p>
+<p>Alongside the default panels, you can also define your own panels and
+add them to the app. As an example, we could add an extra QC panel (in
+this case it will be exactly the same). Note that extra panels appear at
+the top level, and all parameters are converted to lists by
+<strong>generateShinyApp</strong> and thus need to be supplied as such.
+It might be useful to explore the app.R file generated by the command
+below to understand the structure:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span>
-  shiny.dir <span class="op">=</span> <span class="st">"shiny_Yang2019_ExtraQC"</span>,
-  app.title <span class="op">=</span> <span class="st">"Shiny app for visualisation of three timepoints from the Yang 2019 data - extra QC"</span>,
-  modality <span class="op">=</span> <span class="st">"RNA"</span>,
-  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span>,
-  metadata <span class="op">=</span> <span class="va">meta</span>,
-  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,
-  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span>,
-  panels.extra <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>
-    name <span class="op">=</span> <span class="st">"RNA2"</span>,
-    UIfun <span class="op">=</span> <span class="st">"modalityPanelUI"</span>, 
-    UIvars <span class="op">=</span> <span class="st">"'RNA2', metadata[[1]], NA, 'QC'"</span>, 
-    serverFun <span class="op">=</span> <span class="st">"modalityPanelServer"</span>, 
-    serverVars <span class="op">=</span> <span class="st">"'RNA2', expression.matrix[[1]], metadata[[1]], anno[[1]], NA, 'QC'"</span>
-  <span class="op">)</span>
-<span class="op">)</span></code></pre></div>
-<p>If you need to add extra data or package imports for the extra panel(s) then you can do this using the <em>data.extra</em> and <em>packages.extra</em> parameters. Make sure you have the extra data loaded when you create the app. Note that the data.exta object will be available in the app as a single list. For example:</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span></span>
+<span>  shiny.dir <span class="op">=</span> <span class="st">"shiny_Yang2019_ExtraQC"</span>,</span>
+<span>  app.title <span class="op">=</span> <span class="st">"Shiny app for visualisation of three timepoints from the Yang 2019 data - extra QC"</span>,</span>
+<span>  modality <span class="op">=</span> <span class="st">"RNA"</span>,</span>
+<span>  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="va">meta</span>,</span>
+<span>  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,</span>
+<span>  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span>,</span>
+<span>  panels.extra <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
+<span>    name <span class="op">=</span> <span class="st">"RNA2"</span>,</span>
+<span>    UIfun <span class="op">=</span> <span class="st">"modalityPanelUI"</span>, </span>
+<span>    UIvars <span class="op">=</span> <span class="st">"'RNA2', metadata[[1]], NA, 'QC'"</span>, </span>
+<span>    serverFun <span class="op">=</span> <span class="st">"modalityPanelServer"</span>, </span>
+<span>    serverVars <span class="op">=</span> <span class="st">"'RNA2', expression.matrix[[1]], metadata[[1]], anno[[1]], NA, 'QC'"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>If you need to add extra data or package imports for the extra
+panel(s) then you can do this using the <em>data.extra</em> and
+<em>packages.extra</em> parameters. Make sure you have the extra data
+loaded when you create the app. Note that the data.exta object will be
+available in the app as a single list. For example:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">extra.data1</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">36</span><span class="op">)</span>,nrow<span class="op">=</span><span class="fl">6</span><span class="op">)</span>
-<span class="va">extra.data2</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">60</span><span class="op">)</span>,nrow<span class="op">=</span><span class="fl">10</span><span class="op">)</span>
-
-<span class="fu"><a href="../reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span>
-  shiny.dir <span class="op">=</span> <span class="st">"shiny_Yang2019_ExtraQC"</span>,
-  app.title <span class="op">=</span> <span class="st">"Shiny app for visualisation of three timepoints from the Yang 2019 data - extra QC"</span>,
-  modality <span class="op">=</span> <span class="st">"RNA"</span>,
-  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span>,
-  metadata <span class="op">=</span> <span class="va">meta</span>,
-  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,
-  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span>,
-  panels.extra <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>
-    name <span class="op">=</span> <span class="st">"RNA2"</span>,
-    UIfun <span class="op">=</span> <span class="st">"modalityPanelUI"</span>, 
-    UIvars <span class="op">=</span> <span class="st">"'RNA2', metadata[[1]], NA, 'QC'"</span>, 
-    serverFun <span class="op">=</span> <span class="st">"modalityPanelServer"</span>, 
-    serverVars <span class="op">=</span> <span class="st">"'RNA2', expression.matrix[[1]], metadata[[1]], anno[[1]], NA, 'QC'"</span>
-  <span class="op">)</span>,
-  data.extra <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">extra.data1</span>, <span class="va">extra.data2</span><span class="op">)</span>,
-  packages.extra <span class="op">=</span> <span class="st">"somePackage"</span>,
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">extra.data1</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">36</span><span class="op">)</span>,nrow<span class="op">=</span><span class="fl">6</span><span class="op">)</span></span>
+<span><span class="va">extra.data2</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">60</span><span class="op">)</span>,nrow<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/generateShinyApp.html">generateShinyApp</a></span><span class="op">(</span></span>
+<span>  shiny.dir <span class="op">=</span> <span class="st">"shiny_Yang2019_ExtraQC"</span>,</span>
+<span>  app.title <span class="op">=</span> <span class="st">"Shiny app for visualisation of three timepoints from the Yang 2019 data - extra QC"</span>,</span>
+<span>  modality <span class="op">=</span> <span class="st">"RNA"</span>,</span>
+<span>  expression.matrix <span class="op">=</span> <span class="va">exp.proc</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="va">meta</span>,</span>
+<span>  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,</span>
+<span>  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span>,</span>
+<span>  panels.extra <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
+<span>    name <span class="op">=</span> <span class="st">"RNA2"</span>,</span>
+<span>    UIfun <span class="op">=</span> <span class="st">"modalityPanelUI"</span>, </span>
+<span>    UIvars <span class="op">=</span> <span class="st">"'RNA2', metadata[[1]], NA, 'QC'"</span>, </span>
+<span>    serverFun <span class="op">=</span> <span class="st">"modalityPanelServer"</span>, </span>
+<span>    serverVars <span class="op">=</span> <span class="st">"'RNA2', expression.matrix[[1]], metadata[[1]], anno[[1]], NA, 'QC'"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  data.extra <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">extra.data1</span>, <span class="va">extra.data2</span><span class="op">)</span>,</span>
+<span>  packages.extra <span class="op">=</span> <span class="st">"somePackage"</span>,</span>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">##&gt; R version 4.1.1 (2021-08-10)</span>
-<span class="co">##&gt; Platform: x86_64-w64-mingw32/x64 (64-bit)</span>
-<span class="co">##&gt; Running under: Windows 10 x64 (build 19042)</span>
-<span class="co">##&gt; </span>
-<span class="co">##&gt; Matrix products: default</span>
-<span class="co">##&gt; </span>
-<span class="co">##&gt; locale:</span>
-<span class="co">##&gt; [1] LC_COLLATE=English_United Kingdom.1252 </span>
-<span class="co">##&gt; [2] LC_CTYPE=English_United Kingdom.1252   </span>
-<span class="co">##&gt; [3] LC_MONETARY=English_United Kingdom.1252</span>
-<span class="co">##&gt; [4] LC_NUMERIC=C                           </span>
-<span class="co">##&gt; [5] LC_TIME=English_United Kingdom.1252    </span>
-<span class="co">##&gt; </span>
-<span class="co">##&gt; attached base packages:</span>
-<span class="co">##&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
-<span class="co">##&gt; </span>
-<span class="co">##&gt; other attached packages:</span>
-<span class="co">##&gt; [1] ggplot2_3.3.5      dplyr_1.0.8        bulkAnalyseR_0.1.1</span>
-<span class="co">##&gt; </span>
-<span class="co">##&gt; loaded via a namespace (and not attached):</span>
-<span class="co">##&gt;  [1] Rcpp_1.0.8            lattice_0.20-44       assertthat_0.2.1     </span>
-<span class="co">##&gt;  [4] rprojroot_2.0.2       digest_0.6.29         foreach_1.5.2        </span>
-<span class="co">##&gt;  [7] utf8_1.2.2            mime_0.12             R6_2.5.1             </span>
-<span class="co">##&gt; [10] evaluate_0.15         highr_0.9             pillar_1.7.0         </span>
-<span class="co">##&gt; [13] rlang_1.0.1           rstudioapi_0.13       jquerylib_0.1.4      </span>
-<span class="co">##&gt; [16] Matrix_1.3-4          preprocessCore_1.54.0 rmarkdown_2.11       </span>
-<span class="co">##&gt; [19] pkgdown_2.0.2         labeling_0.4.2        textshaping_0.3.6    </span>
-<span class="co">##&gt; [22] desc_1.4.0            splines_4.1.1         stringr_1.4.0        </span>
-<span class="co">##&gt; [25] munsell_0.5.0         philentropy_0.5.0     shiny_1.7.1          </span>
-<span class="co">##&gt; [28] compiler_4.1.1        httpuv_1.6.3          xfun_0.29            </span>
-<span class="co">##&gt; [31] pkgconfig_2.0.3       systemfonts_1.0.3     mgcv_1.8-36          </span>
-<span class="co">##&gt; [34] htmltools_0.5.2       tidyselect_1.1.2      tibble_3.1.6         </span>
-<span class="co">##&gt; [37] codetools_0.2-18      fansi_1.0.2           crayon_1.5.0         </span>
-<span class="co">##&gt; [40] withr_2.4.3           later_1.3.0           noisyr_1.0.0         </span>
-<span class="co">##&gt; [43] grid_4.1.1            nlme_3.1-152          jsonlite_1.8.0       </span>
-<span class="co">##&gt; [46] xtable_1.8-4          gtable_0.3.0          lifecycle_1.0.1      </span>
-<span class="co">##&gt; [49] DBI_1.1.2             magrittr_2.0.2        scales_1.1.1         </span>
-<span class="co">##&gt; [52] cli_3.2.0             stringi_1.7.6         cachem_1.0.6         </span>
-<span class="co">##&gt; [55] farver_2.1.0          fs_1.5.0              promises_1.2.0.1     </span>
-<span class="co">##&gt; [58] bslib_0.3.1           ellipsis_0.3.2        ragg_1.2.0           </span>
-<span class="co">##&gt; [61] generics_0.1.2        vctrs_0.3.8           iterators_1.0.14     </span>
-<span class="co">##&gt; [64] tools_4.1.1           glue_1.6.2            purrr_0.3.4          </span>
-<span class="co">##&gt; [67] fastmap_1.1.0         yaml_2.3.5            colorspace_2.0-3     </span>
-<span class="co">##&gt; [70] memoise_2.0.1         knitr_1.37            sass_0.4.0</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">##&gt; R version 4.1.1 (2021-08-10)</span></span>
+<span><span class="co">##&gt; Platform: x86_64-w64-mingw32/x64 (64-bit)</span></span>
+<span><span class="co">##&gt; Running under: Windows 10 x64 (build 22000)</span></span>
+<span><span class="co">##&gt; </span></span>
+<span><span class="co">##&gt; Matrix products: default</span></span>
+<span><span class="co">##&gt; </span></span>
+<span><span class="co">##&gt; locale:</span></span>
+<span><span class="co">##&gt; [1] LC_COLLATE=English_United Kingdom.1252 </span></span>
+<span><span class="co">##&gt; [2] LC_CTYPE=English_United Kingdom.1252   </span></span>
+<span><span class="co">##&gt; [3] LC_MONETARY=English_United Kingdom.1252</span></span>
+<span><span class="co">##&gt; [4] LC_NUMERIC=C                           </span></span>
+<span><span class="co">##&gt; [5] LC_TIME=English_United Kingdom.1252    </span></span>
+<span><span class="co">##&gt; </span></span>
+<span><span class="co">##&gt; attached base packages:</span></span>
+<span><span class="co">##&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
+<span><span class="co">##&gt; </span></span>
+<span><span class="co">##&gt; other attached packages:</span></span>
+<span><span class="co">##&gt; [1] ggplot2_3.3.5      dplyr_1.0.8        bulkAnalyseR_1.0.0</span></span>
+<span><span class="co">##&gt; </span></span>
+<span><span class="co">##&gt; loaded via a namespace (and not attached):</span></span>
+<span><span class="co">##&gt;  [1] Rcpp_1.0.8.3          lattice_0.20-44       assertthat_0.2.1     </span></span>
+<span><span class="co">##&gt;  [4] rprojroot_2.0.3       digest_0.6.29         foreach_1.5.2        </span></span>
+<span><span class="co">##&gt;  [7] utf8_1.2.2            mime_0.12             R6_2.5.1             </span></span>
+<span><span class="co">##&gt; [10] evaluate_0.16         highr_0.9             pillar_1.8.1         </span></span>
+<span><span class="co">##&gt; [13] rlang_1.0.6           rstudioapi_0.14       jquerylib_0.1.4      </span></span>
+<span><span class="co">##&gt; [16] Matrix_1.5-1          preprocessCore_1.54.0 rmarkdown_2.16       </span></span>
+<span><span class="co">##&gt; [19] pkgdown_2.0.6         labeling_0.4.2        textshaping_0.3.6    </span></span>
+<span><span class="co">##&gt; [22] desc_1.4.2            splines_4.1.1         stringr_1.4.1        </span></span>
+<span><span class="co">##&gt; [25] munsell_0.5.0         philentropy_0.6.0     shiny_1.7.1          </span></span>
+<span><span class="co">##&gt; [28] compiler_4.1.1        httpuv_1.6.3          xfun_0.29            </span></span>
+<span><span class="co">##&gt; [31] pkgconfig_2.0.3       systemfonts_1.0.4     mgcv_1.8-36          </span></span>
+<span><span class="co">##&gt; [34] htmltools_0.5.2       tidyselect_1.1.2      tibble_3.1.6         </span></span>
+<span><span class="co">##&gt; [37] codetools_0.2-18      fansi_1.0.2           withr_2.5.0          </span></span>
+<span><span class="co">##&gt; [40] later_1.3.0           noisyr_1.0.0          grid_4.1.1           </span></span>
+<span><span class="co">##&gt; [43] nlme_3.1-152          jsonlite_1.8.0        xtable_1.8-4         </span></span>
+<span><span class="co">##&gt; [46] gtable_0.3.1          lifecycle_1.0.2       DBI_1.1.3            </span></span>
+<span><span class="co">##&gt; [49] magrittr_2.0.2        scales_1.2.1          cli_3.4.1            </span></span>
+<span><span class="co">##&gt; [52] stringi_1.7.6         cachem_1.0.6          farver_2.1.0         </span></span>
+<span><span class="co">##&gt; [55] fs_1.5.2              promises_1.2.0.1      bslib_0.4.0          </span></span>
+<span><span class="co">##&gt; [58] ellipsis_0.3.2        ragg_1.2.2            generics_0.1.3       </span></span>
+<span><span class="co">##&gt; [61] vctrs_0.3.8           iterators_1.0.14      tools_4.1.1          </span></span>
+<span><span class="co">##&gt; [64] glue_1.6.2            purrr_0.3.4           fastmap_1.1.0        </span></span>
+<span><span class="co">##&gt; [67] yaml_2.3.5            colorspace_2.0-3      memoise_2.0.1        </span></span>
+<span><span class="co">##&gt; [70] knitr_1.40            sass_0.4.1</span></span></code></pre></div>
 </div>
 </div>
-  
-   <aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  <aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -654,7 +832,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
   <p class="preferably">Using <a href="https://preferably.amirmasoudabdol.name/?source=footer" class="external-link">preferably</a> template.</p>
 </div>
 

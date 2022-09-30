@@ -8,6 +8,8 @@
 #' @param mask whether to hide genes that were not called DE in either
 #' comparison; default is FALSE
 #' @param df Optionally, pre-computed cross plot table, from cross_plot_prep
+#' @param lfc.threshold the log2(fold-change)
+#' threshold to determine whether a gene is DE
 #' @param labnames,cols.chosen the legend labels and colours for the 4
 #' categories of genes ("not DE", "DE both", "DE comparison 1", "DE comparison 2")
 #' @param labels.per.region how many labels to show in each region of the plot;
@@ -73,6 +75,10 @@ cross_plot = function(
   seed = 0,
   label.force = 1
 ){
+  if(is.null(lfc.threshold)){
+    lfc.threshold <- min(abs(DEtable1Subset$log2FC), abs(DEtable2Subset$log2FC), na.rm = TRUE)
+  }
+  
   if (is.null(df)){
     df <- cross_plot_prep(
       DEtable1 = DEtable1,
@@ -140,6 +146,7 @@ cross_plot = function(
   }
   
   if(labels.per.region > 0){
+    colours <- NULL
     df.lab <- df %>%
       dplyr::mutate(
         dist = sqrt(lfc1 ^ 2 + lfc2 ^ 2),
@@ -174,16 +181,12 @@ cross_plot_prep <- function(
     DEtable2,
     DEtable1Subset,
     DEtable2Subset,
-    lfc.threshold = NULL,
-    mask = FALSE,
-    labnames = c("not DE", "DE both", "DE comparison 1", "DE comparison 2")
+    lfc.threshold,
+    mask,
+    labnames
 ){
   de1 <- DEtable1Subset$gene_id
   de2 <- DEtable2Subset$gene_id
-  
-  if(is.null(lfc.threshold)){
-    lfc.threshold <- min(abs(DEtable1Subset$log2FC), abs(DEtable2Subset$log2FC), na.rm = TRUE)
-  }
   
   if(mask){
     all.genes <- unique(c(de1, de2))

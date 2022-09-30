@@ -14,7 +14,7 @@ volcano_plot to add extra features."><!-- Inform modern browsers that this page 
       "<link id=\"css\" rel=\"stylesheet\" href=\"https://bootswatch.com/5/flatly/bootstrap.css\" onload=\"document.documentElement.style.display = ''\">"
     );
   }
-</script><title>Create a volcano plot visualising differential expression (DE) results — volcano_plot • bulkAnalyseR</title><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Create a volcano plot visualising differential expression (DE) results — volcano_plot"><meta property="og:description" content="This function creates a volcano plot to visualise the results
+</script><title>Create a volcano plot visualising differential expression (DE) results — volcano_plot • bulkAnalyseR</title><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Create a volcano plot visualising differential expression (DE) results — volcano_plot"><meta property="og:description" content="This function creates a volcano plot to visualise the results
 of a DE analysis.
 volcano_enhance is called indirectly by
 volcano_plot to add extra features."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -28,7 +28,7 @@ volcano_plot to add extra features."><!-- mathjax --><script src="https://cdnjs.
     
     <a class="navbar-brand me-2" href="../index.html">bulkAnalyseR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,6 +45,7 @@ volcano_plot to add extra features."><!-- mathjax --><script src="https://cdnjs.
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/GEO_App.html">A beginner's guide to creating a bulkAnalyseR app from a GEO dataset</a>
     <a class="dropdown-item" href="../articles/IntegratingMultiomics.html">bulkAnalyseR: Integrating multi-omics or external data</a>
   </div>
 </li>
@@ -88,45 +89,45 @@ of a DE analysis.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">volcano_plot</span><span class="op">(</span>
-  <span class="va">genes.de.results</span>,
-  pval.threshold <span class="op">=</span> <span class="fl">0.05</span>,
-  lfc.threshold <span class="op">=</span> <span class="fl">1</span>,
-  alpha <span class="op">=</span> <span class="fl">0.1</span>,
-  xlims <span class="op">=</span> <span class="cn">NULL</span>,
-  log10pval.cap <span class="op">=</span> <span class="cn">TRUE</span>,
-  add.colours <span class="op">=</span> <span class="cn">TRUE</span>,
-  add.expression.colour.gradient <span class="op">=</span> <span class="cn">TRUE</span>,
-  add.guide.lines <span class="op">=</span> <span class="cn">TRUE</span>,
-  add.labels.auto <span class="op">=</span> <span class="cn">TRUE</span>,
-  add.labels.custom <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="fu">volcano_enhance</span><span class="op">(</span>
-  <span class="va">vp</span>,
-  <span class="va">df</span>,
-  <span class="va">pval.threshold</span>,
-  <span class="va">lfc.threshold</span>,
-  <span class="va">alpha</span>,
-  <span class="va">add.colours</span>,
-  point.colours <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#bfbfbf"</span>, <span class="st">"orange"</span>, <span class="st">"red"</span>, <span class="st">"blue"</span><span class="op">)</span>,
-  raster <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">add.expression.colour.gradient</span>,
-  colour.gradient.scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>left <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#99e6ff"</span>, <span class="st">"#000066"</span><span class="op">)</span>, right <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#99e6ff"</span>,
-    <span class="st">"#000066"</span><span class="op">)</span><span class="op">)</span>,
-  colour.gradient.breaks <span class="op">=</span> <span class="fu">waiver</span><span class="op">(</span><span class="op">)</span>,
-  colour.gradient.limits <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">add.guide.lines</span>,
-  guide.line.colours <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"green"</span>, <span class="st">"blue"</span><span class="op">)</span>,
-  <span class="va">add.labels.auto</span>,
-  <span class="va">add.labels.custom</span>,
-  annotation <span class="op">=</span> <span class="cn">NULL</span>,
-  n.labels.auto <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span>,
-  genes.to.label <span class="op">=</span> <span class="cn">NULL</span>,
-  seed <span class="op">=</span> <span class="fl">0</span>,
-  label.force <span class="op">=</span> <span class="fl">1</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">volcano_plot</span><span class="op">(</span></span>
+<span>  <span class="va">genes.de.results</span>,</span>
+<span>  pval.threshold <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  lfc.threshold <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  alpha <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  xlims <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  log10pval.cap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  add.colours <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  add.expression.colour.gradient <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  add.guide.lines <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  add.labels.auto <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  add.labels.custom <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">volcano_enhance</span><span class="op">(</span></span>
+<span>  <span class="va">vp</span>,</span>
+<span>  <span class="va">df</span>,</span>
+<span>  <span class="va">pval.threshold</span>,</span>
+<span>  <span class="va">lfc.threshold</span>,</span>
+<span>  <span class="va">alpha</span>,</span>
+<span>  <span class="va">add.colours</span>,</span>
+<span>  point.colours <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#bfbfbf"</span>, <span class="st">"orange"</span>, <span class="st">"red"</span>, <span class="st">"blue"</span><span class="op">)</span>,</span>
+<span>  raster <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">add.expression.colour.gradient</span>,</span>
+<span>  colour.gradient.scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>left <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#99e6ff"</span>, <span class="st">"#000066"</span><span class="op">)</span>, right <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#99e6ff"</span>,</span>
+<span>    <span class="st">"#000066"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  colour.gradient.breaks <span class="op">=</span> <span class="fu">waiver</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  colour.gradient.limits <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">add.guide.lines</span>,</span>
+<span>  guide.line.colours <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"green"</span>, <span class="st">"blue"</span><span class="op">)</span>,</span>
+<span>  <span class="va">add.labels.auto</span>,</span>
+<span>  <span class="va">add.labels.custom</span>,</span>
+<span>  annotation <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  n.labels.auto <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span>,</span>
+<span>  genes.to.label <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  seed <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  label.force <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -134,116 +135,165 @@ of a DE analysis.</p>
     <dl><dt>genes.de.results</dt>
 <dd><p>the table of DE genes, usually generated by
 <code><a href="DEanalysis.html">DEanalysis_edger</a></code></p></dd>
+
+
 <dt>pval.threshold, lfc.threshold</dt>
 <dd><p>the p-value and/or log2(fold-change)
 thresholds to determine whether a gene is DE</p></dd>
+
+
 <dt>alpha</dt>
 <dd><p>the transparency of points; ignored for DE genes if
 add.expression.colour.gradient is TRUE; default is 0.1</p></dd>
+
+
 <dt>xlims</dt>
 <dd><p>a single value to create (symmetric) x-axis limits; by default
 inferred from the data</p></dd>
+
+
 <dt>log10pval.cap</dt>
 <dd><p>whether to cap the log10(p-value at -10); any p-values
 lower that 10^(-10) are set to the cap for plotting</p></dd>
+
+
 <dt>add.colours</dt>
 <dd><p>whether to colour genes based on their log2(fold-change)
 and -log10(p-value); default is TRUE</p></dd>
+
+
 <dt>add.expression.colour.gradient</dt>
 <dd><p>whether to add a colour gradient
 for DE genes to present their log2(expression); default is TRUE</p></dd>
+
+
 <dt>add.guide.lines</dt>
 <dd><p>whether to add vertical and horizontal guide lines
 to the plot to highlight the thresholds; default is TRUE</p></dd>
+
+
 <dt>add.labels.auto</dt>
 <dd><p>whether to automatically label genes with the
 highest |log2(fold-change)| and expression; default is TRUE</p></dd>
+
+
 <dt>add.labels.custom</dt>
 <dd><p>whether to add labels to user-specified genes;
 the parameter genes.to.label must also be specified; default is FALSE</p></dd>
+
+
 <dt>...</dt>
 <dd><p>parameters passed on to <code>volcano_enhance</code></p></dd>
+
+
 <dt>vp</dt>
 <dd><p>volcano plot as a ggplot object (usually passed by <code>volcano_plot</code>)</p></dd>
+
+
 <dt>df</dt>
 <dd><p>data frame of DE results for all genes (usually passed by
 <code>volcano_plot</code>)</p></dd>
+
+
 <dt>point.colours</dt>
 <dd><p>a vector of 4 colours to colour genes with both pval
 and lfc under thresholds, just pval under threshold, just lfc under threshold,
 both pval and lfc over threshold (DE genes) respectively; only used if
 add.colours is TRUE</p></dd>
+
+
 <dt>raster</dt>
 <dd><p>whether to rasterize non-DE genes with ggraster to reduce
 memory usage; particularly useful when saving plots to files</p></dd>
+
+
 <dt>colour.gradient.scale</dt>
 <dd><p>a vector of two colours to create a colour
 gradient for colouring the DE genes based on expression; a named list with
 components left and right can be supplied to use two different colour scales;
 only used if add.expression.colour.gradient is TRUE</p></dd>
+
+
 <dt>colour.gradient.breaks, colour.gradient.limits</dt>
 <dd><p>parameters to customise
 the legend of the colour gradient scale; especially useful if creating
 multiple plots or a plot with two scales;
 only used if add.expression.colour.gradient is TRUE</p></dd>
+
+
 <dt>guide.line.colours</dt>
 <dd><p>a vector with two colours to be used to colour
 the guide lines; the first colour is used for the p-value and log2(fold-change)
 thresholds and the second for double those values</p></dd>
+
+
 <dt>annotation</dt>
 <dd><p>annotation data frame containing a match between the gene
 field of df (usually ENSEMBL IDs) and the gene names that should be shown
 in the plot labels; not necessary if df already contains gene names</p></dd>
+
+
 <dt>n.labels.auto</dt>
 <dd><p>a integer vector of length 3 denoting the number of
 genes that should be automatically labelled; the first entry corresponds to
 DE genes with the lowest p-value, the second to those with highest absolute
 log2(fold-change) and the third to those with highest expression; a single
 integer can also be specified, to be used for all 3 entries; default is 5</p></dd>
+
+
 <dt>genes.to.label</dt>
 <dd><p>a vector of gene names to be labelled in the
 plot; if names are present those are shown as the labels (but the values are
 the ones matched - this is to allow custom gene names to be presented)</p></dd>
+
+
 <dt>seed</dt>
 <dd><p>the random seed to be used for reproducibility; only used for
 ggrepel::geom_label_repel if labels are present</p></dd>
+
+
 <dt>label.force</dt>
 <dd><p>passed to the force argument of ggrepel::geom_label_repel;
 higher values make labels overlap less (at the cost of them being further
 away from the points they are labelling)</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>The volcano plot as a ggplot object.
-The enhanced volcano plot as a ggplot object.</p>
+    
+
+<p>The volcano plot as a ggplot object.</p>
+
+
+<p>The enhanced volcano plot as a ggplot object.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">expression.matrix.preproc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span></span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"expression_matrix_preprocessed.csv"</span>, package <span class="op">=</span> <span class="st">"bulkAnalyseR"</span><span class="op">)</span>, </span>
-<span class="r-in">  row.names <span class="op">=</span> <span class="fl">1</span></span>
-<span class="r-in"><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">500</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">anno</span> <span class="op">&lt;-</span> <span class="fu">AnnotationDbi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html" class="external-link">select</a></span><span class="op">(</span></span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/ns-reflect.html" class="external-link">getExportedValue</a></span><span class="op">(</span><span class="st">'org.Mm.eg.db'</span>, <span class="st">'org.Mm.eg.db'</span><span class="op">)</span>,</span>
-<span class="r-in">  keys <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">expression.matrix.preproc</span><span class="op">)</span>,</span>
-<span class="r-in">  keytype <span class="op">=</span> <span class="st">'ENSEMBL'</span>,</span>
-<span class="r-in">  columns <span class="op">=</span> <span class="st">'SYMBOL'</span></span>
-<span class="r-in"><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">ENSEMBL</span>, .keep_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>NAME <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">SYMBOL</span><span class="op">)</span>, <span class="va">ENSEMBL</span>, <span class="va">SYMBOL</span><span class="op">)</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">expression.matrix.preproc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"expression_matrix_preprocessed.csv"</span>, package <span class="op">=</span> <span class="st">"bulkAnalyseR"</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>  row.names <span class="op">=</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">500</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">anno</span> <span class="op">&lt;-</span> <span class="fu">AnnotationDbi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html" class="external-link">select</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/ns-reflect.html" class="external-link">getExportedValue</a></span><span class="op">(</span><span class="st">'org.Mm.eg.db'</span>, <span class="st">'org.Mm.eg.db'</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  keys <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">expression.matrix.preproc</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  keytype <span class="op">=</span> <span class="st">'ENSEMBL'</span>,</span></span>
+<span class="r-in"><span>  columns <span class="op">=</span> <span class="st">'SYMBOL'</span></span></span>
+<span class="r-in"><span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">ENSEMBL</span>, .keep_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="pipe.html">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>NAME <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">SYMBOL</span><span class="op">)</span>, <span class="va">ENSEMBL</span>, <span class="va">SYMBOL</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 'select()' returned 1:many mapping between keys and columns</span>
-<span class="r-in">  </span>
-<span class="r-in"><span class="va">edger</span> <span class="op">&lt;-</span> <span class="fu"><a href="DEanalysis.html">DEanalysis_edger</a></span><span class="op">(</span></span>
-<span class="r-in">  expression.matrix <span class="op">=</span> <span class="va">expression.matrix.preproc</span>,</span>
-<span class="r-in">  condition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"0h"</span>, <span class="st">"12h"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
-<span class="r-in">  var1 <span class="op">=</span> <span class="st">"0h"</span>,</span>
-<span class="r-in">  var2 <span class="op">=</span> <span class="st">"12h"</span>,</span>
-<span class="r-in">  anno <span class="op">=</span> <span class="va">anno</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">vp</span> <span class="op">&lt;-</span> <span class="fu">volcano_plot</span><span class="op">(</span><span class="va">edger</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">vp</span><span class="op">)</span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span><span class="va">edger</span> <span class="op">&lt;-</span> <span class="fu"><a href="DEanalysis.html">DEanalysis_edger</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  expression.matrix <span class="op">=</span> <span class="va">expression.matrix.preproc</span>,</span></span>
+<span class="r-in"><span>  condition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"0h"</span>, <span class="st">"12h"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  var1 <span class="op">=</span> <span class="st">"0h"</span>,</span></span>
+<span class="r-in"><span>  var2 <span class="op">=</span> <span class="st">"12h"</span>,</span></span>
+<span class="r-in"><span>  anno <span class="op">=</span> <span class="va">anno</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">vp</span> <span class="op">&lt;-</span> <span class="fu">volcano_plot</span><span class="op">(</span><span class="va">edger</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">vp</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="volcano_plot-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
@@ -256,7 +306,7 @@ The enhanced volcano plot as a ggplot object.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
   <p class="preferably">Using <a href="https://preferably.amirmasoudabdol.name/?source=footer" class="external-link">preferably</a> template.</p>
 </div>
 

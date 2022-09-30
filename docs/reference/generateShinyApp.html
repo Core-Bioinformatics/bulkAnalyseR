@@ -16,7 +16,7 @@ preprocessExpressionMatrix before this function."><!-- Inform modern browsers th
       "<link id=\"css\" rel=\"stylesheet\" href=\"https://bootswatch.com/5/flatly/bootstrap.css\" onload=\"document.documentElement.style.display = ''\">"
     );
   }
-</script><title>Generate all files required for an autonomous shiny app — generateShinyApp • bulkAnalyseR</title><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Generate all files required for an autonomous shiny app — generateShinyApp"><meta property="og:description" content="This function creates an app.R file and all required objects
+</script><title>Generate all files required for an autonomous shiny app — generateShinyApp • bulkAnalyseR</title><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Generate all files required for an autonomous shiny app — generateShinyApp"><meta property="og:description" content="This function creates an app.R file and all required objects
 to run the app in .rda format in the target directory. A basic argument
 check is performed to avoid input data problems. The app directory
 is standalone and can be used on another platform, as long as bulkAnalyseR
@@ -32,7 +32,7 @@ preprocessExpressionMatrix before this function."><!-- mathjax --><script src="h
     
     <a class="navbar-brand me-2" href="../index.html">bulkAnalyseR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,6 +49,7 @@ preprocessExpressionMatrix before this function."><!-- mathjax --><script src="h
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/GEO_App.html">A beginner's guide to creating a bulkAnalyseR app from a GEO dataset</a>
     <a class="dropdown-item" href="../articles/IntegratingMultiomics.html">bulkAnalyseR: Integrating multi-omics or external data</a>
   </div>
 </li>
@@ -94,31 +95,31 @@ is installed there. It is recommended to run
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">generateShinyApp</span><span class="op">(</span>
-  shiny.dir <span class="op">=</span> <span class="st">"shiny_bulkAnalyseR"</span>,
-  app.title <span class="op">=</span> <span class="st">"Visualisation of RNA-Seq data"</span>,
-  theme <span class="op">=</span> <span class="st">"flatly"</span>,
-  modality <span class="op">=</span> <span class="st">"RNA"</span>,
-  <span class="va">expression.matrix</span>,
-  <span class="va">metadata</span>,
-  organism <span class="op">=</span> <span class="cn">NA</span>,
-  org.db <span class="op">=</span> <span class="cn">NA</span>,
-  panels.default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Landing"</span>, <span class="st">"SampleSelect"</span>, <span class="st">"QC"</span>, <span class="st">"GRN"</span>, <span class="st">"DE"</span>, <span class="st">"DEplot"</span>,
-    <span class="st">"DEsummary"</span>, <span class="st">"Enrichment"</span>, <span class="st">"GRNenrichment"</span>, <span class="st">"Cross"</span>, <span class="st">"Patterns"</span><span class="op">)</span>,
-  panels.extra <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>name <span class="op">=</span> <span class="cn">NULL</span>, UIfun <span class="op">=</span> <span class="cn">NULL</span>, UIvars <span class="op">=</span> <span class="cn">NULL</span>, serverFun <span class="op">=</span>
-    <span class="cn">NULL</span>, serverVars <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,
-  data.extra <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,
-  packages.extra <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,
-  cis.integration <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>reference.expression.matrix <span class="op">=</span> <span class="cn">NULL</span>, reference.org.db
-    <span class="op">=</span> <span class="cn">NULL</span>, reference.coord <span class="op">=</span> <span class="cn">NULL</span>, comparison.coord <span class="op">=</span> <span class="cn">NULL</span>, reference.table.name <span class="op">=</span> <span class="cn">NULL</span>,
-    comparison.table.name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,
-  trans.integration <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>reference.expression.matrix <span class="op">=</span> <span class="cn">NULL</span>,
-    reference.org.db <span class="op">=</span> <span class="cn">NULL</span>, comparison.expression.matrix <span class="op">=</span> <span class="cn">NULL</span>, comparison.org.db <span class="op">=</span>
-    <span class="cn">NULL</span>, reference.table.name <span class="op">=</span> <span class="cn">NULL</span>, comparison.table.name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,
-  custom.integration <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>reference.expression.matrix <span class="op">=</span> <span class="cn">NULL</span>,
-    reference.org.db <span class="op">=</span> <span class="cn">NULL</span>, comparison.table <span class="op">=</span> <span class="cn">NULL</span>, reference.table.name <span class="op">=</span> <span class="cn">NULL</span>,
-    comparison.table.name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">generateShinyApp</span><span class="op">(</span></span>
+<span>  shiny.dir <span class="op">=</span> <span class="st">"shiny_bulkAnalyseR"</span>,</span>
+<span>  app.title <span class="op">=</span> <span class="st">"Visualisation of RNA-Seq data"</span>,</span>
+<span>  theme <span class="op">=</span> <span class="st">"flatly"</span>,</span>
+<span>  modality <span class="op">=</span> <span class="st">"RNA"</span>,</span>
+<span>  <span class="va">expression.matrix</span>,</span>
+<span>  <span class="va">metadata</span>,</span>
+<span>  organism <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  org.db <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  panels.default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Landing"</span>, <span class="st">"SampleSelect"</span>, <span class="st">"QC"</span>, <span class="st">"GRN"</span>, <span class="st">"DE"</span>, <span class="st">"DEplot"</span>, <span class="st">"DEsummary"</span>,</span>
+<span>    <span class="st">"Enrichment"</span>, <span class="st">"GRNenrichment"</span>, <span class="st">"Cross"</span>, <span class="st">"Patterns"</span><span class="op">)</span>,</span>
+<span>  panels.extra <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>name <span class="op">=</span> <span class="cn">NULL</span>, UIfun <span class="op">=</span> <span class="cn">NULL</span>, UIvars <span class="op">=</span> <span class="cn">NULL</span>, serverFun <span class="op">=</span></span>
+<span>    <span class="cn">NULL</span>, serverVars <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,</span>
+<span>  data.extra <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  packages.extra <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  cis.integration <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>reference.expression.matrix <span class="op">=</span> <span class="cn">NULL</span>, reference.org.db <span class="op">=</span></span>
+<span>    <span class="cn">NULL</span>, reference.coord <span class="op">=</span> <span class="cn">NULL</span>, comparison.coord <span class="op">=</span> <span class="cn">NULL</span>, reference.table.name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    comparison.table.name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,</span>
+<span>  trans.integration <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>reference.expression.matrix <span class="op">=</span> <span class="cn">NULL</span>, reference.org.db</span>
+<span>    <span class="op">=</span> <span class="cn">NULL</span>, comparison.expression.matrix <span class="op">=</span> <span class="cn">NULL</span>, comparison.org.db <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    reference.table.name <span class="op">=</span> <span class="cn">NULL</span>, comparison.table.name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,</span>
+<span>  custom.integration <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>reference.expression.matrix <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    reference.org.db <span class="op">=</span> <span class="cn">NULL</span>, comparison.table <span class="op">=</span> <span class="cn">NULL</span>, reference.table.name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    comparison.table.name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -126,18 +127,28 @@ is installed there. It is recommended to run
     <dl><dt>shiny.dir</dt>
 <dd><p>directory to store the shiny app; if a non-empty
 directory with that name already exists an error is generated</p></dd>
+
+
 <dt>app.title</dt>
 <dd><p>title to be displayed within the app</p></dd>
+
+
 <dt>theme</dt>
 <dd><p>shiny theme to be used in the app; default is 'flatly'</p></dd>
+
+
 <dt>modality</dt>
 <dd><p>name of the modality, or a vector of modalities to be
 included in the app</p></dd>
+
+
 <dt>expression.matrix</dt>
 <dd><p>the expression matrix; rows correspond to genes and
 columns correspond to samples; usually preprocessed by
 <code><a href="preprocessExpressionMatrix.html">preprocessExpressionMatrix</a></code>; a list  (of the same length as
 modality) can be provided if #' <code>length(modality) &gt; 1</code></p></dd>
+
+
 <dt>metadata</dt>
 <dd><p>a data frame containing metadata for the samples contained
 in the expression.matrix; must contain at minimum two columns:
@@ -145,6 +156,8 @@ the first column must contain the column names of the expression.matrix,
 while the last column is assumed to contain the experimental conditions
 that will be tested for differential expression; a list  (of the same
 length as modality) can be provided if #' <code>length(modality) &gt; 1</code></p></dd>
+
+
 <dt>organism</dt>
 <dd><p>organism name to be passed on to <code><a href="https://rdrr.io/pkg/gprofiler2/man/gost.html" class="external-link">gprofiler2::gost</a></code>;
 organism names are constructed by concatenating the first letter of the
@@ -152,6 +165,8 @@ name and the family name; default is NA - enrichment is not included
 to ensure compatibility with datasets that have non-standard gene names;
 a vector (of the same length as modality) can be provided if
 <code>length(modality) &gt; 1</code></p></dd>
+
+
 <dt>org.db</dt>
 <dd><p>database for annotations to transform ENSEMBL IDs to
 gene names; a list of bioconductor packaged databases can be found with
@@ -161,12 +176,16 @@ used directly - it is recommended to provide ENSEMBL IDs if the database
 for your model organism is available;
 a vector (of the same length as modality) can be provided if
 <code>length(modality) &gt; 1</code></p></dd>
+
+
 <dt>panels.default</dt>
 <dd><p>argument to control which of the default panels
 will be included in the app; default is all, but the enrichment panel
 will not appear unless organism is also supplied; note that the 'DE' panel
 is required for 'DEplot', 'DEsummary', 'Enrichment', and 'GRNenrichment'; a list  (of the same
 length as modality) can be provided if <code>length(modality) &gt; 1</code></p></dd>
+
+
 <dt>panels.extra, data.extra, packages.extra</dt>
 <dd><p>functionality to add new
 user-created panels to the app to extend functionality or change the default
@@ -175,6 +194,8 @@ server names and default parameters should be passed to panels.extra
 (see example); the names of any packages required
 should be passed to the packages.extra argument; extra data should be a
 single list and passed to the data.extra argument</p></dd>
+
+
 <dt>cis.integration</dt>
 <dd><p>functionality to integrate extra cis-regulatory
 information into GRN panel. Tibble containing names of reference expression
@@ -182,6 +203,8 @@ matrix, tables of coordinates for elements corresponding to rows of reference
 expression matrix (reference.coord), tables of coordinates to compare against
 reference.coord (comparison.coord) and names for comparison tables. See
 vignettes for more details about inputs.</p></dd>
+
+
 <dt>trans.integration</dt>
 <dd><p>functionality to integrate extra trans-regulatory
 information into GRN panel. Tibble containing names of reference expression
@@ -189,6 +212,8 @@ matrix, (reference.expression.matrix), comparison expression matrix
 (comparison.expression.matrix). Organism database names for each expression
 matrix and names for each table are also required. See vignettes for more
 details about inputs.</p></dd>
+
+
 <dt>custom.integration</dt>
 <dd><p>functionality to integrate custom information
 related to rows of reference expression matrix. Tibble containing names
@@ -198,55 +223,58 @@ database) and Comparison_ID and Comparison_Name plus a Category column
 containing extra information. Names for the reference
 expression matrix and comparison table (comparison.table.name)
 are also required. See vignettes for more details about inputs.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>The path to shiny.dir (invisibly).</p>
+    
+
+<p>The path to shiny.dir (invisibly).</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">expression.matrix.preproc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span></span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"expression_matrix_preprocessed.csv"</span>, package <span class="op">=</span> <span class="st">"bulkAnalyseR"</span><span class="op">)</span>, </span>
-<span class="r-in">  row.names <span class="op">=</span> <span class="fl">1</span></span>
-<span class="r-in"><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span class="r-in">  srr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">expression.matrix.preproc</span><span class="op">)</span>, </span>
-<span class="r-in">  timepoint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"0h"</span>, <span class="st">"12h"</span>, <span class="st">"36h"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">app.dir</span> <span class="op">&lt;-</span> <span class="fu">generateShinyApp</span><span class="op">(</span></span>
-<span class="r-in">  shiny.dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/shiny_Yang2019"</span><span class="op">)</span>,</span>
-<span class="r-in">  app.title <span class="op">=</span> <span class="st">"Shiny app for the Yang 2019 data"</span>,</span>
-<span class="r-in">  modality <span class="op">=</span> <span class="st">"RNA"</span>,</span>
-<span class="r-in">  expression.matrix <span class="op">=</span> <span class="va">expression.matrix.preproc</span>,</span>
-<span class="r-in">  metadata <span class="op">=</span> <span class="va">metadata</span>,</span>
-<span class="r-in">  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,</span>
-<span class="r-in">  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in paste0(shiny.dir, "/", name, ".rda"):</span> object 'name' not found</span>
-<span class="r-in"><span class="co"># runApp(app.dir)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Example of an app with a second copy of the QC panel</span></span>
-<span class="r-in"><span class="va">app.dir.qc2</span> <span class="op">&lt;-</span> <span class="fu">generateShinyApp</span><span class="op">(</span></span>
-<span class="r-in">  shiny.dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/shiny_Yang2019_QC2"</span><span class="op">)</span>,</span>
-<span class="r-in">  app.title <span class="op">=</span> <span class="st">"Shiny app for the Yang 2019 data"</span>,</span>
-<span class="r-in">  expression.matrix <span class="op">=</span> <span class="va">expression.matrix.preproc</span>,</span>
-<span class="r-in">  metadata <span class="op">=</span> <span class="va">metadata</span>,</span>
-<span class="r-in">  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,</span>
-<span class="r-in">  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span>,</span>
-<span class="r-in">  panels.extra <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
-<span class="r-in">    name <span class="op">=</span> <span class="st">"RNA2"</span>,</span>
-<span class="r-in">    UIfun <span class="op">=</span> <span class="st">"modalityPanelUI"</span>, </span>
-<span class="r-in">    UIvars <span class="op">=</span> <span class="st">"'RNA2', metadata[[1]], NA, 'QC'"</span>, </span>
-<span class="r-in">    serverFun <span class="op">=</span> <span class="st">"modalityPanelServer"</span>, </span>
-<span class="r-in">    serverVars <span class="op">=</span> <span class="st">"'RNA2', expression.matrix[[1]], metadata[[1]], anno[[1]], NA, 'QC'"</span></span>
-<span class="r-in">  <span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in paste0(shiny.dir, "/", name, ".rda"):</span> object 'name' not found</span>
-<span class="r-in"><span class="co"># runApp(app.dir.qc2)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># clean up tempdir</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/normalizePath.html" class="external-link">normalizePath</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">expression.matrix.preproc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"expression_matrix_preprocessed.csv"</span>, package <span class="op">=</span> <span class="st">"bulkAnalyseR"</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>  row.names <span class="op">=</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  srr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">expression.matrix.preproc</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>  timepoint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"0h"</span>, <span class="st">"12h"</span>, <span class="st">"36h"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">app.dir</span> <span class="op">&lt;-</span> <span class="fu">generateShinyApp</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  shiny.dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/shiny_Yang2019"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  app.title <span class="op">=</span> <span class="st">"Shiny app for the Yang 2019 data"</span>,</span></span>
+<span class="r-in"><span>  modality <span class="op">=</span> <span class="st">"RNA"</span>,</span></span>
+<span class="r-in"><span>  expression.matrix <span class="op">=</span> <span class="va">expression.matrix.preproc</span>,</span></span>
+<span class="r-in"><span>  metadata <span class="op">=</span> <span class="va">metadata</span>,</span></span>
+<span class="r-in"><span>  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,</span></span>
+<span class="r-in"><span>  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> App created! To launch, run shiny::runApp('C:\Users\emouts\AppData\Local\Temp\RtmpErXRzg/shiny_Yang2019')</span>
+<span class="r-in"><span><span class="co"># runApp(app.dir)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Example of an app with a second copy of the QC panel</span></span></span>
+<span class="r-in"><span><span class="va">app.dir.qc2</span> <span class="op">&lt;-</span> <span class="fu">generateShinyApp</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  shiny.dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/shiny_Yang2019_QC2"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  app.title <span class="op">=</span> <span class="st">"Shiny app for the Yang 2019 data"</span>,</span></span>
+<span class="r-in"><span>  expression.matrix <span class="op">=</span> <span class="va">expression.matrix.preproc</span>,</span></span>
+<span class="r-in"><span>  metadata <span class="op">=</span> <span class="va">metadata</span>,</span></span>
+<span class="r-in"><span>  organism <span class="op">=</span> <span class="st">"mmusculus"</span>,</span></span>
+<span class="r-in"><span>  org.db <span class="op">=</span> <span class="st">"org.Mm.eg.db"</span>,</span></span>
+<span class="r-in"><span>  panels.extra <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    name <span class="op">=</span> <span class="st">"RNA2"</span>,</span></span>
+<span class="r-in"><span>    UIfun <span class="op">=</span> <span class="st">"modalityPanelUI"</span>, </span></span>
+<span class="r-in"><span>    UIvars <span class="op">=</span> <span class="st">"'RNA2', metadata[[1]], NA, 'QC'"</span>, </span></span>
+<span class="r-in"><span>    serverFun <span class="op">=</span> <span class="st">"modalityPanelServer"</span>, </span></span>
+<span class="r-in"><span>    serverVars <span class="op">=</span> <span class="st">"'RNA2', expression.matrix[[1]], metadata[[1]], anno[[1]], NA, 'QC'"</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> App created! To launch, run shiny::runApp('C:\Users\emouts\AppData\Local\Temp\RtmpErXRzg/shiny_Yang2019_QC2')</span>
+<span class="r-in"><span><span class="co"># runApp(app.dir.qc2)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># clean up tempdir</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/normalizePath.html" class="external-link">normalizePath</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -258,7 +286,7 @@ are also required. See vignettes for more details about inputs.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
   <p class="preferably">Using <a href="https://preferably.amirmasoudabdol.name/?source=footer" class="external-link">preferably</a> template.</p>
 </div>
 
