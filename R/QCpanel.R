@@ -167,7 +167,7 @@ QCpanelServer <- function(id, expression.matrix, metadata, anno){
     updateSelectizeInput(session, "geneName", choices = anno$NAME, server = TRUE)
     
     jaccard.plot <- reactive({
-      meta <- lapply(metadata(), function(x) factor(x, levels = unique(x))) %>% 
+      meta <- lapply(metadata(), function(x) if(!is.factor(x)){factor(x, levels = unique(x))}else{x}) %>% 
         as.data.frame() %>%
         dplyr::arrange(dplyr::across(input[['jaccard.annotations']]))
       

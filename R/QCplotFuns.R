@@ -160,7 +160,9 @@ plot_pca <- function(
   expr.PCA <- dplyr::mutate(
     as.data.frame(expr.PCA.list$x),
     name = factor(metadata[, 1], levels = metadata[, 1]),
-    condition = factor(metadata[, annotation.id], levels = unique(metadata[, annotation.id]))
+    condition = if(!is.factor(metadata[,annotation.id])){
+      factor(metadata[, annotation.id], levels = unique(metadata[, annotation.id]))}else{metadata[,annotation.id]}
+
   )
   if(min(table(metadata[, annotation.id])) <= 2){
     expr.PCA.2 <- expr.PCA
@@ -291,6 +293,9 @@ qc_violin_plot = function(expression.matrix,
                                                   cols = colnames(log.expression.matrix))
   melted.expression.matrix$colour <- metadata[,annotation.id][ match(melted.expression.matrix$name,metadata[,1]) ]
   
+  if (is.factor(metadata[,1])) {
+    melted.expression.matrix$name = factor(melted.expression.matrix$name, levels = levels(metadata[,1]))
+  }
   p  <- ggplot(melted.expression.matrix, 
                aes(y = .data$value, 
                    x = .data$name, 
