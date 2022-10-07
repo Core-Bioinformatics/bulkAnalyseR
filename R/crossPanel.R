@@ -39,7 +39,7 @@ crossPanelUI <- function(id, metadata, show = TRUE){
           selectInput(ns('pipeline2'), 'DE pipeline for comparison #2:', c("edgeR", "DESeq2")),
           
           sliderInput(ns('lfcThreshold'), label = 'logFC threshold',
-                      min = 0, value = 1, max = 5, step = 0.5),
+                      min = 0, value = 1, max = 5, step = 0.05),
           sliderInput(ns('pvalThreshold'), label = 'Adjusted p-value threshold',
                       min = 0, value = 0.05, max = 0.2, step = 0.005),
           

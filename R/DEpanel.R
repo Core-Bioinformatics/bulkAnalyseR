@@ -41,7 +41,7 @@ DEpanelUI <- function(id, metadata, show = TRUE){
           
           #DE thresholds
           sliderInput(ns('lfcThreshold'), label = 'logFC threshold',
-                      min = 0, value = 1, max = 5, step = 0.5),
+                      min = 0, value = 1, max = 5, step = 0.05),
           
           sliderInput(ns('pvalThreshold'), label = 'Adjusted p-value threshold',
                       min = 0, value = 0.05, max = 1, step = 0.005),
