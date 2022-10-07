@@ -188,6 +188,7 @@ generateShinyApp <- function(
     panels.default <- rep(list(panels.default), n_modalities)
   }
   metadata <- lapply(metadata, as.data.frame)
+  for(ii in seq_along(metadata)) metadata[[ii]][is.na(metadata[[ii]])] <- "N/A"
   
   generateAppFile(
     shiny.dir = shiny.dir,
