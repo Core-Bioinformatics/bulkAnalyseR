@@ -202,8 +202,7 @@ crossPanelServer <- function(id, expression.matrix, metadata, anno){
         DEtable2 = results$DEtable2,
         DEtable1Subset = results$DEtable1Subset,
         DEtable2Subset = results$DEtable2Subset,
-        lfc.threshold = results$lfcThreshold,
-        mask = mask
+        lfc.threshold = results$lfcThreshold
       )
     })
     
