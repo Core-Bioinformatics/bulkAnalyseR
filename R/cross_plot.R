@@ -182,8 +182,8 @@ cross_plot_prep <- function(
     DEtable1Subset,
     DEtable2Subset,
     lfc.threshold,
-    mask,
-    labnames
+    mask = FALSE,
+    labnames = c("not DE", "DE both", "DE comparison 1", "DE comparison 2")
 ){
   de1 <- DEtable1Subset$gene_id
   de2 <- DEtable2Subset$gene_id
