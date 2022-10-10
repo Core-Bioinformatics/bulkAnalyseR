@@ -140,7 +140,11 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
         (input[["n_networks"]] < 1 | length(input[["samples1"]]) > 0) &
         (input[["n_networks"]] < 2 | length(input[["samples2"]]) > 0) &
         (input[["n_networks"]] < 3 | length(input[["samples3"]]) > 0) &
-        (input[["n_networks"]] < 4 | length(input[["samples4"]]) > 0)
+        (input[["n_networks"]] < 4 | length(input[["samples4"]]) > 0) &
+        (input[["n_networks"]] < 1 | (sum((metadata()[,input[["condition"]]]%in%input[["samples1"]])) > 1)) &
+        (input[["n_networks"]] < 2 | (sum((metadata()[,input[["condition"]]]%in%input[["samples2"]])) > 1)) &
+        (input[["n_networks"]] < 3 | (sum((metadata()[,input[["condition"]]]%in%input[["samples3"]])) > 1)) &
+        (input[["n_networks"]] < 4 | (sum((metadata()[,input[["condition"]]]%in%input[["samples4"]])) > 1))
       if(enable_condition){
         shinyjs::enable("goGRN")
       }else{
