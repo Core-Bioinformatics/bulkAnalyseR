@@ -106,13 +106,11 @@ DEsummaryPanelServer <- function(id, expression.matrix, metadata, DEresults, ann
       geneIDs <- anno$ENSEMBL[match(geneSet, anno$NAME)]
       subsetExpression <- expression.matrix()[geneIDs, , drop = FALSE]
       rownames(subsetExpression) <- geneSet
-      
-      meta <- lapply(metadata(), function(x) factor(x, levels = unique(x))) %>% 
+      meta <- lapply(metadata(), function(x)if(!is.factor(x)){factor(x, levels = unique(x))}else{x}) %>%
         as.data.frame() %>%
         dplyr::arrange(dplyr::across(input[['heatmap.annotations']]))
-      
       myplot <- expression_heatmap(
-        expression.matrix.subset = subsetExpression[, meta[, 1], drop = FALSE],
+        expression.matrix.subset = subsetExpression[, as.character(meta[, 1]), drop = FALSE],
         top.annotation.ids = match(input[['heatmap.annotations']], colnames(meta)),
         metadata = meta,
         type = input[["heatmap.processing"]],
