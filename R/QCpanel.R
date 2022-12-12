@@ -78,7 +78,7 @@ QCpanelUI <- function(id, metadata, show = TRUE){
         selectInput(ns('scatter_sample1'), 'Sample 1', choices = metadata[, 1], selected = metadata[1, 1]),
         selectInput(ns('scatter_sample2'), 'Sample 2', choices = metadata[, 1], selected = metadata[2, 1]),
         selectInput(ns("scatterGeneName"), "Genes to highlight:", multiple = TRUE, choices = character(0)),
-        textInput(ns('plotScatterFileName'), 'File name for MA plot download', value = 'ScatterPlot.png'),
+        textInput(ns('plotScatterFileName'), 'File name for scatter plot download', value = 'ScatterPlot.png'),
         downloadButton(ns('downloadScatterPlot'), 'Download Scatter Plot'),
         
         status = "info",
@@ -170,7 +170,6 @@ QCpanelServer <- function(id, expression.matrix, metadata, anno){
       meta <- lapply(metadata(), function(x) if(!is.factor(x)){factor(x, levels = unique(x))}else{x}) %>% 
         as.data.frame() %>%
         dplyr::arrange(dplyr::across(input[['jaccard.annotations']]))
-      
       myplot <- jaccard_heatmap(
         expression.matrix = expression.matrix()[, meta[, 1]],
         metadata = meta,
@@ -199,6 +198,9 @@ QCpanelServer <- function(id, expression.matrix, metadata, anno){
     observe({
       updateSelectInput(session, 'ma.sample1', choices = metadata()[, 1], selected = metadata()[1, 1])
       updateSelectInput(session, 'ma.sample2', choices = metadata()[, 1], selected = metadata()[2, 1])
+      updateSelectInput(session, 'scatter_sample1', choices = metadata()[, 1], selected = metadata()[1, 1])
+      updateSelectInput(session, 'scatter_sample2', choices = metadata()[, 1], selected = metadata()[2, 1])
+
     })
     ma.plot <- reactive({
       highlightGenes <- input[["maGeneName"]]

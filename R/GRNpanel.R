@@ -153,8 +153,7 @@ GRNpanelServer <- function(id, expression.matrix, metadata, anno){
     }) %>%
       bindEvent(input[["targets"]], input[["n_networks"]], input[["samples1"]],
                 input[["samples2"]], input[["samples3"]], input[["samples4"]])
-    
-    
+ 
     n_networks <- reactive(input[["n_networks"]]) %>% bindEvent(input[["goGRN"]])
     observe(updateSelectInput(session, "plotId", choices = seq_len(n_networks())))
     

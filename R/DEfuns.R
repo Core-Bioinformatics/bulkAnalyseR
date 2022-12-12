@@ -110,7 +110,7 @@ DEanalysis_deseq2 <- function(
     expression.matrix[matrixStats::rowMins(expression.matrix) != 
                         matrixStats::rowMaxs(expression.matrix), ]
   
-  condition <- as.factor(condition)  
+  condition <- factor(condition, levels = unique(condition))  
   design <- stats::model.matrix(~ 0 + condition)
   
   deseq <- DESeq2::DESeqDataSetFromMatrix(expression.matrix, data.frame(condition), design)

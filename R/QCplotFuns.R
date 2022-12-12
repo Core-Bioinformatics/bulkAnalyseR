@@ -256,6 +256,9 @@ qc_density_plot <- function(expression.matrix,
            geom_density() + 
            theme_minimal() + 
            xlab('log2 expression')
+  if (ncol(expression.matrix)>20){
+    p <- p + theme(legend.position = "none")
+  }
   p
 }
 
@@ -303,7 +306,8 @@ qc_violin_plot = function(expression.matrix,
           geom_violin() + 
           geom_boxplot(width = 0.1) +
           theme_minimal() +
-          scale_color_discrete(name = annotation.id)
+          scale_color_discrete(name = annotation.id) + 
+          theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
   p
 }
 
@@ -329,7 +333,7 @@ genes_barplot <- function(sub.expression.matrix,
   if (log.transformation){
     log.expression.matrix <- data.frame(log2(as.matrix(sub.expression.matrix) + 1))
   } else {
-    log.expression.matrix <- sub.expression.matrix
+    log.expression.matrix <- data.frame(as.matrix(sub.expression.matrix))
     }
   log.expression.matrix$gene <- rownames(log.expression.matrix)
   melted.expression.matrix <- tidyr::pivot_longer(log.expression.matrix,
