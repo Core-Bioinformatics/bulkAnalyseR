@@ -15,6 +15,14 @@ scatter_plot(
 \item{sub.expression.matrix}{subset of the expression matrix containing only the two
 selected samples}
 
+\item{anno}{annotation data frame containing a match between the row names
+of the expression.matrix (usually ENSEMBL IDs) and the gene names that
+should be rendered within the app and in output files; this object is
+created by \code{\link{generateShinyApp}} using the org.db specified}
+
+\item{genes.to.highlight}{vector of gene names to highlight.
+These should match entries in the anno NAME column.}
+
 \item{log.transformation}{whether expression should be shown on log (default) or
 linear scale}
 }

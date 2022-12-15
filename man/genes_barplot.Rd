@@ -26,6 +26,6 @@ expression.matrix.preproc <- as.matrix(read.csv(
   row.names = 1
 ))[1:500,]
 
-print(genes_barplot(head(expression.matrix.preproc,5), metadata, 'timepoint'))
+print(genes_barplot(head(expression.matrix.preproc,5)))
 
 }
