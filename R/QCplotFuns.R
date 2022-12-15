@@ -326,7 +326,7 @@ qc_violin_plot = function(expression.matrix,
 #'   row.names = 1
 #' ))[1:500,]
 #' 
-#' print(genes_barplot(head(expression.matrix.preproc,5), metadata, 'timepoint'))
+#' print(genes_barplot(head(expression.matrix.preproc,5)))
 #' 
 genes_barplot <- function(sub.expression.matrix,
                           log.transformation = TRUE){
@@ -351,9 +351,14 @@ genes_barplot <- function(sub.expression.matrix,
 
 #' Create a scatter plot of expression between two samples of an experiment
 #' @description This function creates a scatter plot between two samples.
-#' @inheritParams generateShinyApp
 #' @param sub.expression.matrix subset of the expression matrix containing only the two
 #' selected samples
+#' @param genes.to.highlight vector of gene names to highlight. 
+#' These should match entries in the anno NAME column.
+#' @param anno annotation data frame containing a match between the row names
+#' of the expression.matrix (usually ENSEMBL IDs) and the gene names that
+#' should be rendered within the app and in output files; this object is
+#' created by \code{\link{generateShinyApp}} using the org.db specified
 #' @param log.transformation whether expression should be shown on log (default) or 
 #' linear scale
 #' @return The scatter plot as a ggplot object.
