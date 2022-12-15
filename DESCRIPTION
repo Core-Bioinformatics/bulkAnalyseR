@@ -1,6 +1,6 @@
 Package: bulkAnalyseR
 Title: Interactive Shiny App for Bulk Sequencing Data
-Version: 1.0.2
+Version: 1.1.0
 Authors@R: c(
             person("Ilias", "Moutsopoulos", , "im383@cam.ac.uk", c("aut", "cre")),
             person("Eleanor", "Williams", , "ecw63@cam.ac.uk", role = c("aut", "ctb")),
