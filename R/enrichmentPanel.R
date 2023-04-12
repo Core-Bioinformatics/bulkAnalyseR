@@ -34,6 +34,7 @@ enrichmentPanelUI <- function(id, show = TRUE){
           downloadButton(ns('downloadPlot'), 'Download Plot'),
         ),
         mainPanel(
+          textOutput(ns('enriched_terms')),
           plotOutput(ns('plot'), click = ns('plot_click')),
           tableOutput(ns('data'))
         )
@@ -59,23 +60,27 @@ enrichmentPanelServer <- function(id, DEresults, organism, seed = 13){
     getenrichmentData <- reactive({
       shinyjs::disable("goEnrichment")
       inputdata = DEresults()$DE()
-      gostres <- gprofiler2::gost(query = inputdata$DEtableSubset$gene_id,
-                                  organism = organism,
-                                  correction_method = 'fdr',
-                                  custom_bg = inputdata$DEtable$gene_id,
-                                  sources = input[['gprofilerSources']],
-                                  evcodes = TRUE)
-      if(!is.null(gostres$result)){
-        gostres$result <- gostres$result %>%
-          dplyr::mutate(parents = sapply(.data$parents, toString),
-                        intersection_names = sapply(.data$intersection, function(x){
-                          ensids <- strsplit(x, split = ",")[[1]]
-                          names <- inputdata$DEtable$gene_name[match(ensids, inputdata$DEtable$gene_id)]
-                          paste(names, collapse = ",")
-                        }))
+      if (length(inputdata$DEtableSubset$gene_id)>0){
+        gostres <- gprofiler2::gost(query = inputdata$DEtableSubset$gene_id,
+                                    organism = organism,
+                                    correction_method = 'fdr',
+                                    custom_bg = inputdata$DEtable$gene_id,
+                                    sources = input[['gprofilerSources']],
+                                    evcodes = TRUE)
+        if(!is.null(gostres$result)){
+          gostres$result <- gostres$result %>%
+            dplyr::mutate(parents = sapply(.data$parents, toString),
+                          intersection_names = sapply(.data$intersection, function(x){
+                            ensids <- strsplit(x, split = ",")[[1]]
+                            names <- inputdata$DEtable$gene_name[match(ensids, inputdata$DEtable$gene_id)]
+                            paste(names, collapse = ",")
+                          }))
+        }
+        shinyjs::enable("goEnrichment")
+        return(gostres$result)
+      } else {
+        return(NULL)
       }
-      shinyjs::enable("goEnrichment")
-      return(gostres$result)
     }) %>%
       bindCache(DEresults()$DE()$DEtableSubset$gene_id, input[['gprofilerSources']]) %>%
       bindEvent(input[["goEnrichment"]])
@@ -116,16 +121,21 @@ enrichmentPanelServer <- function(id, DEresults, organism, seed = 13){
     #Plot enrichment data
     plotenrichmentPlot <- reactive({
       plotdata <- getenrichmentPlot()
-      if(is.null(plotdata)) stop("No enriched terms found")
-      myplot <- ggplot(plotdata) + 
-        geom_point(aes(x = jitter, y = `-log10(pVal)`, colour = source)) + 
-        theme_bw()+ 
-        scale_x_continuous(breaks = seq(1, length(unique(plotdata$source)), 1), 
-                           labels = unique(plotdata$source)) + 
-        xlab("")
-      return(myplot)
+      if(is.null(plotdata)) {
+        return(list('numterms'='No enriched terms found','plot'=NULL))
+      } else {
+        myplot <- ggplot(plotdata) + 
+          geom_point(aes(x = jitter, y = `-log10(pVal)`, colour = source)) + 
+          theme_bw()+ 
+          scale_x_continuous(breaks = seq(1, length(unique(plotdata$source)), 1), 
+                             labels = unique(plotdata$source)) + 
+          xlab("")
+        return(list('numterms'=paste0(nrow(plotdata),' enriched terms found'),
+                    'plot'=myplot))
+      }
     })
-    output[['plot']] <- renderPlot(plotenrichmentPlot())
+    output[['enriched_terms']] <- renderText(plotenrichmentPlot()$numterms)
+    output[['plot']] <- renderPlot(plotenrichmentPlot()$plot)
     
     
     #Define clicking on enrichment data table
@@ -152,10 +162,9 @@ enrichmentPanelServer <- function(id, DEresults, organism, seed = 13){
     output[['downloadPlot']] <- downloadHandler(
       filename = function() { input[['plotFileName']] },
       content = function(file) {
-        ggsave(file, plot = plotenrichmentPlot(), dpi = 300)
+        ggsave(file, plot = plotenrichmentPlot()$plot, dpi = 300)
       }
     )
-    
     return(returnableResult)
     
   })
