@@ -7,7 +7,10 @@
 
 Bulk sequencing experiments (e.g. mRNAseq, sRNAseq etc) are essential for exploring a wide range of biological questions. To bring the data analysis closer to its interpretation and facilitate both interactive, exploratory tasks and the sharing of (easily accessible) information, we present *bulkAnalyseR*, an R package that offers a seamless, customisable solution for most bulk sequencing datasets. By integrating state-of-the-art approaches without relying on extensive computational support, and replacing static images with interactive panels, our aim is to further support and strengthen the reusability of data. *bulkAnalyseR* enables standard analyses of bulk data, using an expression matrix as starting point. It presents the outputs of various steps in an interactive web-based interface, making it easy to generate, explore and verify hypotheses. Moreover, the app can be easily shared and published, incentivising research reproducibility and allowing others to explore the same processed data.
 
-Preprint: https://www.biorxiv.org/content/10.1101/2021.12.23.473982v1
+> **bulkAnalyseR: an accessible, interactive pipeline for analysing and sharing bulk multi-modal sequencing data**  
+> Ilias Moutsopoulos, Eleanor C Williams, Irina I Mohorianu.  
+> _Briefings in Bioinformatics_, Volume 24, Issue 1, bbac591 (2023)  
+> https://doi.org/10.1093/bib/bbac591
 
 Live app example: https://bioinf.stemcells.cam.ac.uk/shiny/bulkAnalyseR/Yang2019/
 
