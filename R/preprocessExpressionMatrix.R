@@ -76,7 +76,7 @@ preprocessExpressionMatrix <- function(
       x = expression.matrix, 
       MARGIN = 2, 
       STATS = DESeq2::estimateSizeFactorsForMatrix(expression.matrix),
-      FUN = "*"
+      FUN = "/"
     )
   }else if(normalisation.method[1] == "median"){
     csums <- colSums(expression.matrix)
